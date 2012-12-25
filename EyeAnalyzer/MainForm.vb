@@ -1,14 +1,32 @@
 ﻿''' <summary>
-''' Main form for measuring fixations. Allows the user to specify stimulus intervals
+''' Main form for measuring fixations. Allows the user to specify stimulus segments
 ''' and AOIs and execute processing.
 ''' </summary>
 Public Class MainForm
 
     Private Const MIN_FIXATION_DURATION_MS As Integer = 40
 
+    Private _newSegment As StimulusSegment = Nothing
+    Private _selectedSegment As StimulusSegment = Nothing
+
     Private _videoRecording As VideoRecording = Nothing
     Private _eyeTrackerData As EyeTrackerData = Nothing
     Private _didFrameChange As Boolean = False
+
+
+    ''' <summary>
+    ''' Formats the specified time in milliseconds to a string of the
+    ''' format HH:MM:SS
+    ''' </summary>
+    Private Function makeTimeString(ByVal timeMs As ULong) As String
+        Dim hours As Integer = timeMs / 3600000L
+        timeMs = timeMs Mod 3600000L
+        Dim minutes As Integer = timeMs / 60000L
+        timeMs = timeMs Mod 60000L
+        Dim seconds As Integer = timeMs / 1000L
+        Return hours.ToString("D2") & ":" & minutes.ToString("D2") & ":" & _
+            seconds.ToString("D2")
+    End Function
 
     Private Sub ExitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitToolStripMenuItem.Click
         Close()
@@ -31,18 +49,20 @@ Public Class MainForm
         _eyeTrackerData = Nothing
         VideoFileStatusLabel.Text = "-"
         XmlFileStatusLabel.Text = "-"
-        IntervalStartTextBox.Text = ""
-        IntervalEndTextBox.Text = ""
+        SegmentStartTextBox.Text = ""
+        SegmentEndTextBox.Text = ""
+        VideoPositionLabel.Text = makeTimeString(0)
         VideoGroupBox.Enabled = False
-        IntervalsGroupBox.Enabled = False
-        AddIntervalButton.Enabled = False
-        DeleteIntervalButton.Enabled = False
+        SegmentsGroupBox.Enabled = False
+        AddSegmentButton.Enabled = False
+        DeleteSegmentButton.Enabled = False
         AoiGroupBox.Enabled = False
         AddAoiButton.Enabled = False
         CopyAoiButton.Enabled = False
         DeleteAoiButton.Enabled = False
         ProcessFixationsButton.Enabled = False
         VideoPictureBox.Image = Nothing
+        _newSegment = New StimulusSegment()
         setStatusMessage("Ready for study data...")
     End Sub
 
@@ -52,7 +72,7 @@ Public Class MainForm
 
     Private Sub OpenStudyDataToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpenStudyDataToolStripMenuItem.Click
         If _videoRecording IsNot Nothing Or _eyeTrackerData IsNot Nothing Then
-            If MessageBox.Show("Loading new data will clear all intervals and AOIs. Would you like to continue?", _
+            If MessageBox.Show("Loading new data will clear all segments and AOIs. Would you like to continue?", _
                                "Clear all data?", MessageBoxButtons.OKCancel) = Windows.Forms.DialogResult.OK Then
                 resetForm()
             Else
@@ -95,7 +115,7 @@ Public Class MainForm
             _eyeTrackerData = EyeTrackerData.FromFile(xmlFileFullName)
             XmlFileStatusLabel.Text = xmlFileName
             VideoGroupBox.Enabled = True
-            IntervalsGroupBox.Enabled = True
+            SegmentsGroupBox.Enabled = True
             setStatusMessage("Loaded study data.")
             VideoPositionUpDown.Maximum = _videoRecording.LengthMs
             VideoPositionUpDown.Increment = _videoRecording.TimeBetweenFramesMs
@@ -110,6 +130,7 @@ Public Class MainForm
         _didFrameChange = True
         Dim percent As Single = CType(VideoPositionUpDown.Value, Single) / _videoRecording.LengthMs
         VideoPositionTrackBar.Value = percent * 100
+        VideoPositionLabel.Text = makeTimeString(VideoPositionUpDown.Value)
     End Sub
 
     Private Sub VideoPositionTrackBar_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VideoPositionTrackBar.Scroll
@@ -139,11 +160,21 @@ Public Class MainForm
         End Using
     End Sub
 
-    Private Sub IntervalStartButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles IntervalStartButton.Click
-        IntervalStartTextBox.Text = VideoPositionUpDown.Value
+    Private Sub SegmentStartButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SegmentStartButton.Click
+        If _newSegment.EndMs Is Nothing Or _newSegment.EndMs > VideoPositionUpDown.Value Then
+            _newSegment.StartMs = VideoPositionUpDown.Value
+            SegmentStartTextBox.Text = makeTimeString(_newSegment.StartMs)
+        Else
+            MessageBox.Show("Cannot choose start position at or after the chosen end position.")
+        End If
     End Sub
 
-    Private Sub IntervalEndButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles IntervalEndButton.Click
-        IntervalEndTextBox.Text = VideoPositionUpDown.Value
+    Private Sub SegmentEndButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SegmentEndButton.Click
+        If _newSegment.StartMs Is Nothing Or _newSegment.StartMs < VideoPositionUpDown.Value Then
+            _newSegment.EndMs = VideoPositionUpDown.Value
+            SegmentEndTextBox.Text = makeTimeString(_newSegment.EndMs)
+        Else
+            MessageBox.Show("Cannot choose end position at or before the chosen start position.")
+        End If
     End Sub
 End Class

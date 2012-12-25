@@ -44,26 +44,27 @@ Partial Class MainForm
         Me.Label1 = New System.Windows.Forms.Label()
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
         Me.MainStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.IntervalsGroupBox = New System.Windows.Forms.GroupBox()
-        Me.IntervalEndButton = New System.Windows.Forms.Button()
-        Me.IntervalStartButton = New System.Windows.Forms.Button()
+        Me.VideoFileStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.XmlFileStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.SegmentsGroupBox = New System.Windows.Forms.GroupBox()
+        Me.SegmentEndButton = New System.Windows.Forms.Button()
+        Me.SegmentStartButton = New System.Windows.Forms.Button()
         Me.Label5 = New System.Windows.Forms.Label()
-        Me.IntervalEndTextBox = New System.Windows.Forms.TextBox()
-        Me.IntervalStartTextBox = New System.Windows.Forms.TextBox()
+        Me.SegmentEndTextBox = New System.Windows.Forms.TextBox()
+        Me.SegmentStartTextBox = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
-        Me.IntervalNameTextBox = New System.Windows.Forms.TextBox()
+        Me.SegmentNameTextBox = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
-        Me.AddIntervalButton = New System.Windows.Forms.Button()
-        Me.DeleteIntervalButton = New System.Windows.Forms.Button()
-        Me.IntervalsListBox = New System.Windows.Forms.ListBox()
+        Me.AddSegmentButton = New System.Windows.Forms.Button()
+        Me.DeleteSegmentButton = New System.Windows.Forms.Button()
+        Me.SegmentsListBox = New System.Windows.Forms.ListBox()
         Me.VideoPositionTrackBar = New System.Windows.Forms.TrackBar()
         Me.VideoPositionUpDown = New System.Windows.Forms.NumericUpDown()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.VideoGroupBox = New System.Windows.Forms.GroupBox()
+        Me.VideoPositionLabel = New System.Windows.Forms.Label()
         Me.SaveScreenshotButton = New System.Windows.Forms.Button()
         Me.MainOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
-        Me.VideoFileStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.XmlFileStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.RedrawTimer = New System.Windows.Forms.Timer(Me.components)
         Me.MainSaveFileDialog = New System.Windows.Forms.SaveFileDialog()
         CType(Me.VideoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -71,7 +72,7 @@ Partial Class MainForm
         Me.MainMenuStrip.SuspendLayout()
         Me.SettingsGroupBox.SuspendLayout()
         Me.MainStatusStrip.SuspendLayout()
-        Me.IntervalsGroupBox.SuspendLayout()
+        Me.SegmentsGroupBox.SuspendLayout()
         CType(Me.VideoPositionTrackBar, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.VideoPositionUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.VideoGroupBox.SuspendLayout()
@@ -264,45 +265,63 @@ Partial Class MainForm
         Me.MainStatusLabel.Text = "..."
         Me.MainStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
-        'IntervalsGroupBox
+        'VideoFileStatusLabel
         '
-        Me.IntervalsGroupBox.Controls.Add(Me.IntervalEndButton)
-        Me.IntervalsGroupBox.Controls.Add(Me.IntervalStartButton)
-        Me.IntervalsGroupBox.Controls.Add(Me.Label5)
-        Me.IntervalsGroupBox.Controls.Add(Me.AoiGroupBox)
-        Me.IntervalsGroupBox.Controls.Add(Me.IntervalEndTextBox)
-        Me.IntervalsGroupBox.Controls.Add(Me.IntervalStartTextBox)
-        Me.IntervalsGroupBox.Controls.Add(Me.Label4)
-        Me.IntervalsGroupBox.Controls.Add(Me.IntervalNameTextBox)
-        Me.IntervalsGroupBox.Controls.Add(Me.Label3)
-        Me.IntervalsGroupBox.Controls.Add(Me.AddIntervalButton)
-        Me.IntervalsGroupBox.Controls.Add(Me.DeleteIntervalButton)
-        Me.IntervalsGroupBox.Controls.Add(Me.IntervalsListBox)
-        Me.IntervalsGroupBox.Enabled = False
-        Me.IntervalsGroupBox.Location = New System.Drawing.Point(692, 31)
-        Me.IntervalsGroupBox.Name = "IntervalsGroupBox"
-        Me.IntervalsGroupBox.Size = New System.Drawing.Size(329, 453)
-        Me.IntervalsGroupBox.TabIndex = 5
-        Me.IntervalsGroupBox.TabStop = False
-        Me.IntervalsGroupBox.Text = "Stimulus Intervals"
+        Me.VideoFileStatusLabel.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
+                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
+                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
+        Me.VideoFileStatusLabel.Name = "VideoFileStatusLabel"
+        Me.VideoFileStatusLabel.Size = New System.Drawing.Size(22, 24)
+        Me.VideoFileStatusLabel.Text = "..."
         '
-        'IntervalEndButton
+        'XmlFileStatusLabel
         '
-        Me.IntervalEndButton.Location = New System.Drawing.Point(290, 57)
-        Me.IntervalEndButton.Name = "IntervalEndButton"
-        Me.IntervalEndButton.Size = New System.Drawing.Size(28, 23)
-        Me.IntervalEndButton.TabIndex = 8
-        Me.IntervalEndButton.Text = "..."
-        Me.IntervalEndButton.UseVisualStyleBackColor = True
+        Me.XmlFileStatusLabel.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
+                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
+                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
+        Me.XmlFileStatusLabel.Name = "XmlFileStatusLabel"
+        Me.XmlFileStatusLabel.Size = New System.Drawing.Size(22, 24)
+        Me.XmlFileStatusLabel.Text = "..."
         '
-        'IntervalStartButton
+        'SegmentsGroupBox
         '
-        Me.IntervalStartButton.Location = New System.Drawing.Point(142, 57)
-        Me.IntervalStartButton.Name = "IntervalStartButton"
-        Me.IntervalStartButton.Size = New System.Drawing.Size(28, 23)
-        Me.IntervalStartButton.TabIndex = 8
-        Me.IntervalStartButton.Text = "..."
-        Me.IntervalStartButton.UseVisualStyleBackColor = True
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentEndButton)
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentStartButton)
+        Me.SegmentsGroupBox.Controls.Add(Me.Label5)
+        Me.SegmentsGroupBox.Controls.Add(Me.AoiGroupBox)
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentEndTextBox)
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentStartTextBox)
+        Me.SegmentsGroupBox.Controls.Add(Me.Label4)
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentNameTextBox)
+        Me.SegmentsGroupBox.Controls.Add(Me.Label3)
+        Me.SegmentsGroupBox.Controls.Add(Me.AddSegmentButton)
+        Me.SegmentsGroupBox.Controls.Add(Me.DeleteSegmentButton)
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentsListBox)
+        Me.SegmentsGroupBox.Enabled = False
+        Me.SegmentsGroupBox.Location = New System.Drawing.Point(692, 31)
+        Me.SegmentsGroupBox.Name = "SegmentsGroupBox"
+        Me.SegmentsGroupBox.Size = New System.Drawing.Size(329, 453)
+        Me.SegmentsGroupBox.TabIndex = 5
+        Me.SegmentsGroupBox.TabStop = False
+        Me.SegmentsGroupBox.Text = "Stimulus Segments"
+        '
+        'SegmentEndButton
+        '
+        Me.SegmentEndButton.Location = New System.Drawing.Point(290, 57)
+        Me.SegmentEndButton.Name = "SegmentEndButton"
+        Me.SegmentEndButton.Size = New System.Drawing.Size(28, 23)
+        Me.SegmentEndButton.TabIndex = 8
+        Me.SegmentEndButton.Text = "..."
+        Me.SegmentEndButton.UseVisualStyleBackColor = True
+        '
+        'SegmentStartButton
+        '
+        Me.SegmentStartButton.Location = New System.Drawing.Point(142, 57)
+        Me.SegmentStartButton.Name = "SegmentStartButton"
+        Me.SegmentStartButton.Size = New System.Drawing.Size(28, 23)
+        Me.SegmentStartButton.TabIndex = 8
+        Me.SegmentStartButton.Text = "..."
+        Me.SegmentStartButton.UseVisualStyleBackColor = True
         '
         'Label5
         '
@@ -313,21 +332,21 @@ Partial Class MainForm
         Me.Label5.TabIndex = 7
         Me.Label5.Text = "End:"
         '
-        'IntervalEndTextBox
+        'SegmentEndTextBox
         '
-        Me.IntervalEndTextBox.Enabled = False
-        Me.IntervalEndTextBox.Location = New System.Drawing.Point(216, 56)
-        Me.IntervalEndTextBox.Name = "IntervalEndTextBox"
-        Me.IntervalEndTextBox.Size = New System.Drawing.Size(68, 22)
-        Me.IntervalEndTextBox.TabIndex = 6
+        Me.SegmentEndTextBox.Enabled = False
+        Me.SegmentEndTextBox.Location = New System.Drawing.Point(216, 56)
+        Me.SegmentEndTextBox.Name = "SegmentEndTextBox"
+        Me.SegmentEndTextBox.Size = New System.Drawing.Size(68, 22)
+        Me.SegmentEndTextBox.TabIndex = 6
         '
-        'IntervalStartTextBox
+        'SegmentStartTextBox
         '
-        Me.IntervalStartTextBox.Enabled = False
-        Me.IntervalStartTextBox.Location = New System.Drawing.Point(68, 56)
-        Me.IntervalStartTextBox.Name = "IntervalStartTextBox"
-        Me.IntervalStartTextBox.Size = New System.Drawing.Size(68, 22)
-        Me.IntervalStartTextBox.TabIndex = 6
+        Me.SegmentStartTextBox.Enabled = False
+        Me.SegmentStartTextBox.Location = New System.Drawing.Point(68, 56)
+        Me.SegmentStartTextBox.Name = "SegmentStartTextBox"
+        Me.SegmentStartTextBox.Size = New System.Drawing.Size(68, 22)
+        Me.SegmentStartTextBox.TabIndex = 6
         '
         'Label4
         '
@@ -338,12 +357,12 @@ Partial Class MainForm
         Me.Label4.TabIndex = 5
         Me.Label4.Text = "Start:"
         '
-        'IntervalNameTextBox
+        'SegmentNameTextBox
         '
-        Me.IntervalNameTextBox.Location = New System.Drawing.Point(68, 27)
-        Me.IntervalNameTextBox.Name = "IntervalNameTextBox"
-        Me.IntervalNameTextBox.Size = New System.Drawing.Size(125, 22)
-        Me.IntervalNameTextBox.TabIndex = 4
+        Me.SegmentNameTextBox.Location = New System.Drawing.Point(68, 27)
+        Me.SegmentNameTextBox.Name = "SegmentNameTextBox"
+        Me.SegmentNameTextBox.Size = New System.Drawing.Size(125, 22)
+        Me.SegmentNameTextBox.TabIndex = 4
         '
         'Label3
         '
@@ -354,35 +373,35 @@ Partial Class MainForm
         Me.Label3.TabIndex = 3
         Me.Label3.Text = "Name:"
         '
-        'AddIntervalButton
+        'AddSegmentButton
         '
-        Me.AddIntervalButton.Enabled = False
-        Me.AddIntervalButton.Location = New System.Drawing.Point(199, 26)
-        Me.AddIntervalButton.Name = "AddIntervalButton"
-        Me.AddIntervalButton.Size = New System.Drawing.Size(119, 23)
-        Me.AddIntervalButton.TabIndex = 2
-        Me.AddIntervalButton.Text = "Add New"
-        Me.AddIntervalButton.UseVisualStyleBackColor = True
+        Me.AddSegmentButton.Enabled = False
+        Me.AddSegmentButton.Location = New System.Drawing.Point(199, 26)
+        Me.AddSegmentButton.Name = "AddSegmentButton"
+        Me.AddSegmentButton.Size = New System.Drawing.Size(119, 23)
+        Me.AddSegmentButton.TabIndex = 2
+        Me.AddSegmentButton.Text = "Add New"
+        Me.AddSegmentButton.UseVisualStyleBackColor = True
         '
-        'DeleteIntervalButton
+        'DeleteSegmentButton
         '
-        Me.DeleteIntervalButton.Enabled = False
-        Me.DeleteIntervalButton.Location = New System.Drawing.Point(199, 86)
-        Me.DeleteIntervalButton.Name = "DeleteIntervalButton"
-        Me.DeleteIntervalButton.Size = New System.Drawing.Size(119, 23)
-        Me.DeleteIntervalButton.TabIndex = 1
-        Me.DeleteIntervalButton.Text = "Delete Selected"
-        Me.DeleteIntervalButton.UseVisualStyleBackColor = True
+        Me.DeleteSegmentButton.Enabled = False
+        Me.DeleteSegmentButton.Location = New System.Drawing.Point(199, 86)
+        Me.DeleteSegmentButton.Name = "DeleteSegmentButton"
+        Me.DeleteSegmentButton.Size = New System.Drawing.Size(119, 23)
+        Me.DeleteSegmentButton.TabIndex = 1
+        Me.DeleteSegmentButton.Text = "Delete Selected"
+        Me.DeleteSegmentButton.UseVisualStyleBackColor = True
         '
-        'IntervalsListBox
+        'SegmentsListBox
         '
-        Me.IntervalsListBox.FormattingEnabled = True
-        Me.IntervalsListBox.ItemHeight = 16
-        Me.IntervalsListBox.Location = New System.Drawing.Point(16, 88)
-        Me.IntervalsListBox.MultiColumn = True
-        Me.IntervalsListBox.Name = "IntervalsListBox"
-        Me.IntervalsListBox.Size = New System.Drawing.Size(177, 100)
-        Me.IntervalsListBox.TabIndex = 0
+        Me.SegmentsListBox.FormattingEnabled = True
+        Me.SegmentsListBox.ItemHeight = 16
+        Me.SegmentsListBox.Location = New System.Drawing.Point(16, 88)
+        Me.SegmentsListBox.MultiColumn = True
+        Me.SegmentsListBox.Name = "SegmentsListBox"
+        Me.SegmentsListBox.Size = New System.Drawing.Size(177, 100)
+        Me.SegmentsListBox.TabIndex = 0
         '
         'VideoPositionTrackBar
         '
@@ -411,6 +430,7 @@ Partial Class MainForm
         '
         'VideoGroupBox
         '
+        Me.VideoGroupBox.Controls.Add(Me.VideoPositionLabel)
         Me.VideoGroupBox.Controls.Add(Me.SaveScreenshotButton)
         Me.VideoGroupBox.Controls.Add(Me.VideoPictureBox)
         Me.VideoGroupBox.Controls.Add(Me.Label6)
@@ -423,6 +443,15 @@ Partial Class MainForm
         Me.VideoGroupBox.TabIndex = 9
         Me.VideoGroupBox.TabStop = False
         Me.VideoGroupBox.Text = "Video"
+        '
+        'VideoPositionLabel
+        '
+        Me.VideoPositionLabel.AutoSize = True
+        Me.VideoPositionLabel.Location = New System.Drawing.Point(349, 406)
+        Me.VideoPositionLabel.Name = "VideoPositionLabel"
+        Me.VideoPositionLabel.Size = New System.Drawing.Size(64, 17)
+        Me.VideoPositionLabel.TabIndex = 10
+        Me.VideoPositionLabel.Text = "00:00:00"
         '
         'SaveScreenshotButton
         '
@@ -437,24 +466,6 @@ Partial Class MainForm
         '
         Me.MainOpenFileDialog.FileName = "MainOpenFileDialog"
         '
-        'VideoFileStatusLabel
-        '
-        Me.VideoFileStatusLabel.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
-                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
-                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
-        Me.VideoFileStatusLabel.Name = "VideoFileStatusLabel"
-        Me.VideoFileStatusLabel.Size = New System.Drawing.Size(22, 24)
-        Me.VideoFileStatusLabel.Text = "..."
-        '
-        'XmlFileStatusLabel
-        '
-        Me.XmlFileStatusLabel.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
-                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
-                    Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
-        Me.XmlFileStatusLabel.Name = "XmlFileStatusLabel"
-        Me.XmlFileStatusLabel.Size = New System.Drawing.Size(22, 24)
-        Me.XmlFileStatusLabel.Text = "..."
-        '
         'RedrawTimer
         '
         Me.RedrawTimer.Interval = 33
@@ -465,12 +476,11 @@ Partial Class MainForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1279, 521)
         Me.Controls.Add(Me.VideoGroupBox)
-        Me.Controls.Add(Me.IntervalsGroupBox)
+        Me.Controls.Add(Me.SegmentsGroupBox)
         Me.Controls.Add(Me.MainStatusStrip)
         Me.Controls.Add(Me.SettingsGroupBox)
         Me.Controls.Add(Me.MainMenuStrip)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
-        Me.MainMenuStrip = Me.MainMenuStrip
         Me.MaximizeBox = False
         Me.Name = "MainForm"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
@@ -485,8 +495,8 @@ Partial Class MainForm
         Me.SettingsGroupBox.PerformLayout()
         Me.MainStatusStrip.ResumeLayout(False)
         Me.MainStatusStrip.PerformLayout()
-        Me.IntervalsGroupBox.ResumeLayout(False)
-        Me.IntervalsGroupBox.PerformLayout()
+        Me.SegmentsGroupBox.ResumeLayout(False)
+        Me.SegmentsGroupBox.PerformLayout()
         CType(Me.VideoPositionTrackBar, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.VideoPositionUpDown, System.ComponentModel.ISupportInitialize).EndInit()
         Me.VideoGroupBox.ResumeLayout(False)
@@ -510,21 +520,21 @@ Partial Class MainForm
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents MainStatusStrip As System.Windows.Forms.StatusStrip
     Friend WithEvents MainStatusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Friend WithEvents IntervalsGroupBox As System.Windows.Forms.GroupBox
+    Friend WithEvents SegmentsGroupBox As System.Windows.Forms.GroupBox
     Friend WithEvents Label4 As System.Windows.Forms.Label
-    Friend WithEvents IntervalNameTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents SegmentNameTextBox As System.Windows.Forms.TextBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
-    Friend WithEvents AddIntervalButton As System.Windows.Forms.Button
-    Friend WithEvents DeleteIntervalButton As System.Windows.Forms.Button
-    Friend WithEvents IntervalsListBox As System.Windows.Forms.ListBox
-    Friend WithEvents IntervalStartButton As System.Windows.Forms.Button
+    Friend WithEvents AddSegmentButton As System.Windows.Forms.Button
+    Friend WithEvents DeleteSegmentButton As System.Windows.Forms.Button
+    Friend WithEvents SegmentsListBox As System.Windows.Forms.ListBox
+    Friend WithEvents SegmentStartButton As System.Windows.Forms.Button
     Friend WithEvents Label5 As System.Windows.Forms.Label
-    Friend WithEvents IntervalStartTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents SegmentStartTextBox As System.Windows.Forms.TextBox
     Friend WithEvents VideoPositionTrackBar As System.Windows.Forms.TrackBar
     Friend WithEvents VideoPositionUpDown As System.Windows.Forms.NumericUpDown
     Friend WithEvents Label6 As System.Windows.Forms.Label
-    Friend WithEvents IntervalEndButton As System.Windows.Forms.Button
-    Friend WithEvents IntervalEndTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents SegmentEndButton As System.Windows.Forms.Button
+    Friend WithEvents SegmentEndTextBox As System.Windows.Forms.TextBox
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents VideoGroupBox As System.Windows.Forms.GroupBox
     Friend WithEvents OpenStudyDataToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -538,5 +548,6 @@ Partial Class MainForm
     Friend WithEvents XmlFileStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents RedrawTimer As System.Windows.Forms.Timer
     Friend WithEvents MainSaveFileDialog As System.Windows.Forms.SaveFileDialog
+    Friend WithEvents VideoPositionLabel As System.Windows.Forms.Label
 
 End Class
