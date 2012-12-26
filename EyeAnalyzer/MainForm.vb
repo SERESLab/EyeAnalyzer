@@ -7,12 +7,7 @@ Public Class MainForm
     Private Const MIN_FIXATION_DURATION_MS As Integer = 40
     Private Const AOI_DRAW_WIDTH As Single = 1.0
     Private Const SELECTED_AOI_DRAW_WIDTH As Single = 3.0
-    Private Const AOI_FILL_ALPHA As Byte = 170
 
-    Private _defaultAoiColor As Color = Color.LightBlue
-    Private _defaultNewAoiColor As Color = Color.Yellow
-    Private _defaultSelectedAoiColor As Color = Color.Red
-    Private _defaultNonExclusiveAoiColor As Color = Color.Green
     Private _newAoiPen As Pen
     Private _selectedAoiPen As Pen
     Private _aoiPen As Pen
@@ -59,10 +54,6 @@ Public Class MainForm
     End Sub
 
     Private Sub MainForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        AoiColorLabel.BackColor = _defaultAoiColor
-        NewAoiColorLabel.BackColor = _defaultNewAoiColor
-        SelectedAoiColorLabel.BackColor = _defaultSelectedAoiColor
-        NonExclusiveAoiColorLabel.BackColor = _defaultNonExclusiveAoiColor
         updateAoiDrawObjects()
         FixationDurationTextBox.Text = MIN_FIXATION_DURATION_MS
         resetForm()
@@ -72,20 +63,20 @@ Public Class MainForm
         Dim c As Color
         c = AoiColorLabel.BackColor
         _aoiPen = New Pen(c, AOI_DRAW_WIDTH)
-        c = Color.FromArgb(AOI_FILL_ALPHA, c)
+        c = Color.FromArgb(AoiOpacityTrackBar.Value, c)
         _aoiBrush = New SolidBrush(c)
         c = NewAoiColorLabel.BackColor
         _newAoiPen = New Pen(c, SELECTED_AOI_DRAW_WIDTH)
         _newAoiPen.DashStyle = Drawing2D.DashStyle.Dash
-        c = Color.FromArgb(AOI_FILL_ALPHA, c)
+        c = Color.FromArgb(AoiOpacityTrackBar.Value, c)
         _newAoiBrush = New SolidBrush(c)
         c = SelectedAoiColorLabel.BackColor
         _selectedAoiPen = New Pen(c, SELECTED_AOI_DRAW_WIDTH)
-        c = Color.FromArgb(AOI_FILL_ALPHA, c)
+        c = Color.FromArgb(AoiOpacityTrackBar.Value, c)
         _selectedAoiBrush = New SolidBrush(c)
         c = NonExclusiveAoiColorLabel.BackColor
         _nonExclusiveAoiPen = New Pen(c, AOI_DRAW_WIDTH)
-        c = Color.FromArgb(AOI_FILL_ALPHA, c)
+        c = Color.FromArgb(AoiOpacityTrackBar.Value, c)
         _nonExclusiveAoiBrush = New SolidBrush(c)
         _isRedrawRequired = True
     End Sub
@@ -101,6 +92,7 @@ Public Class MainForm
         SegmentStartLinkLabel.Text = "-:-:-"
         SegmentEndLinkLabel.Text = "-:-:-"
         VideoPositionLabel.Text = makeTimeString(0)
+        DisplaySettingsGroupBox.Enabled = False
         UnselectSegmentButton.Enabled = False
         VideoGroupBox.Enabled = False
         SegmentsGroupBox.Enabled = False
@@ -110,6 +102,8 @@ Public Class MainForm
         AddRenameAoiButton.Enabled = False
         DeleteAoiButton.Enabled = False
         ProcessFixationsButton.Enabled = False
+        ImportStimulusSegmentsToolStripMenuItem.Enabled = False
+        ExportStimulusSegmentsToolStripMenuItem.Enabled = False
         VideoPictureBox.Image = Nothing
         VideoPictureBox.Width = VideoPanel.Width
         VideoPictureBox.Height = VideoPanel.Height
@@ -178,6 +172,7 @@ Public Class MainForm
             setStatusMessage("Loaded study data.")
             VideoPositionUpDown.Maximum = _videoRecording.LengthMs
             VideoPositionUpDown.Increment = _videoRecording.TimeBetweenFramesMs
+            DisplaySettingsGroupBox.Enabled = True
             _isRedrawRequired = True
             RedrawTimer.Start()
         Else
@@ -212,11 +207,15 @@ Public Class MainForm
             drawAois()
             _isRedrawRequired = False
         End If
+
+        ' enable modifying stimulus segments if prereqs are met
         If SegmentNameTextBox.Text.Trim.Length > 0 And _segmentStart IsNot Nothing And _segmentEnd IsNot Nothing Then
             AddUpdateSegmentButton.Enabled = True
         Else
             AddUpdateSegmentButton.Enabled = False
         End If
+
+        ' enable modifying AOIs if prereqs are met
         If _newAoiRect IsNot Nothing Or AoiListBox.SelectedItem IsNot Nothing Then
             If _isEditingSegment And AoiNameTextBox.Text.Trim.Length > 0 Then
                 AddRenameAoiButton.Enabled = True
@@ -234,6 +233,16 @@ Public Class MainForm
             AoiWidthUpDown.Enabled = False
             AoiHeightUpDown.Enabled = False
         End If
+
+        ' enable processing if prereqs are met
+        Dim enableProcessing As Boolean = False
+        For Each segment As StimulusSegment In _stimulusSegments
+            If segment.AOIs.Count > 0 Then
+                enableProcessing = True
+                Exit For
+            End If
+        Next
+        ProcessFixationsButton.Enabled = enableProcessing
     End Sub
 
     Private Sub drawAois()
@@ -719,6 +728,7 @@ Public Class MainForm
             AoiListBox.DataSource = Nothing
             AoiListBox.DataSource = ss.AOIs
             AoiListBox.SelectedItem = newAoi
+            setStatusMessage("Added new AOI '" & name & "' to stimulus segment '" & ss.Name & "'.")
         End If
     End Sub
 
@@ -726,6 +736,7 @@ Public Class MainForm
         Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
         Dim selectedAoi As AreaOfInterest = AoiListBox.SelectedItem
         Dim name As String = AoiNameTextBox.Text.Trim
+        Dim oldName As String = selectedAoi.Name
         Dim doesNameExist As Boolean = False
 
         For Each aoi As AreaOfInterest In ss.AOIs
@@ -743,6 +754,7 @@ Public Class MainForm
             AoiListBox.DataSource = Nothing
             AoiListBox.DataSource = ss.AOIs
             AoiListBox.SelectedItem = selectedAoi
+            setStatusMessage("Renamed AOI '" & oldName & "' to '" & name & "' in stimulus segment '" & ss.Name & "'.")
         End If
     End Sub
 
@@ -884,10 +896,26 @@ Public Class MainForm
         If MessageBox.Show("Are you sure you would like to delete the specified AOI?", _
                                 "Delete AOI", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.Yes Then
             Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
-            ss.AOIs.Remove(AoiListBox.SelectedItem)
+            Dim aoi As AreaOfInterest = AoiListBox.SelectedItem
+            ss.AOIs.Remove(aoi)
             AoiListBox.DataSource = Nothing
             AoiListBox.DataSource = ss.AOIs
             AoiListBox.ClearSelected()
+            setStatusMessage("Removed AOI '" & aoi.Name & "' from stimulus segment '" & ss.Name & "'.")
         End If
+    End Sub
+
+    Private Sub AoiNameTextBox_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles AoiNameTextBox.KeyDown
+        If e.KeyCode = Keys.Enter And AddRenameAoiButton.Enabled Then
+            If AoiListBox.SelectedItem Is Nothing Then
+                addNewAoi()
+            Else
+                updateSelectedAoi()
+            End If
+        End If
+    End Sub
+
+    Private Sub AoiOpacityTrackBar_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AoiOpacityTrackBar.Scroll
+        updateAoiDrawObjects()
     End Sub
 End Class
