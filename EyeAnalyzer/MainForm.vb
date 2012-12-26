@@ -21,11 +21,11 @@ Public Class MainForm
     ''' format HH:MM:SS
     ''' </summary>
     Private Function makeTimeString(ByVal timeMs As ULong) As String
-        Dim hours As Integer = timeMs / 3600000L
-        timeMs = timeMs Mod 3600000L
-        Dim minutes As Integer = timeMs / 60000L
-        timeMs = timeMs Mod 60000L
-        Dim seconds As Integer = timeMs / 1000L
+        Dim hours As Integer = timeMs \ 3600000L
+        timeMs -= hours * 3600000L
+        Dim minutes As Integer = timeMs \ 60000L
+        timeMs -= minutes * 60000L
+        Dim seconds As Integer = timeMs \ 1000L
         Return hours.ToString("D2") & ":" & minutes.ToString("D2") & ":" & _
             seconds.ToString("D2")
     End Function
