@@ -8,6 +8,7 @@ Public Class StimulusSegment
     Private _name As String = ""
     Private _startMs? As ULong = Nothing
     Private _endMs? As ULong = Nothing
+    Private _areasOfInterest As New List(Of AreaOfInterest)
 
     ''' <summary>
     ''' Gets or sets the name of the segment.
@@ -17,7 +18,28 @@ Public Class StimulusSegment
             Return _name
         End Get
         Set(ByVal value As String)
-            _name = value
+            If value Is Nothing Then
+                Throw New Exception("Name must have a value.")
+            End If
+            If value.Trim.Length = 0 Then
+                Throw New Exception("Name must have a value.")
+            End If
+            _name = value.Trim
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' The list of AOIs belonging to this segment.
+    ''' </summary>
+    Public Property AOIs As List(Of AreaOfInterest)
+        Get
+            Return _areasOfInterest
+        End Get
+        Set(ByVal value As List(Of AreaOfInterest))
+            If value Is Nothing Then
+                Throw New Exception("AOI list must have a value.")
+            End If
+            _areasOfInterest = value
         End Set
     End Property
 

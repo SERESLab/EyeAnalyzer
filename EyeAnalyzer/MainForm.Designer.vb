@@ -25,11 +25,27 @@ Partial Class MainForm
         Me.components = New System.ComponentModel.Container()
         Me.VideoPictureBox = New System.Windows.Forms.PictureBox()
         Me.AoiGroupBox = New System.Windows.Forms.GroupBox()
-        Me.CopyAoiButton = New System.Windows.Forms.Button()
+        Me.AoiHeightUpDown = New System.Windows.Forms.NumericUpDown()
+        Me.AoiWidthUpDown = New System.Windows.Forms.NumericUpDown()
+        Me.AoiYUpDown = New System.Windows.Forms.NumericUpDown()
+        Me.AoiXUpDown = New System.Windows.Forms.NumericUpDown()
+        Me.AoiNonexclusiveCheckBox = New System.Windows.Forms.CheckBox()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.Label13 = New System.Windows.Forms.Label()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.Label11 = New System.Windows.Forms.Label()
+        Me.AoiColorLabel = New System.Windows.Forms.Label()
+        Me.NewAoiColorLabel = New System.Windows.Forms.Label()
+        Me.NonExclusiveAoiColorLabel = New System.Windows.Forms.Label()
+        Me.SelectedAoiColorLabel = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.Label15 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.Label8 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.AoiNameTextBox = New System.Windows.Forms.TextBox()
         Me.DeleteAoiButton = New System.Windows.Forms.Button()
-        Me.AddAoiButton = New System.Windows.Forms.Button()
+        Me.AddRenameAoiButton = New System.Windows.Forms.Button()
         Me.AoiListBox = New System.Windows.Forms.ListBox()
         Me.MainMenuStrip = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -63,13 +79,21 @@ Partial Class MainForm
         Me.VideoPositionUpDown = New System.Windows.Forms.NumericUpDown()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.VideoGroupBox = New System.Windows.Forms.GroupBox()
+        Me.VideoPanel = New System.Windows.Forms.Panel()
+        Me.VideoActualSizeCheckBox = New System.Windows.Forms.CheckBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.VideoPositionLabel = New System.Windows.Forms.Label()
         Me.SaveScreenshotButton = New System.Windows.Forms.Button()
         Me.MainOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.RedrawTimer = New System.Windows.Forms.Timer(Me.components)
         Me.MainSaveFileDialog = New System.Windows.Forms.SaveFileDialog()
+        Me.MainColorDialog = New System.Windows.Forms.ColorDialog()
         CType(Me.VideoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.AoiGroupBox.SuspendLayout()
+        CType(Me.AoiHeightUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AoiWidthUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AoiYUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AoiXUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainMenuStrip.SuspendLayout()
         Me.SettingsGroupBox.SuspendLayout()
         Me.MainStatusStrip.SuspendLayout()
@@ -77,43 +101,204 @@ Partial Class MainForm
         CType(Me.VideoPositionTrackBar, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.VideoPositionUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.VideoGroupBox.SuspendLayout()
+        Me.VideoPanel.SuspendLayout()
         Me.SuspendLayout()
         '
         'VideoPictureBox
         '
         Me.VideoPictureBox.BackColor = System.Drawing.Color.Black
-        Me.VideoPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.VideoPictureBox.Location = New System.Drawing.Point(6, 21)
+        Me.VideoPictureBox.Location = New System.Drawing.Point(0, 0)
         Me.VideoPictureBox.Name = "VideoPictureBox"
         Me.VideoPictureBox.Size = New System.Drawing.Size(640, 360)
+        Me.VideoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
         Me.VideoPictureBox.TabIndex = 0
         Me.VideoPictureBox.TabStop = False
         '
         'AoiGroupBox
         '
-        Me.AoiGroupBox.Controls.Add(Me.CopyAoiButton)
+        Me.AoiGroupBox.Controls.Add(Me.AoiHeightUpDown)
+        Me.AoiGroupBox.Controls.Add(Me.AoiWidthUpDown)
+        Me.AoiGroupBox.Controls.Add(Me.AoiYUpDown)
+        Me.AoiGroupBox.Controls.Add(Me.AoiXUpDown)
+        Me.AoiGroupBox.Controls.Add(Me.AoiNonexclusiveCheckBox)
+        Me.AoiGroupBox.Controls.Add(Me.Label14)
+        Me.AoiGroupBox.Controls.Add(Me.Label13)
+        Me.AoiGroupBox.Controls.Add(Me.Label12)
+        Me.AoiGroupBox.Controls.Add(Me.Label11)
+        Me.AoiGroupBox.Controls.Add(Me.AoiColorLabel)
+        Me.AoiGroupBox.Controls.Add(Me.NewAoiColorLabel)
+        Me.AoiGroupBox.Controls.Add(Me.NonExclusiveAoiColorLabel)
+        Me.AoiGroupBox.Controls.Add(Me.SelectedAoiColorLabel)
+        Me.AoiGroupBox.Controls.Add(Me.Label10)
+        Me.AoiGroupBox.Controls.Add(Me.Label15)
+        Me.AoiGroupBox.Controls.Add(Me.Label9)
+        Me.AoiGroupBox.Controls.Add(Me.Label8)
         Me.AoiGroupBox.Controls.Add(Me.Label7)
         Me.AoiGroupBox.Controls.Add(Me.AoiNameTextBox)
         Me.AoiGroupBox.Controls.Add(Me.DeleteAoiButton)
-        Me.AoiGroupBox.Controls.Add(Me.AddAoiButton)
+        Me.AoiGroupBox.Controls.Add(Me.AddRenameAoiButton)
         Me.AoiGroupBox.Controls.Add(Me.AoiListBox)
         Me.AoiGroupBox.Enabled = False
         Me.AoiGroupBox.Location = New System.Drawing.Point(16, 217)
         Me.AoiGroupBox.Name = "AoiGroupBox"
-        Me.AoiGroupBox.Size = New System.Drawing.Size(302, 226)
+        Me.AoiGroupBox.Size = New System.Drawing.Size(317, 258)
         Me.AoiGroupBox.TabIndex = 1
         Me.AoiGroupBox.TabStop = False
         Me.AoiGroupBox.Text = "AOIs"
         '
-        'CopyAoiButton
+        'AoiHeightUpDown
         '
-        Me.CopyAoiButton.Enabled = False
-        Me.CopyAoiButton.Location = New System.Drawing.Point(171, 58)
-        Me.CopyAoiButton.Name = "CopyAoiButton"
-        Me.CopyAoiButton.Size = New System.Drawing.Size(119, 28)
-        Me.CopyAoiButton.TabIndex = 5
-        Me.CopyAoiButton.Text = "Copy Selected"
-        Me.CopyAoiButton.UseVisualStyleBackColor = True
+        Me.AoiHeightUpDown.Enabled = False
+        Me.AoiHeightUpDown.Location = New System.Drawing.Point(230, 139)
+        Me.AoiHeightUpDown.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.AoiHeightUpDown.Name = "AoiHeightUpDown"
+        Me.AoiHeightUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiHeightUpDown.TabIndex = 14
+        Me.AoiHeightUpDown.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
+        'AoiWidthUpDown
+        '
+        Me.AoiWidthUpDown.Enabled = False
+        Me.AoiWidthUpDown.Location = New System.Drawing.Point(230, 111)
+        Me.AoiWidthUpDown.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.AoiWidthUpDown.Name = "AoiWidthUpDown"
+        Me.AoiWidthUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiWidthUpDown.TabIndex = 14
+        Me.AoiWidthUpDown.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
+        'AoiYUpDown
+        '
+        Me.AoiYUpDown.Enabled = False
+        Me.AoiYUpDown.Location = New System.Drawing.Point(230, 83)
+        Me.AoiYUpDown.Name = "AoiYUpDown"
+        Me.AoiYUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiYUpDown.TabIndex = 14
+        '
+        'AoiXUpDown
+        '
+        Me.AoiXUpDown.Enabled = False
+        Me.AoiXUpDown.Location = New System.Drawing.Point(230, 55)
+        Me.AoiXUpDown.Name = "AoiXUpDown"
+        Me.AoiXUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiXUpDown.TabIndex = 14
+        '
+        'AoiNonexclusiveCheckBox
+        '
+        Me.AoiNonexclusiveCheckBox.AutoSize = True
+        Me.AoiNonexclusiveCheckBox.Location = New System.Drawing.Point(171, 159)
+        Me.AoiNonexclusiveCheckBox.Name = "AoiNonexclusiveCheckBox"
+        Me.AoiNonexclusiveCheckBox.Size = New System.Drawing.Size(118, 21)
+        Me.AoiNonexclusiveCheckBox.TabIndex = 13
+        Me.AoiNonexclusiveCheckBox.Text = "Non-exclusive"
+        Me.AoiNonexclusiveCheckBox.UseVisualStyleBackColor = True
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(171, 139)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(53, 17)
+        Me.Label14.TabIndex = 12
+        Me.Label14.Text = "Height:"
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(176, 111)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(48, 17)
+        Me.Label13.TabIndex = 11
+        Me.Label13.Text = "Width:"
+        '
+        'Label12
+        '
+        Me.Label12.AutoSize = True
+        Me.Label12.Location = New System.Drawing.Point(203, 83)
+        Me.Label12.Name = "Label12"
+        Me.Label12.Size = New System.Drawing.Size(21, 17)
+        Me.Label12.TabIndex = 10
+        Me.Label12.Text = "Y:"
+        '
+        'Label11
+        '
+        Me.Label11.AutoSize = True
+        Me.Label11.Location = New System.Drawing.Point(203, 55)
+        Me.Label11.Name = "Label11"
+        Me.Label11.Size = New System.Drawing.Size(21, 17)
+        Me.Label11.TabIndex = 9
+        Me.Label11.Text = "X:"
+        '
+        'AoiColorLabel
+        '
+        Me.AoiColorLabel.BackColor = System.Drawing.Color.Black
+        Me.AoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.AoiColorLabel.Location = New System.Drawing.Point(281, 183)
+        Me.AoiColorLabel.Name = "AoiColorLabel"
+        Me.AoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.AoiColorLabel.TabIndex = 8
+        '
+        'NewAoiColorLabel
+        '
+        Me.NewAoiColorLabel.BackColor = System.Drawing.Color.Black
+        Me.NewAoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.NewAoiColorLabel.Location = New System.Drawing.Point(281, 202)
+        Me.NewAoiColorLabel.Name = "NewAoiColorLabel"
+        Me.NewAoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.NewAoiColorLabel.TabIndex = 8
+        '
+        'NonExclusiveAoiColorLabel
+        '
+        Me.NonExclusiveAoiColorLabel.BackColor = System.Drawing.Color.Black
+        Me.NonExclusiveAoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.NonExclusiveAoiColorLabel.Location = New System.Drawing.Point(281, 241)
+        Me.NonExclusiveAoiColorLabel.Name = "NonExclusiveAoiColorLabel"
+        Me.NonExclusiveAoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.NonExclusiveAoiColorLabel.TabIndex = 8
+        '
+        'SelectedAoiColorLabel
+        '
+        Me.SelectedAoiColorLabel.BackColor = System.Drawing.Color.Black
+        Me.SelectedAoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.SelectedAoiColorLabel.Location = New System.Drawing.Point(281, 221)
+        Me.SelectedAoiColorLabel.Name = "SelectedAoiColorLabel"
+        Me.SelectedAoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.SelectedAoiColorLabel.TabIndex = 8
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(203, 183)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(70, 17)
+        Me.Label10.TabIndex = 7
+        Me.Label10.Text = "AOI color:"
+        '
+        'Label15
+        '
+        Me.Label15.AutoSize = True
+        Me.Label15.Location = New System.Drawing.Point(140, 241)
+        Me.Label15.Name = "Label15"
+        Me.Label15.Size = New System.Drawing.Size(135, 17)
+        Me.Label15.TabIndex = 6
+        Me.Label15.Text = "Non-exclusive color:"
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(173, 221)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(102, 17)
+        Me.Label9.TabIndex = 6
+        Me.Label9.Text = "Selected color:"
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(198, 204)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(74, 17)
+        Me.Label8.TabIndex = 6
+        Me.Label8.Text = "New color:"
         '
         'Label7
         '
@@ -134,30 +319,30 @@ Partial Class MainForm
         'DeleteAoiButton
         '
         Me.DeleteAoiButton.Enabled = False
-        Me.DeleteAoiButton.Location = New System.Drawing.Point(171, 106)
+        Me.DeleteAoiButton.Location = New System.Drawing.Point(9, 215)
         Me.DeleteAoiButton.Name = "DeleteAoiButton"
-        Me.DeleteAoiButton.Size = New System.Drawing.Size(119, 23)
+        Me.DeleteAoiButton.Size = New System.Drawing.Size(131, 23)
         Me.DeleteAoiButton.TabIndex = 2
         Me.DeleteAoiButton.Text = "Delete Selected"
         Me.DeleteAoiButton.UseVisualStyleBackColor = True
         '
-        'AddAoiButton
+        'AddRenameAoiButton
         '
-        Me.AddAoiButton.Enabled = False
-        Me.AddAoiButton.Location = New System.Drawing.Point(171, 29)
-        Me.AddAoiButton.Name = "AddAoiButton"
-        Me.AddAoiButton.Size = New System.Drawing.Size(119, 23)
-        Me.AddAoiButton.TabIndex = 1
-        Me.AddAoiButton.Text = "Add New"
-        Me.AddAoiButton.UseVisualStyleBackColor = True
+        Me.AddRenameAoiButton.Enabled = False
+        Me.AddRenameAoiButton.Location = New System.Drawing.Point(171, 21)
+        Me.AddRenameAoiButton.Name = "AddRenameAoiButton"
+        Me.AddRenameAoiButton.Size = New System.Drawing.Size(131, 23)
+        Me.AddRenameAoiButton.TabIndex = 1
+        Me.AddRenameAoiButton.Text = "Add New"
+        Me.AddRenameAoiButton.UseVisualStyleBackColor = True
         '
         'AoiListBox
         '
         Me.AoiListBox.FormattingEnabled = True
         Me.AoiListBox.ItemHeight = 16
-        Me.AoiListBox.Location = New System.Drawing.Point(9, 58)
+        Me.AoiListBox.Location = New System.Drawing.Point(9, 55)
         Me.AoiListBox.Name = "AoiListBox"
-        Me.AoiListBox.Size = New System.Drawing.Size(156, 164)
+        Me.AoiListBox.Size = New System.Drawing.Size(156, 148)
         Me.AoiListBox.TabIndex = 0
         '
         'MainMenuStrip
@@ -247,7 +432,7 @@ Partial Class MainForm
         'MainStatusStrip
         '
         Me.MainStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MainStatusLabel, Me.VideoFileStatusLabel, Me.XmlFileStatusLabel})
-        Me.MainStatusStrip.Location = New System.Drawing.Point(0, 492)
+        Me.MainStatusStrip.Location = New System.Drawing.Point(0, 522)
         Me.MainStatusStrip.Name = "MainStatusStrip"
         Me.MainStatusStrip.Size = New System.Drawing.Size(1279, 29)
         Me.MainStatusStrip.SizingGrip = False
@@ -302,7 +487,7 @@ Partial Class MainForm
         Me.SegmentsGroupBox.Enabled = False
         Me.SegmentsGroupBox.Location = New System.Drawing.Point(692, 31)
         Me.SegmentsGroupBox.Name = "SegmentsGroupBox"
-        Me.SegmentsGroupBox.Size = New System.Drawing.Size(329, 453)
+        Me.SegmentsGroupBox.Size = New System.Drawing.Size(339, 481)
         Me.SegmentsGroupBox.TabIndex = 5
         Me.SegmentsGroupBox.TabStop = False
         Me.SegmentsGroupBox.Text = "Stimulus Segments"
@@ -426,44 +611,76 @@ Partial Class MainForm
         Me.VideoPositionTrackBar.Name = "VideoPositionTrackBar"
         Me.VideoPositionTrackBar.Size = New System.Drawing.Size(337, 56)
         Me.VideoPositionTrackBar.TabIndex = 6
+        Me.VideoPositionTrackBar.TickStyle = System.Windows.Forms.TickStyle.None
         '
         'VideoPositionUpDown
         '
         Me.VideoPositionUpDown.Location = New System.Drawing.Point(500, 387)
         Me.VideoPositionUpDown.Name = "VideoPositionUpDown"
         Me.VideoPositionUpDown.ReadOnly = True
-        Me.VideoPositionUpDown.Size = New System.Drawing.Size(146, 22)
+        Me.VideoPositionUpDown.Size = New System.Drawing.Size(115, 22)
         Me.VideoPositionUpDown.TabIndex = 7
         '
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(349, 389)
+        Me.Label6.Location = New System.Drawing.Point(381, 387)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(145, 17)
+        Me.Label6.Size = New System.Drawing.Size(112, 17)
         Me.Label6.TabIndex = 8
-        Me.Label6.Text = "Current Position (ms):"
+        Me.Label6.Text = "Current position:"
         '
         'VideoGroupBox
         '
+        Me.VideoGroupBox.Controls.Add(Me.VideoPanel)
+        Me.VideoGroupBox.Controls.Add(Me.VideoActualSizeCheckBox)
+        Me.VideoGroupBox.Controls.Add(Me.Label2)
         Me.VideoGroupBox.Controls.Add(Me.VideoPositionLabel)
         Me.VideoGroupBox.Controls.Add(Me.SaveScreenshotButton)
-        Me.VideoGroupBox.Controls.Add(Me.VideoPictureBox)
         Me.VideoGroupBox.Controls.Add(Me.Label6)
         Me.VideoGroupBox.Controls.Add(Me.VideoPositionUpDown)
         Me.VideoGroupBox.Controls.Add(Me.VideoPositionTrackBar)
         Me.VideoGroupBox.Enabled = False
         Me.VideoGroupBox.Location = New System.Drawing.Point(12, 31)
         Me.VideoGroupBox.Name = "VideoGroupBox"
-        Me.VideoGroupBox.Size = New System.Drawing.Size(661, 453)
+        Me.VideoGroupBox.Size = New System.Drawing.Size(661, 481)
         Me.VideoGroupBox.TabIndex = 9
         Me.VideoGroupBox.TabStop = False
         Me.VideoGroupBox.Text = "Video"
         '
+        'VideoPanel
+        '
+        Me.VideoPanel.AutoScroll = True
+        Me.VideoPanel.BackColor = System.Drawing.Color.Black
+        Me.VideoPanel.Controls.Add(Me.VideoPictureBox)
+        Me.VideoPanel.Location = New System.Drawing.Point(6, 21)
+        Me.VideoPanel.Name = "VideoPanel"
+        Me.VideoPanel.Size = New System.Drawing.Size(640, 360)
+        Me.VideoPanel.TabIndex = 13
+        '
+        'VideoActualSizeCheckBox
+        '
+        Me.VideoActualSizeCheckBox.AutoSize = True
+        Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(6, 449)
+        Me.VideoActualSizeCheckBox.Name = "VideoActualSizeCheckBox"
+        Me.VideoActualSizeCheckBox.Size = New System.Drawing.Size(98, 21)
+        Me.VideoActualSizeCheckBox.TabIndex = 12
+        Me.VideoActualSizeCheckBox.Text = "Actual size"
+        Me.VideoActualSizeCheckBox.UseVisualStyleBackColor = True
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(620, 387)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(26, 17)
+        Me.Label2.TabIndex = 11
+        Me.Label2.Text = "ms"
+        '
         'VideoPositionLabel
         '
         Me.VideoPositionLabel.AutoSize = True
-        Me.VideoPositionLabel.Location = New System.Drawing.Point(349, 406)
+        Me.VideoPositionLabel.Location = New System.Drawing.Point(430, 404)
         Me.VideoPositionLabel.Name = "VideoPositionLabel"
         Me.VideoPositionLabel.Size = New System.Drawing.Size(64, 17)
         Me.VideoPositionLabel.TabIndex = 10
@@ -471,7 +688,7 @@ Partial Class MainForm
         '
         'SaveScreenshotButton
         '
-        Me.SaveScreenshotButton.Location = New System.Drawing.Point(500, 420)
+        Me.SaveScreenshotButton.Location = New System.Drawing.Point(500, 449)
         Me.SaveScreenshotButton.Name = "SaveScreenshotButton"
         Me.SaveScreenshotButton.Size = New System.Drawing.Size(146, 23)
         Me.SaveScreenshotButton.TabIndex = 9
@@ -484,13 +701,18 @@ Partial Class MainForm
         '
         'RedrawTimer
         '
-        Me.RedrawTimer.Interval = 33
+        Me.RedrawTimer.Interval = 20
+        '
+        'MainColorDialog
+        '
+        Me.MainColorDialog.FullOpen = True
+        Me.MainColorDialog.SolidColorOnly = True
         '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1279, 521)
+        Me.ClientSize = New System.Drawing.Size(1279, 551)
         Me.Controls.Add(Me.VideoGroupBox)
         Me.Controls.Add(Me.SegmentsGroupBox)
         Me.Controls.Add(Me.MainStatusStrip)
@@ -505,6 +727,10 @@ Partial Class MainForm
         CType(Me.VideoPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.AoiGroupBox.ResumeLayout(False)
         Me.AoiGroupBox.PerformLayout()
+        CType(Me.AoiHeightUpDown, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AoiWidthUpDown, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AoiYUpDown, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AoiXUpDown, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MainMenuStrip.ResumeLayout(False)
         Me.MainMenuStrip.PerformLayout()
         Me.SettingsGroupBox.ResumeLayout(False)
@@ -517,6 +743,8 @@ Partial Class MainForm
         CType(Me.VideoPositionUpDown, System.ComponentModel.ISupportInitialize).EndInit()
         Me.VideoGroupBox.ResumeLayout(False)
         Me.VideoGroupBox.PerformLayout()
+        Me.VideoPanel.ResumeLayout(False)
+        Me.VideoPanel.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -524,7 +752,7 @@ Partial Class MainForm
     Friend WithEvents VideoPictureBox As System.Windows.Forms.PictureBox
     Friend WithEvents AoiGroupBox As System.Windows.Forms.GroupBox
     Friend WithEvents DeleteAoiButton As System.Windows.Forms.Button
-    Friend WithEvents AddAoiButton As System.Windows.Forms.Button
+    Friend WithEvents AddRenameAoiButton As System.Windows.Forms.Button
     Friend WithEvents AoiListBox As System.Windows.Forms.ListBox
     Friend WithEvents MainMenuStrip As System.Windows.Forms.MenuStrip
     Friend WithEvents FileToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -556,7 +784,6 @@ Partial Class MainForm
     Friend WithEvents ExitToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GenerateNewHeatmapToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SaveScreenshotButton As System.Windows.Forms.Button
-    Friend WithEvents CopyAoiButton As System.Windows.Forms.Button
     Friend WithEvents MainOpenFileDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents VideoFileStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents XmlFileStatusLabel As System.Windows.Forms.ToolStripStatusLabel
@@ -566,5 +793,26 @@ Partial Class MainForm
     Friend WithEvents UnselectSegmentButton As System.Windows.Forms.Button
     Friend WithEvents SegmentStartLinkLabel As System.Windows.Forms.LinkLabel
     Friend WithEvents SegmentEndLinkLabel As System.Windows.Forms.LinkLabel
+    Friend WithEvents VideoActualSizeCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents VideoPanel As System.Windows.Forms.Panel
+    Friend WithEvents MainColorDialog As System.Windows.Forms.ColorDialog
+    Friend WithEvents AoiColorLabel As System.Windows.Forms.Label
+    Friend WithEvents NewAoiColorLabel As System.Windows.Forms.Label
+    Friend WithEvents SelectedAoiColorLabel As System.Windows.Forms.Label
+    Friend WithEvents Label10 As System.Windows.Forms.Label
+    Friend WithEvents Label9 As System.Windows.Forms.Label
+    Friend WithEvents Label8 As System.Windows.Forms.Label
+    Friend WithEvents AoiHeightUpDown As System.Windows.Forms.NumericUpDown
+    Friend WithEvents AoiWidthUpDown As System.Windows.Forms.NumericUpDown
+    Friend WithEvents AoiYUpDown As System.Windows.Forms.NumericUpDown
+    Friend WithEvents AoiXUpDown As System.Windows.Forms.NumericUpDown
+    Friend WithEvents AoiNonexclusiveCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents Label14 As System.Windows.Forms.Label
+    Friend WithEvents Label13 As System.Windows.Forms.Label
+    Friend WithEvents Label12 As System.Windows.Forms.Label
+    Friend WithEvents Label11 As System.Windows.Forms.Label
+    Friend WithEvents NonExclusiveAoiColorLabel As System.Windows.Forms.Label
+    Friend WithEvents Label15 As System.Windows.Forms.Label
 
 End Class

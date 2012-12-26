@@ -71,6 +71,7 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AreaOfInterest.vb" />
     <Compile Include="EyeTrackerData.vb" />
     <Compile Include="HeatmapForm.Designer.vb">
       <DependentUpon>HeatmapForm.vb</DependentUpon>
