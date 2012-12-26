@@ -689,14 +689,61 @@ Public Class MainForm
     End Sub
 
     Private Sub AddRenameAoiButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddRenameAoiButton.Click
+        If AoiListBox.SelectedItem Is Nothing Then
+            addNewAoi()
+        Else
+            updateSelectedAoi()
+        End If
+    End Sub
+
+    Private Sub addNewAoi()
         Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
-        Dim aoi As New AreaOfInterest(AoiNameTextBox.Text, _newAoiRect)
-        aoi.NonExclusive = AoiNonexclusiveCheckBox.Checked
-        _newAoiRect = Nothing
-        ss.AOIs.Add(aoi)
-        AoiListBox.DataSource = Nothing
-        AoiListBox.DataSource = ss.AOIs
-        AoiListBox.SelectedItem = aoi
+        Dim name As String = AoiNameTextBox.Text.Trim
+        Dim doesNameExist As Boolean = False
+
+        For Each aoi As AreaOfInterest In ss.AOIs
+            If aoi.Name = name Then
+                doesNameExist = True
+                Exit For
+            End If
+        Next
+
+        If doesNameExist Then
+            MessageBox.Show("Specified AOI name is already in use!", _
+                                "Invalid AOI name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        Else
+            Dim newAoi As New AreaOfInterest(name, _newAoiRect)
+            newAoi.NonExclusive = AoiNonexclusiveCheckBox.Checked
+            _newAoiRect = Nothing
+            ss.AOIs.Add(newAoi)
+            AoiListBox.DataSource = Nothing
+            AoiListBox.DataSource = ss.AOIs
+            AoiListBox.SelectedItem = newAoi
+        End If
+    End Sub
+
+    Private Sub updateSelectedAoi()
+        Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
+        Dim selectedAoi As AreaOfInterest = AoiListBox.SelectedItem
+        Dim name As String = AoiNameTextBox.Text.Trim
+        Dim doesNameExist As Boolean = False
+
+        For Each aoi As AreaOfInterest In ss.AOIs
+            If aoi IsNot selectedAoi And aoi.Name = name Then
+                doesNameExist = True
+                Exit For
+            End If
+        Next
+
+        If doesNameExist Then
+            MessageBox.Show("Specified AOI name is already in use!", _
+                                "Invalid AOI name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        Else
+            selectedAoi.Name = name
+            AoiListBox.DataSource = Nothing
+            AoiListBox.DataSource = ss.AOIs
+            AoiListBox.SelectedItem = selectedAoi
+        End If
     End Sub
 
     Private Sub AoiListBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AoiListBox.SelectedIndexChanged
@@ -710,6 +757,8 @@ Public Class MainForm
             AoiWidthUpDown.Value = selectedAoi.Area.Width
             AoiHeightUpDown.Value = selectedAoi.Area.Height
             AoiNonexclusiveCheckBox.Checked = selectedAoi.NonExclusive
+            AddRenameAoiButton.Text = "Rename"
+            DeleteAoiButton.Enabled = True
         Else
             AoiNameTextBox.Text = ""
             AoiXUpDown.Value = 0
@@ -717,6 +766,8 @@ Public Class MainForm
             AoiWidthUpDown.Value = 1
             AoiHeightUpDown.Value = 1
             AoiNonexclusiveCheckBox.Checked = False
+            AddRenameAoiButton.Text = "Add New"
+            DeleteAoiButton.Enabled = False
         End If
         _isRedrawRequired = True
     End Sub
@@ -827,5 +878,16 @@ Public Class MainForm
             End If
         End If
         _isRedrawRequired = True
+    End Sub
+
+    Private Sub DeleteAoiButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteAoiButton.Click
+        If MessageBox.Show("Are you sure you would like to delete the specified AOI?", _
+                                "Delete AOI", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.Yes Then
+            Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
+            ss.AOIs.Remove(AoiListBox.SelectedItem)
+            AoiListBox.DataSource = Nothing
+            AoiListBox.DataSource = ss.AOIs
+            AoiListBox.ClearSelected()
+        End If
     End Sub
 End Class
