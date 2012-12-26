@@ -444,6 +444,7 @@ Public Class MainForm
             AoiListBox.DataSource = Nothing
             AoiListBox.DataSource = ss.AOIs
             AoiListBox.ClearSelected()
+            setStatusMessage("Click and drag over video preview to draw a new area of interest.")
         Else
             _isEditingSegment = False
             AddUpdateSegmentButton.Text = "Add New"
@@ -456,6 +457,7 @@ Public Class MainForm
             DeleteSegmentButton.Enabled = False
             AoiListBox.DataSource = Nothing
             AoiGroupBox.Enabled = False
+            setStatusMessage("Ready.")
         End If
         _newAoiRect = Nothing
         _isRedrawRequired = True
