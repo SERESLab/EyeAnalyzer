@@ -80,7 +80,7 @@ Public Class MainForm
     Private Sub OpenStudyDataToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpenStudyDataToolStripMenuItem.Click
         If _videoRecording IsNot Nothing Or _eyeTrackerData IsNot Nothing Then
             If MessageBox.Show("Loading new data will clear all segments and AOIs. Would you like to continue?", _
-                               "Clear all data?", MessageBoxButtons.OKCancel) = Windows.Forms.DialogResult.OK Then
+                               "Clear all data?", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.OK Then
                 resetForm()
             Else
                 Return
@@ -184,14 +184,16 @@ Public Class MainForm
             For Each segment As StimulusSegment In _segments
                 If (value >= segment.StartMs And value <= segment.EndMs) _
                     And (Not _isEditingSegment Or segment IsNot ss) Then
-                    MessageBox.Show("Specified segment start time falls within segment '" & segment.Name & "'!")
+                    MessageBox.Show("Specified segment start time falls within segment '" & segment.Name & "'!", _
+                                    "Invalid start time", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                     Return
                 End If
             Next
             _segmentStart = value
             SegmentStartLinkLabel.Text = makeTimeString(_segmentStart)
         Else
-            MessageBox.Show("Cannot choose start position at or after the chosen end position.")
+            MessageBox.Show("Cannot choose start position at or after the chosen end position.", _
+                                    "Invalid start time", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
         End If
     End Sub
 
@@ -202,14 +204,16 @@ Public Class MainForm
             For Each segment As StimulusSegment In _segments
                 If (value >= segment.StartMs And value <= segment.EndMs) _
                     And (Not _isEditingSegment Or segment IsNot ss) Then
-                    MessageBox.Show("Specified segment end time falls within segment '" & segment.Name & "'!")
+                    MessageBox.Show("Specified segment end time falls within segment '" & segment.Name & "'!", _
+                                    "Invalid end time", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                     Return
                 End If
             Next
             _segmentEnd = value
             SegmentEndLinkLabel.Text = makeTimeString(_segmentEnd)
         Else
-            MessageBox.Show("Cannot choose end position at or before the chosen start position.")
+            MessageBox.Show("Cannot choose end position at or before the chosen start position.", _
+                                    "Invalid end time", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
         End If
     End Sub
 
@@ -231,7 +235,13 @@ Public Class MainForm
         Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
         For Each segment As StimulusSegment In _segments
             If segment IsNot ss And segment.Name = SegmentNameTextBox.Text Then
-                MessageBox.Show("Specified segment name is already in use!")
+                MessageBox.Show("Specified segment name is already in use!", _
+                                "Invalid segment name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                Return
+            End If
+            If segment IsNot ss And segment.StartMs >= _segmentStart And segment.EndMs <= _segmentEnd Then
+                MessageBox.Show("Segment '" & segment.Name & "' falls between the specified start and end times.", _
+                                "Invalid segment boundaries", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                 Return
             End If
         Next
@@ -248,7 +258,13 @@ Public Class MainForm
     Private Sub addNewSegment()
         For Each segment As StimulusSegment In _segments
             If segment.Name = SegmentNameTextBox.Text Then
-                MessageBox.Show("Specified segment name is already in use!")
+                MessageBox.Show("Specified segment name is already in use!", _
+                                "Invalid segment name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                Return
+            End If
+            If segment.StartMs >= _segmentStart And segment.EndMs <= _segmentEnd Then
+                MessageBox.Show("Segment '" & segment.Name & "' falls between the specified start and end times.", _
+                                "Invalid segment boundaries", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                 Return
             End If
         Next
@@ -301,11 +317,14 @@ Public Class MainForm
 
     Private Sub DeleteSegmentButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteSegmentButton.Click
         Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
-        _segments.Remove(ss)
-        SegmentsListBox.DataSource = Nothing
-        SegmentsListBox.DataSource = _segments
-        SegmentsListBox.ClearSelected()
-        setStatusMessage("Removed stimulus segment '" & ss.Name & "'.")
+        If MessageBox.Show("Are you sure you would like to delete the segment '" & ss.Name & "'?", _
+                                "Delete stimulus segment", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.Yes Then
+            _segments.Remove(ss)
+            SegmentsListBox.DataSource = Nothing
+            SegmentsListBox.DataSource = _segments
+            SegmentsListBox.ClearSelected()
+            setStatusMessage("Removed stimulus segment '" & ss.Name & "'.")
+        End If
     End Sub
 
     Private Sub SegmentStartLinkLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles SegmentStartLinkLabel.LinkClicked
