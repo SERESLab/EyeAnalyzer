@@ -47,15 +47,16 @@ Partial Class MainForm
         Me.VideoFileStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.XmlFileStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.SegmentsGroupBox = New System.Windows.Forms.GroupBox()
+        Me.SegmentEndLinkLabel = New System.Windows.Forms.LinkLabel()
+        Me.UnselectSegmentButton = New System.Windows.Forms.Button()
+        Me.SegmentStartLinkLabel = New System.Windows.Forms.LinkLabel()
         Me.SegmentEndButton = New System.Windows.Forms.Button()
         Me.SegmentStartButton = New System.Windows.Forms.Button()
         Me.Label5 = New System.Windows.Forms.Label()
-        Me.SegmentEndTextBox = New System.Windows.Forms.TextBox()
-        Me.SegmentStartTextBox = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.SegmentNameTextBox = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
-        Me.AddSegmentButton = New System.Windows.Forms.Button()
+        Me.AddUpdateSegmentButton = New System.Windows.Forms.Button()
         Me.DeleteSegmentButton = New System.Windows.Forms.Button()
         Me.SegmentsListBox = New System.Windows.Forms.ListBox()
         Me.VideoPositionTrackBar = New System.Windows.Forms.TrackBar()
@@ -285,16 +286,17 @@ Partial Class MainForm
         '
         'SegmentsGroupBox
         '
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentEndLinkLabel)
+        Me.SegmentsGroupBox.Controls.Add(Me.UnselectSegmentButton)
+        Me.SegmentsGroupBox.Controls.Add(Me.SegmentStartLinkLabel)
         Me.SegmentsGroupBox.Controls.Add(Me.SegmentEndButton)
         Me.SegmentsGroupBox.Controls.Add(Me.SegmentStartButton)
         Me.SegmentsGroupBox.Controls.Add(Me.Label5)
         Me.SegmentsGroupBox.Controls.Add(Me.AoiGroupBox)
-        Me.SegmentsGroupBox.Controls.Add(Me.SegmentEndTextBox)
-        Me.SegmentsGroupBox.Controls.Add(Me.SegmentStartTextBox)
         Me.SegmentsGroupBox.Controls.Add(Me.Label4)
         Me.SegmentsGroupBox.Controls.Add(Me.SegmentNameTextBox)
         Me.SegmentsGroupBox.Controls.Add(Me.Label3)
-        Me.SegmentsGroupBox.Controls.Add(Me.AddSegmentButton)
+        Me.SegmentsGroupBox.Controls.Add(Me.AddUpdateSegmentButton)
         Me.SegmentsGroupBox.Controls.Add(Me.DeleteSegmentButton)
         Me.SegmentsGroupBox.Controls.Add(Me.SegmentsListBox)
         Me.SegmentsGroupBox.Enabled = False
@@ -304,6 +306,36 @@ Partial Class MainForm
         Me.SegmentsGroupBox.TabIndex = 5
         Me.SegmentsGroupBox.TabStop = False
         Me.SegmentsGroupBox.Text = "Stimulus Segments"
+        '
+        'SegmentEndLinkLabel
+        '
+        Me.SegmentEndLinkLabel.AutoSize = True
+        Me.SegmentEndLinkLabel.Location = New System.Drawing.Point(219, 57)
+        Me.SegmentEndLinkLabel.Name = "SegmentEndLinkLabel"
+        Me.SegmentEndLinkLabel.Size = New System.Drawing.Size(64, 17)
+        Me.SegmentEndLinkLabel.TabIndex = 10
+        Me.SegmentEndLinkLabel.TabStop = True
+        Me.SegmentEndLinkLabel.Text = "00:00:00"
+        '
+        'UnselectSegmentButton
+        '
+        Me.UnselectSegmentButton.Enabled = False
+        Me.UnselectSegmentButton.Location = New System.Drawing.Point(16, 86)
+        Me.UnselectSegmentButton.Name = "UnselectSegmentButton"
+        Me.UnselectSegmentButton.Size = New System.Drawing.Size(75, 23)
+        Me.UnselectSegmentButton.TabIndex = 9
+        Me.UnselectSegmentButton.Text = "Unselect"
+        Me.UnselectSegmentButton.UseVisualStyleBackColor = True
+        '
+        'SegmentStartLinkLabel
+        '
+        Me.SegmentStartLinkLabel.AutoSize = True
+        Me.SegmentStartLinkLabel.Location = New System.Drawing.Point(65, 57)
+        Me.SegmentStartLinkLabel.Name = "SegmentStartLinkLabel"
+        Me.SegmentStartLinkLabel.Size = New System.Drawing.Size(64, 17)
+        Me.SegmentStartLinkLabel.TabIndex = 10
+        Me.SegmentStartLinkLabel.TabStop = True
+        Me.SegmentStartLinkLabel.Text = "00:00:00"
         '
         'SegmentEndButton
         '
@@ -332,26 +364,10 @@ Partial Class MainForm
         Me.Label5.TabIndex = 7
         Me.Label5.Text = "End:"
         '
-        'SegmentEndTextBox
-        '
-        Me.SegmentEndTextBox.Enabled = False
-        Me.SegmentEndTextBox.Location = New System.Drawing.Point(216, 56)
-        Me.SegmentEndTextBox.Name = "SegmentEndTextBox"
-        Me.SegmentEndTextBox.Size = New System.Drawing.Size(68, 22)
-        Me.SegmentEndTextBox.TabIndex = 6
-        '
-        'SegmentStartTextBox
-        '
-        Me.SegmentStartTextBox.Enabled = False
-        Me.SegmentStartTextBox.Location = New System.Drawing.Point(68, 56)
-        Me.SegmentStartTextBox.Name = "SegmentStartTextBox"
-        Me.SegmentStartTextBox.Size = New System.Drawing.Size(68, 22)
-        Me.SegmentStartTextBox.TabIndex = 6
-        '
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(13, 56)
+        Me.Label4.Location = New System.Drawing.Point(20, 56)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(42, 17)
         Me.Label4.TabIndex = 5
@@ -373,15 +389,15 @@ Partial Class MainForm
         Me.Label3.TabIndex = 3
         Me.Label3.Text = "Name:"
         '
-        'AddSegmentButton
+        'AddUpdateSegmentButton
         '
-        Me.AddSegmentButton.Enabled = False
-        Me.AddSegmentButton.Location = New System.Drawing.Point(199, 26)
-        Me.AddSegmentButton.Name = "AddSegmentButton"
-        Me.AddSegmentButton.Size = New System.Drawing.Size(119, 23)
-        Me.AddSegmentButton.TabIndex = 2
-        Me.AddSegmentButton.Text = "Add New"
-        Me.AddSegmentButton.UseVisualStyleBackColor = True
+        Me.AddUpdateSegmentButton.Enabled = False
+        Me.AddUpdateSegmentButton.Location = New System.Drawing.Point(199, 26)
+        Me.AddUpdateSegmentButton.Name = "AddUpdateSegmentButton"
+        Me.AddUpdateSegmentButton.Size = New System.Drawing.Size(119, 27)
+        Me.AddUpdateSegmentButton.TabIndex = 2
+        Me.AddUpdateSegmentButton.Text = "Add New"
+        Me.AddUpdateSegmentButton.UseVisualStyleBackColor = True
         '
         'DeleteSegmentButton
         '
@@ -397,10 +413,9 @@ Partial Class MainForm
         '
         Me.SegmentsListBox.FormattingEnabled = True
         Me.SegmentsListBox.ItemHeight = 16
-        Me.SegmentsListBox.Location = New System.Drawing.Point(16, 88)
-        Me.SegmentsListBox.MultiColumn = True
+        Me.SegmentsListBox.Location = New System.Drawing.Point(16, 111)
         Me.SegmentsListBox.Name = "SegmentsListBox"
-        Me.SegmentsListBox.Size = New System.Drawing.Size(177, 100)
+        Me.SegmentsListBox.Size = New System.Drawing.Size(302, 100)
         Me.SegmentsListBox.TabIndex = 0
         '
         'VideoPositionTrackBar
@@ -416,6 +431,7 @@ Partial Class MainForm
         '
         Me.VideoPositionUpDown.Location = New System.Drawing.Point(500, 387)
         Me.VideoPositionUpDown.Name = "VideoPositionUpDown"
+        Me.VideoPositionUpDown.ReadOnly = True
         Me.VideoPositionUpDown.Size = New System.Drawing.Size(146, 22)
         Me.VideoPositionUpDown.TabIndex = 7
         '
@@ -524,17 +540,15 @@ Partial Class MainForm
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents SegmentNameTextBox As System.Windows.Forms.TextBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
-    Friend WithEvents AddSegmentButton As System.Windows.Forms.Button
+    Friend WithEvents AddUpdateSegmentButton As System.Windows.Forms.Button
     Friend WithEvents DeleteSegmentButton As System.Windows.Forms.Button
     Friend WithEvents SegmentsListBox As System.Windows.Forms.ListBox
     Friend WithEvents SegmentStartButton As System.Windows.Forms.Button
     Friend WithEvents Label5 As System.Windows.Forms.Label
-    Friend WithEvents SegmentStartTextBox As System.Windows.Forms.TextBox
     Friend WithEvents VideoPositionTrackBar As System.Windows.Forms.TrackBar
     Friend WithEvents VideoPositionUpDown As System.Windows.Forms.NumericUpDown
     Friend WithEvents Label6 As System.Windows.Forms.Label
     Friend WithEvents SegmentEndButton As System.Windows.Forms.Button
-    Friend WithEvents SegmentEndTextBox As System.Windows.Forms.TextBox
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents VideoGroupBox As System.Windows.Forms.GroupBox
     Friend WithEvents OpenStudyDataToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -549,5 +563,8 @@ Partial Class MainForm
     Friend WithEvents RedrawTimer As System.Windows.Forms.Timer
     Friend WithEvents MainSaveFileDialog As System.Windows.Forms.SaveFileDialog
     Friend WithEvents VideoPositionLabel As System.Windows.Forms.Label
+    Friend WithEvents UnselectSegmentButton As System.Windows.Forms.Button
+    Friend WithEvents SegmentStartLinkLabel As System.Windows.Forms.LinkLabel
+    Friend WithEvents SegmentEndLinkLabel As System.Windows.Forms.LinkLabel
 
 End Class

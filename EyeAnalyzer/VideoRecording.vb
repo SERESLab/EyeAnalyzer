@@ -57,7 +57,7 @@ Public Class VideoRecording
     Private Sub New(ByVal filename As String)
 
         ' TODO load video and set these values
-        _lengthMs = 66666666
+        _lengthMs = 666666
         _timeBetweenFramesMs = 10
         _width = 400
         _height = 700

@@ -6,13 +6,15 @@ Public Class MainForm
 
     Private Const MIN_FIXATION_DURATION_MS As Integer = 40
 
-    Private _newSegment As StimulusSegment = Nothing
-    Private _selectedSegment As StimulusSegment = Nothing
+    Private _segments As List(Of StimulusSegment) = Nothing
 
     Private _videoRecording As VideoRecording = Nothing
     Private _eyeTrackerData As EyeTrackerData = Nothing
     Private _didFrameChange As Boolean = False
 
+    Private _isEditingSegment As Boolean = False
+    Private _segmentStart? As ULong = Nothing
+    Private _segmentEnd? As ULong = Nothing
 
     ''' <summary>
     ''' Formats the specified time in milliseconds to a string of the
@@ -49,12 +51,13 @@ Public Class MainForm
         _eyeTrackerData = Nothing
         VideoFileStatusLabel.Text = "-"
         XmlFileStatusLabel.Text = "-"
-        SegmentStartTextBox.Text = ""
-        SegmentEndTextBox.Text = ""
+        SegmentStartLinkLabel.Text = "-:-:-"
+        SegmentEndLinkLabel.Text = "-:-:-"
         VideoPositionLabel.Text = makeTimeString(0)
+        UnselectSegmentButton.Enabled = False
         VideoGroupBox.Enabled = False
         SegmentsGroupBox.Enabled = False
-        AddSegmentButton.Enabled = False
+        AddUpdateSegmentButton.Enabled = False
         DeleteSegmentButton.Enabled = False
         AoiGroupBox.Enabled = False
         AddAoiButton.Enabled = False
@@ -62,7 +65,11 @@ Public Class MainForm
         DeleteAoiButton.Enabled = False
         ProcessFixationsButton.Enabled = False
         VideoPictureBox.Image = Nothing
-        _newSegment = New StimulusSegment()
+        _segmentStart = Nothing
+        _segmentEnd = Nothing
+        _segments = New List(Of StimulusSegment)()
+        _isEditingSegment = False
+        SegmentsListBox.DataSource = Nothing
         setStatusMessage("Ready for study data...")
     End Sub
 
@@ -136,7 +143,9 @@ Public Class MainForm
     Private Sub VideoPositionTrackBar_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VideoPositionTrackBar.Scroll
         _didFrameChange = True
         Dim percent As Single = VideoPositionTrackBar.Value / 100.0
-        VideoPositionUpDown.Value = Math.Round(percent * _videoRecording.LengthMs)
+        Dim value As ULong = Math.Round(percent * _videoRecording.LengthMs)
+        value -= value Mod _videoRecording.TimeBetweenFramesMs
+        VideoPositionUpDown.Value = value
     End Sub
 
     Private Sub RedrawTimer_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RedrawTimer.Tick
@@ -144,6 +153,14 @@ Public Class MainForm
             VideoPictureBox.Image = _videoRecording.drawFrameAtPosition(VideoPositionUpDown.Value, _
                                              VideoPictureBox.Width, VideoPictureBox.Height)
             _didFrameChange = False
+        End If
+
+        If SegmentNameTextBox.Text.Length > 0 _
+            And _segmentStart IsNot Nothing _
+            And _segmentEnd IsNot Nothing Then
+            AddUpdateSegmentButton.Enabled = True
+        Else
+            AddUpdateSegmentButton.Enabled = False
         End If
     End Sub
 
@@ -161,20 +178,145 @@ Public Class MainForm
     End Sub
 
     Private Sub SegmentStartButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SegmentStartButton.Click
-        If _newSegment.EndMs Is Nothing Or _newSegment.EndMs > VideoPositionUpDown.Value Then
-            _newSegment.StartMs = VideoPositionUpDown.Value
-            SegmentStartTextBox.Text = makeTimeString(_newSegment.StartMs)
+        If _segmentEnd Is Nothing Or _segmentEnd > VideoPositionUpDown.Value Then
+            Dim value As ULong = VideoPositionUpDown.Value
+            Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
+            For Each segment As StimulusSegment In _segments
+                If (value >= segment.StartMs And value <= segment.EndMs) _
+                    And (Not _isEditingSegment Or segment IsNot ss) Then
+                    MessageBox.Show("Specified segment start time falls within segment '" & segment.Name & "'!")
+                    Return
+                End If
+            Next
+            _segmentStart = value
+            SegmentStartLinkLabel.Text = makeTimeString(_segmentStart)
         Else
             MessageBox.Show("Cannot choose start position at or after the chosen end position.")
         End If
     End Sub
 
     Private Sub SegmentEndButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SegmentEndButton.Click
-        If _newSegment.StartMs Is Nothing Or _newSegment.StartMs < VideoPositionUpDown.Value Then
-            _newSegment.EndMs = VideoPositionUpDown.Value
-            SegmentEndTextBox.Text = makeTimeString(_newSegment.EndMs)
+        If _segmentStart Is Nothing Or _segmentStart < VideoPositionUpDown.Value Then
+            Dim value As ULong = VideoPositionUpDown.Value
+            Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
+            For Each segment As StimulusSegment In _segments
+                If (value >= segment.StartMs And value <= segment.EndMs) _
+                    And (Not _isEditingSegment Or segment IsNot ss) Then
+                    MessageBox.Show("Specified segment end time falls within segment '" & segment.Name & "'!")
+                    Return
+                End If
+            Next
+            _segmentEnd = value
+            SegmentEndLinkLabel.Text = makeTimeString(_segmentEnd)
         Else
             MessageBox.Show("Cannot choose end position at or before the chosen start position.")
+        End If
+    End Sub
+
+    Private Sub SegmentNameTextBox_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles SegmentNameTextBox.KeyDown
+        If e.KeyCode = Keys.Enter And AddUpdateSegmentButton.Enabled = True Then
+            addNewSegment()
+        End If
+    End Sub
+
+    Private Sub AddUpdateSegmentButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddUpdateSegmentButton.Click
+        If _isEditingSegment Then
+            updateSegment()
+        Else
+            addNewSegment()
+        End If
+    End Sub
+
+    Private Sub updateSegment()
+        Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
+        For Each segment As StimulusSegment In _segments
+            If segment IsNot ss And segment.Name = SegmentNameTextBox.Text Then
+                MessageBox.Show("Specified segment name is already in use!")
+                Return
+            End If
+        Next
+        ss.Name = SegmentNameTextBox.Text
+        ss.StartMs = _segmentStart
+        ss.EndMs = _segmentEnd
+        _segments.Sort()
+        SegmentsListBox.DataSource = Nothing
+        SegmentsListBox.DataSource = _segments
+        SegmentsListBox.ClearSelected()
+        setStatusMessage("Updated stimulus segment '" & ss.Name & "'.")
+    End Sub
+
+    Private Sub addNewSegment()
+        For Each segment As StimulusSegment In _segments
+            If segment.Name = SegmentNameTextBox.Text Then
+                MessageBox.Show("Specified segment name is already in use!")
+                Return
+            End If
+        Next
+        Dim ss As New StimulusSegment()
+        ss.Name = SegmentNameTextBox.Text
+        ss.StartMs = _segmentStart
+        ss.EndMs = _segmentEnd
+
+        _segmentStart = Nothing
+        _segmentEnd = Nothing
+        SegmentNameTextBox.Text = ""
+        SegmentStartLinkLabel.Text = "-:-:-"
+        SegmentEndLinkLabel.Text = "-:-:-"
+        _segments.Add(ss)
+        _segments.Sort()
+        SegmentsListBox.DataSource = Nothing
+        SegmentsListBox.DataSource = _segments
+        SegmentsListBox.ClearSelected()
+        setStatusMessage("New stimulus segment '" & ss.Name & "' added.")
+    End Sub
+
+    Private Sub SegmentsListBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SegmentsListBox.SelectedIndexChanged
+        If SegmentsListBox.SelectedItem IsNot Nothing Then
+            Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
+            _isEditingSegment = True
+            AddUpdateSegmentButton.Text = "Update"
+            SegmentNameTextBox.Text = ss.Name
+            SegmentStartLinkLabel.Text = makeTimeString(ss.StartMs)
+            SegmentEndLinkLabel.Text = makeTimeString(ss.EndMs)
+            _segmentStart = ss.StartMs
+            _segmentEnd = ss.EndMs
+            UnselectSegmentButton.Enabled = True
+            DeleteSegmentButton.Enabled = True
+        Else
+            _isEditingSegment = False
+            AddUpdateSegmentButton.Text = "Add New"
+            _segmentStart = Nothing
+            _segmentEnd = Nothing
+            SegmentNameTextBox.Text = ""
+            SegmentStartLinkLabel.Text = "-:-:-"
+            SegmentEndLinkLabel.Text = "-:-:-"
+            UnselectSegmentButton.Enabled = False
+            DeleteSegmentButton.Enabled = False
+        End If
+    End Sub
+
+    Private Sub UnselectSegmentButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UnselectSegmentButton.Click
+        SegmentsListBox.ClearSelected()
+    End Sub
+
+    Private Sub DeleteSegmentButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteSegmentButton.Click
+        Dim ss As StimulusSegment = SegmentsListBox.SelectedItem
+        _segments.Remove(ss)
+        SegmentsListBox.DataSource = Nothing
+        SegmentsListBox.DataSource = _segments
+        SegmentsListBox.ClearSelected()
+        setStatusMessage("Removed stimulus segment '" & ss.Name & "'.")
+    End Sub
+
+    Private Sub SegmentStartLinkLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles SegmentStartLinkLabel.LinkClicked
+        If _segmentStart IsNot Nothing Then
+            VideoPositionUpDown.Value = _segmentStart
+        End If
+    End Sub
+
+    Private Sub SegmentEndLinkLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles SegmentEndLinkLabel.LinkClicked
+        If _segmentEnd IsNot Nothing Then
+            VideoPositionUpDown.Value = _segmentEnd
         End If
     End Sub
 End Class
