@@ -517,7 +517,7 @@ Partial Class MainForm
         'SegmentEndLinkLabel
         '
         Me.SegmentEndLinkLabel.AutoSize = True
-        Me.SegmentEndLinkLabel.Location = New System.Drawing.Point(65, 80)
+        Me.SegmentEndLinkLabel.Location = New System.Drawing.Point(65, 78)
         Me.SegmentEndLinkLabel.Name = "SegmentEndLinkLabel"
         Me.SegmentEndLinkLabel.Size = New System.Drawing.Size(64, 17)
         Me.SegmentEndLinkLabel.TabIndex = 10

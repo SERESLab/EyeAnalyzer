@@ -357,7 +357,11 @@ Public Class MainForm
 
     Private Sub SegmentNameTextBox_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles SegmentNameTextBox.KeyDown
         If e.KeyCode = Keys.Enter And AddUpdateSegmentButton.Enabled = True Then
-            addNewSegment()
+            If _isEditingSegment Then
+                updateSegment()
+            Else
+                addNewSegment()
+            End If
         End If
     End Sub
 
