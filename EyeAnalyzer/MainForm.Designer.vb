@@ -95,6 +95,9 @@ Partial Class MainForm
         Me.AoiOpacityTrackBar = New System.Windows.Forms.TrackBar()
         Me.Label16 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.SaveFixationCountsCheckBox = New System.Windows.Forms.CheckBox()
+        Me.SaveFixationDurationsCheckBox = New System.Windows.Forms.CheckBox()
+        Me.SaveCalibrationErrorCheckBox = New System.Windows.Forms.CheckBox()
         CType(Me.VideoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.AoiGroupBox.SuspendLayout()
         CType(Me.AoiHeightUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -415,12 +418,15 @@ Partial Class MainForm
         '
         'SettingsGroupBox
         '
+        Me.SettingsGroupBox.Controls.Add(Me.SaveCalibrationErrorCheckBox)
+        Me.SettingsGroupBox.Controls.Add(Me.SaveFixationDurationsCheckBox)
+        Me.SettingsGroupBox.Controls.Add(Me.SaveFixationCountsCheckBox)
         Me.SettingsGroupBox.Controls.Add(Me.ProcessFixationsButton)
         Me.SettingsGroupBox.Controls.Add(Me.FixationDurationTextBox)
         Me.SettingsGroupBox.Controls.Add(Me.Label1)
         Me.SettingsGroupBox.Location = New System.Drawing.Point(1058, 31)
         Me.SettingsGroupBox.Name = "SettingsGroupBox"
-        Me.SettingsGroupBox.Size = New System.Drawing.Size(234, 139)
+        Me.SettingsGroupBox.Size = New System.Drawing.Size(234, 207)
         Me.SettingsGroupBox.TabIndex = 3
         Me.SettingsGroupBox.TabStop = False
         Me.SettingsGroupBox.Text = "Processing Settings"
@@ -428,7 +434,7 @@ Partial Class MainForm
         'ProcessFixationsButton
         '
         Me.ProcessFixationsButton.Enabled = False
-        Me.ProcessFixationsButton.Location = New System.Drawing.Point(9, 89)
+        Me.ProcessFixationsButton.Location = New System.Drawing.Point(9, 162)
         Me.ProcessFixationsButton.Name = "ProcessFixationsButton"
         Me.ProcessFixationsButton.Size = New System.Drawing.Size(219, 29)
         Me.ProcessFixationsButton.TabIndex = 3
@@ -447,9 +453,9 @@ Partial Class MainForm
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(6, 29)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(150, 17)
+        Me.Label1.Size = New System.Drawing.Size(147, 17)
         Me.Label1.TabIndex = 0
-        Me.Label1.Text = "Fixation Duration (ms):"
+        Me.Label1.Text = "Minimum fixation (ms):"
         '
         'MainStatusStrip
         '
@@ -517,6 +523,7 @@ Partial Class MainForm
         'SegmentEndLinkLabel
         '
         Me.SegmentEndLinkLabel.AutoSize = True
+        Me.SegmentEndLinkLabel.Enabled = False
         Me.SegmentEndLinkLabel.Location = New System.Drawing.Point(65, 78)
         Me.SegmentEndLinkLabel.Name = "SegmentEndLinkLabel"
         Me.SegmentEndLinkLabel.Size = New System.Drawing.Size(64, 17)
@@ -537,6 +544,7 @@ Partial Class MainForm
         'SegmentStartLinkLabel
         '
         Me.SegmentStartLinkLabel.AutoSize = True
+        Me.SegmentStartLinkLabel.Enabled = False
         Me.SegmentStartLinkLabel.Location = New System.Drawing.Point(65, 47)
         Me.SegmentStartLinkLabel.Name = "SegmentStartLinkLabel"
         Me.SegmentStartLinkLabel.Size = New System.Drawing.Size(64, 17)
@@ -779,6 +787,38 @@ Partial Class MainForm
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Colors"
         '
+        'SaveFixationCountsCheckBox
+        '
+        Me.SaveFixationCountsCheckBox.AutoSize = True
+        Me.SaveFixationCountsCheckBox.Location = New System.Drawing.Point(9, 65)
+        Me.SaveFixationCountsCheckBox.Name = "SaveFixationCountsCheckBox"
+        Me.SaveFixationCountsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SaveFixationCountsCheckBox.Size = New System.Drawing.Size(156, 21)
+        Me.SaveFixationCountsCheckBox.TabIndex = 4
+        Me.SaveFixationCountsCheckBox.Text = "Save fixation counts"
+        Me.SaveFixationCountsCheckBox.UseVisualStyleBackColor = True
+        '
+        'SaveFixationDurationsCheckBox
+        '
+        Me.SaveFixationDurationsCheckBox.AutoSize = True
+        Me.SaveFixationDurationsCheckBox.Location = New System.Drawing.Point(9, 92)
+        Me.SaveFixationDurationsCheckBox.Name = "SaveFixationDurationsCheckBox"
+        Me.SaveFixationDurationsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SaveFixationDurationsCheckBox.Size = New System.Drawing.Size(173, 21)
+        Me.SaveFixationDurationsCheckBox.TabIndex = 4
+        Me.SaveFixationDurationsCheckBox.Text = "Save fixation durations"
+        Me.SaveFixationDurationsCheckBox.UseVisualStyleBackColor = True
+        '
+        'SaveCalibrationErrorCheckBox
+        '
+        Me.SaveCalibrationErrorCheckBox.AutoSize = True
+        Me.SaveCalibrationErrorCheckBox.Location = New System.Drawing.Point(9, 119)
+        Me.SaveCalibrationErrorCheckBox.Name = "SaveCalibrationErrorCheckBox"
+        Me.SaveCalibrationErrorCheckBox.Size = New System.Drawing.Size(166, 21)
+        Me.SaveCalibrationErrorCheckBox.TabIndex = 5
+        Me.SaveCalibrationErrorCheckBox.Text = "Save calibration error"
+        Me.SaveCalibrationErrorCheckBox.UseVisualStyleBackColor = True
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -898,5 +938,8 @@ Partial Class MainForm
     Friend WithEvents AoiOpacityTrackBar As System.Windows.Forms.TrackBar
     Friend WithEvents Label16 As System.Windows.Forms.Label
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
+    Friend WithEvents SaveFixationDurationsCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents SaveFixationCountsCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents SaveCalibrationErrorCheckBox As System.Windows.Forms.CheckBox
 
 End Class

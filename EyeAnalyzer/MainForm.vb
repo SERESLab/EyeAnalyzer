@@ -94,6 +94,8 @@ Public Class MainForm
         VideoPositionLabel.Text = makeTimeString(0)
         DisplaySettingsGroupBox.Enabled = False
         UnselectSegmentButton.Enabled = False
+        SegmentStartLinkLabel.Enabled = False
+        SegmentEndLinkLabel.Enabled = False
         VideoGroupBox.Enabled = False
         SegmentsGroupBox.Enabled = False
         AddUpdateSegmentButton.Enabled = False
@@ -333,6 +335,7 @@ Public Class MainForm
             Next
             _segmentStart = value
             SegmentStartLinkLabel.Text = makeTimeString(_segmentStart)
+            SegmentStartLinkLabel.Enabled = True
         Else
             MessageBox.Show("Cannot choose start position at or after the chosen end position.", _
                                     "Invalid start time", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
@@ -353,6 +356,7 @@ Public Class MainForm
             Next
             _segmentEnd = value
             SegmentEndLinkLabel.Text = makeTimeString(_segmentEnd)
+            SegmentEndLinkLabel.Enabled = True
         Else
             MessageBox.Show("Cannot choose end position at or before the chosen start position.", _
                                     "Invalid end time", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
