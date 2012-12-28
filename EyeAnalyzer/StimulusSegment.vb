@@ -112,8 +112,11 @@ Public Class StimulusSegment
     ''' </summary>
     Public Function CompareTo(ByVal other As StimulusSegment) As Integer _
         Implements IComparable(Of StimulusSegment).CompareTo
-        Dim thisStart As Integer = _startMs
-        Dim otherStart As Integer = other.StartMs
-        Return thisStart - otherStart
+        If _startMs > other.StartMs Then
+            Return 1
+        ElseIf other.StartMs > _startMs Then
+            Return -1
+        End If
+        Return 0
     End Function
 End Class

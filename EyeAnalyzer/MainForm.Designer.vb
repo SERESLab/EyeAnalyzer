@@ -83,10 +83,10 @@ Partial Class MainForm
         Me.Label6 = New System.Windows.Forms.Label()
         Me.VideoGroupBox = New System.Windows.Forms.GroupBox()
         Me.VideoPanel = New System.Windows.Forms.Panel()
-        Me.VideoActualSizeCheckBox = New System.Windows.Forms.CheckBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.VideoPositionLabel = New System.Windows.Forms.Label()
         Me.SaveScreenshotButton = New System.Windows.Forms.Button()
+        Me.VideoActualSizeCheckBox = New System.Windows.Forms.CheckBox()
         Me.MainOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.RedrawTimer = New System.Windows.Forms.Timer(Me.components)
         Me.MainSaveFileDialog = New System.Windows.Forms.SaveFileDialog()
@@ -679,16 +679,6 @@ Partial Class MainForm
         Me.VideoPanel.Size = New System.Drawing.Size(640, 360)
         Me.VideoPanel.TabIndex = 13
         '
-        'VideoActualSizeCheckBox
-        '
-        Me.VideoActualSizeCheckBox.AutoSize = True
-        Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(14, 214)
-        Me.VideoActualSizeCheckBox.Name = "VideoActualSizeCheckBox"
-        Me.VideoActualSizeCheckBox.Size = New System.Drawing.Size(172, 21)
-        Me.VideoActualSizeCheckBox.TabIndex = 12
-        Me.VideoActualSizeCheckBox.Text = "Full-size video preview"
-        Me.VideoActualSizeCheckBox.UseVisualStyleBackColor = True
-        '
         'Label2
         '
         Me.Label2.AutoSize = True
@@ -715,6 +705,16 @@ Partial Class MainForm
         Me.SaveScreenshotButton.TabIndex = 9
         Me.SaveScreenshotButton.Text = "Save Screenshot"
         Me.SaveScreenshotButton.UseVisualStyleBackColor = True
+        '
+        'VideoActualSizeCheckBox
+        '
+        Me.VideoActualSizeCheckBox.AutoSize = True
+        Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(14, 214)
+        Me.VideoActualSizeCheckBox.Name = "VideoActualSizeCheckBox"
+        Me.VideoActualSizeCheckBox.Size = New System.Drawing.Size(172, 21)
+        Me.VideoActualSizeCheckBox.TabIndex = 12
+        Me.VideoActualSizeCheckBox.Text = "Full-size video preview"
+        Me.VideoActualSizeCheckBox.UseVisualStyleBackColor = True
         '
         'MainOpenFileDialog
         '

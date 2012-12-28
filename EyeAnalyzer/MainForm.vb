@@ -122,9 +122,7 @@ Public Class MainForm
     Private Sub OpenStudyDataToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpenStudyDataToolStripMenuItem.Click
         If _videoRecording IsNot Nothing Or _eyeTrackerData IsNot Nothing Then
             If MessageBox.Show("Loading new data will clear all segments and AOIs. Would you like to continue?", _
-                               "Clear all data?", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.OK Then
-                resetForm()
-            Else
+                               "Clear all data?", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.Cancel Then
                 Return
             End If
         End If
@@ -159,7 +157,13 @@ Public Class MainForm
         End If
 
         If videoFileFullName IsNot Nothing And xmlFileFullName IsNot Nothing Then
-            _videoRecording = VideoRecording.FromFile(videoFileFullName)
+            Dim recording As VideoRecording = VideoRecording.FromFile(videoFileFullName)
+            Dim eyeData As EyeTrackerData = EyeTrackerData.FromFile(xmlFileFullName)
+
+            ' reset and prepare form if everything loaded properly
+            resetForm()
+            _eyeTrackerData = eyeData
+            _videoRecording = recording
             VideoFileStatusLabel.Text = videoFileName
             _eyeTrackerData = EyeTrackerData.FromFile(xmlFileFullName)
             XmlFileStatusLabel.Text = xmlFileName
@@ -173,6 +177,7 @@ Public Class MainForm
             VideoPositionUpDown.Maximum = _videoRecording.LengthMs
             VideoPositionUpDown.Increment = _videoRecording.TimeBetweenFramesMs
             DisplaySettingsGroupBox.Enabled = True
+            ImportStimulusSegmentsToolStripMenuItem.Enabled = True
             _isRedrawRequired = True
             RedrawTimer.Start()
         Else
@@ -208,12 +213,11 @@ Public Class MainForm
             _isRedrawRequired = False
         End If
 
+        ' enable exporting
+        ExportStimulusSegmentsToolStripMenuItem.Enabled = _stimulusSegments.Count > 0
+
         ' enable modifying stimulus segments if prereqs are met
-        If SegmentNameTextBox.Text.Trim.Length > 0 And _segmentStart IsNot Nothing And _segmentEnd IsNot Nothing Then
-            AddUpdateSegmentButton.Enabled = True
-        Else
-            AddUpdateSegmentButton.Enabled = False
-        End If
+        AddUpdateSegmentButton.Enabled = SegmentNameTextBox.Text.Trim.Length > 0 And _segmentStart IsNot Nothing And _segmentEnd IsNot Nothing
 
         ' enable modifying AOIs if prereqs are met
         If _newAoiRect IsNot Nothing Or AoiListBox.SelectedItem IsNot Nothing Then
@@ -306,7 +310,7 @@ Public Class MainForm
         Using b = _videoRecording.drawFrameAtPosition(VideoPositionUpDown.Value, _
                                              _videoRecording.Width, _videoRecording.Height)
             MainSaveFileDialog.Title = "Save screenshot"
-            MainSaveFileDialog.FileName = "Screenshot"
+            MainSaveFileDialog.FileName = "screenshot"
             MainSaveFileDialog.Filter = "PNG (*.png)|*.png"
             If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
                 b.Save(MainSaveFileDialog.FileName, Imaging.ImageFormat.Png)
@@ -436,6 +440,8 @@ Public Class MainForm
             SegmentNameTextBox.Text = ss.Name
             SegmentStartLinkLabel.Text = makeTimeString(ss.StartMs)
             SegmentEndLinkLabel.Text = makeTimeString(ss.EndMs)
+            SegmentStartLinkLabel.Enabled = (ss.StartMs <= _videoRecording.LengthMs)
+            SegmentEndLinkLabel.Enabled = (ss.EndMs <= _videoRecording.LengthMs)
             _segmentStart = ss.StartMs
             _segmentEnd = ss.EndMs
             UnselectSegmentButton.Enabled = True
@@ -453,6 +459,8 @@ Public Class MainForm
             SegmentNameTextBox.Text = ""
             SegmentStartLinkLabel.Text = "-:-:-"
             SegmentEndLinkLabel.Text = "-:-:-"
+            SegmentStartLinkLabel.Enabled = False
+            SegmentEndLinkLabel.Enabled = False
             UnselectSegmentButton.Enabled = False
             DeleteSegmentButton.Enabled = False
             AoiListBox.DataSource = Nothing
@@ -923,5 +931,115 @@ Public Class MainForm
 
     Private Sub AoiOpacityTrackBar_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AoiOpacityTrackBar.Scroll
         updateAoiDrawObjects()
+    End Sub
+
+    Private Sub ExportStimulusSegmentsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExportStimulusSegmentsToolStripMenuItem.Click
+        MainSaveFileDialog.Title = "Export stimulus segments"
+        MainSaveFileDialog.FileName = "segments"
+        MainSaveFileDialog.Filter = "Stimulus Segment XML (*.xml)|*.xml"
+        If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            Try
+                exportStimulusSegments(MainSaveFileDialog.FileName)
+                setStatusMessage("Exported stimulus segments to " & MainSaveFileDialog.FileName & ".")
+            Catch ex As Exception
+                MessageBox.Show("An error occurred while exporting stimulus segments.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+    End Sub
+
+    Private Sub ImportStimulusSegmentsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ImportStimulusSegmentsToolStripMenuItem.Click
+        If _stimulusSegments.Count > 0 Then
+            If MessageBox.Show("Importing stimulus segments will clear existing segments. Would you like to continue?", _
+                               "Clear stimulus segments?", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.Cancel Then
+                Return
+            End If
+        End If
+        MainOpenFileDialog.Multiselect = False
+        MainOpenFileDialog.Title = "Import stimulus segments"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "Stimulus Segment XML (*.xml)|*.xml"
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            Try
+                importStimulusSegments(MainOpenFileDialog.FileName)
+                setStatusMessage("Imported stimulus segments from " & MainOpenFileDialog.FileName & ".")
+            Catch ex As Exception
+                MessageBox.Show("An error occurred while importing stimulus segments.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+    End Sub
+
+    Private Sub importStimulusSegments(ByVal filename As String)
+        Dim segments As New List(Of StimulusSegment)
+        Dim currentSegment As StimulusSegment = Nothing
+        Using reader As New System.Xml.XmlTextReader(filename)
+            While reader.Read()
+                If reader.IsStartElement("AOI") Then
+                    Dim name As String = reader.GetAttribute("name")
+                    Dim nonExclusive As String = reader.GetAttribute("nonExclusive")
+                    Dim x As String = reader.GetAttribute("x")
+                    Dim y As String = reader.GetAttribute("y")
+                    Dim width As String = reader.GetAttribute("width")
+                    Dim height As String = reader.GetAttribute("height")
+
+                    If currentSegment Is Nothing Or name Is Nothing Or nonExclusive Is Nothing _
+                        Or x Is Nothing Or y Is Nothing Or width Is Nothing Or height Is Nothing Then
+                        Throw New Exception("Bad format.")
+                    End If
+                    Dim rect As New Rectangle(Integer.Parse(x), Integer.Parse(y), Integer.Parse(width), Integer.Parse(height))
+                    Dim aoi As New AreaOfInterest(name, rect)
+                    aoi.NonExclusive = (nonExclusive = "1")
+                    currentSegment.AOIs.Add(aoi)
+                ElseIf reader.IsStartElement("StimulusSegment") Then
+                    Dim name As String = reader.GetAttribute("name")
+                    Dim startTime As String = reader.GetAttribute("startTime")
+                    Dim endTime As String = reader.GetAttribute("endTime")
+
+                    If name Is Nothing Or startTime Is Nothing Or endTime Is Nothing Then
+                        Throw New Exception("Bad format.")
+                    End If
+                    currentSegment = New StimulusSegment()
+                    currentSegment.Name = name
+                    currentSegment.StartMs = ULong.Parse(startTime)
+                    currentSegment.EndMs = ULong.Parse(endTime)
+                    segments.Add(currentSegment)
+                End If
+            End While
+        End Using
+        segments.Sort()
+        _stimulusSegments = segments
+        SegmentsListBox.DataSource = Nothing
+        SegmentsListBox.DataSource = _stimulusSegments
+        SegmentsListBox.ClearSelected()
+    End Sub
+
+    Private Sub exportStimulusSegments(ByVal filename As String)
+        Using writer = New System.Xml.XmlTextWriter(filename, System.Text.Encoding.UTF8)
+            writer.WriteStartDocument(True)
+            writer.Formatting = System.Xml.Formatting.Indented
+            writer.Indentation = 2
+            writer.WriteStartElement("StimulusSegments")
+            For Each segment As StimulusSegment In _stimulusSegments
+                writer.WriteStartElement("StimulusSegment")
+                writer.WriteAttributeString("name", segment.Name)
+                writer.WriteAttributeString("startTime", segment.StartMs.ToString())
+                writer.WriteAttributeString("endTime", segment.EndMs.ToString())
+                writer.WriteStartElement("AreasOfInterest")
+                For Each aoi As AreaOfInterest In segment.AOIs
+                    writer.WriteStartElement("AOI")
+                    writer.WriteAttributeString("name", aoi.Name)
+                    writer.WriteAttributeString("nonExclusive", If(aoi.NonExclusive, "1", "0"))
+                    writer.WriteAttributeString("x", aoi.Area.X.ToString())
+                    writer.WriteAttributeString("y", aoi.Area.Y.ToString())
+                    writer.WriteAttributeString("width", aoi.Area.Width.ToString())
+                    writer.WriteAttributeString("height", aoi.Area.Height.ToString())
+                    writer.WriteEndElement()
+                Next
+                writer.WriteEndElement()
+                writer.WriteEndElement()
+            Next
+            writer.WriteEndElement()
+            writer.WriteEndDocument()
+            writer.Close()
+        End Using
     End Sub
 End Class
