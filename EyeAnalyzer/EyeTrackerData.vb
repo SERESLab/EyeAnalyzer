@@ -24,4 +24,12 @@ Public Class EyeTrackerData
 
     End Sub
 
+    ''' <summary>
+    ''' Processes the eye data and returns an object storing the results.
+    ''' </summary>
+    Public Function process(ByVal minFixationDuartion As Integer, _
+                            ByVal stimulusSegments As List(Of StimulusSegment)) As ProcessingResults
+        Return New ProcessingResults()
+    End Function
+
 End Class

@@ -58,7 +58,11 @@ Partial Class MainForm
         Me.HeatmapsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.GenerateNewHeatmapToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SettingsGroupBox = New System.Windows.Forms.GroupBox()
-        Me.ProcessFixationsButton = New System.Windows.Forms.Button()
+        Me.SaveSegmentDurationsCheckBox = New System.Windows.Forms.CheckBox()
+        Me.SaveCalibrationErrorCheckBox = New System.Windows.Forms.CheckBox()
+        Me.SaveFixationDurationsCheckBox = New System.Windows.Forms.CheckBox()
+        Me.SaveFixationCountsCheckBox = New System.Windows.Forms.CheckBox()
+        Me.ProcessButton = New System.Windows.Forms.Button()
         Me.FixationDurationTextBox = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.MainStatusStrip = New System.Windows.Forms.StatusStrip()
@@ -95,9 +99,9 @@ Partial Class MainForm
         Me.AoiOpacityTrackBar = New System.Windows.Forms.TrackBar()
         Me.Label16 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
-        Me.SaveFixationCountsCheckBox = New System.Windows.Forms.CheckBox()
-        Me.SaveFixationDurationsCheckBox = New System.Windows.Forms.CheckBox()
-        Me.SaveCalibrationErrorCheckBox = New System.Windows.Forms.CheckBox()
+        Me.MeasureFixationsGroupBox = New System.Windows.Forms.GroupBox()
+        Me.MeasureFixationsCheckBox = New System.Windows.Forms.CheckBox()
+        Me.SaveFixationLocationsCheckBox = New System.Windows.Forms.CheckBox()
         CType(Me.VideoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.AoiGroupBox.SuspendLayout()
         CType(Me.AoiHeightUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -115,6 +119,7 @@ Partial Class MainForm
         Me.DisplaySettingsGroupBox.SuspendLayout()
         CType(Me.AoiOpacityTrackBar, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox2.SuspendLayout()
+        Me.MeasureFixationsGroupBox.SuspendLayout()
         Me.SuspendLayout()
         '
         'VideoPictureBox
@@ -356,7 +361,7 @@ Partial Class MainForm
         Me.MainMenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.HeatmapsToolStripMenuItem})
         Me.MainMenuStrip.Location = New System.Drawing.Point(0, 0)
         Me.MainMenuStrip.Name = "MainMenuStrip"
-        Me.MainMenuStrip.Size = New System.Drawing.Size(1298, 28)
+        Me.MainMenuStrip.Size = New System.Drawing.Size(1289, 28)
         Me.MainMenuStrip.TabIndex = 1
         Me.MainMenuStrip.Text = "MenuStrip1"
         '
@@ -418,40 +423,91 @@ Partial Class MainForm
         '
         'SettingsGroupBox
         '
+        Me.SettingsGroupBox.Controls.Add(Me.MeasureFixationsGroupBox)
+        Me.SettingsGroupBox.Controls.Add(Me.MeasureFixationsCheckBox)
+        Me.SettingsGroupBox.Controls.Add(Me.SaveFixationLocationsCheckBox)
+        Me.SettingsGroupBox.Controls.Add(Me.SaveSegmentDurationsCheckBox)
         Me.SettingsGroupBox.Controls.Add(Me.SaveCalibrationErrorCheckBox)
-        Me.SettingsGroupBox.Controls.Add(Me.SaveFixationDurationsCheckBox)
-        Me.SettingsGroupBox.Controls.Add(Me.SaveFixationCountsCheckBox)
-        Me.SettingsGroupBox.Controls.Add(Me.ProcessFixationsButton)
-        Me.SettingsGroupBox.Controls.Add(Me.FixationDurationTextBox)
-        Me.SettingsGroupBox.Controls.Add(Me.Label1)
+        Me.SettingsGroupBox.Controls.Add(Me.ProcessButton)
         Me.SettingsGroupBox.Location = New System.Drawing.Point(1058, 31)
         Me.SettingsGroupBox.Name = "SettingsGroupBox"
-        Me.SettingsGroupBox.Size = New System.Drawing.Size(234, 207)
+        Me.SettingsGroupBox.Size = New System.Drawing.Size(219, 275)
         Me.SettingsGroupBox.TabIndex = 3
         Me.SettingsGroupBox.TabStop = False
         Me.SettingsGroupBox.Text = "Processing Settings"
         '
-        'ProcessFixationsButton
+        'SaveSegmentDurationsCheckBox
         '
-        Me.ProcessFixationsButton.Enabled = False
-        Me.ProcessFixationsButton.Location = New System.Drawing.Point(9, 162)
-        Me.ProcessFixationsButton.Name = "ProcessFixationsButton"
-        Me.ProcessFixationsButton.Size = New System.Drawing.Size(219, 29)
-        Me.ProcessFixationsButton.TabIndex = 3
-        Me.ProcessFixationsButton.Text = "Process Fixations"
-        Me.ProcessFixationsButton.UseVisualStyleBackColor = True
+        Me.SaveSegmentDurationsCheckBox.AutoSize = True
+        Me.SaveSegmentDurationsCheckBox.Checked = True
+        Me.SaveSegmentDurationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.SaveSegmentDurationsCheckBox.Location = New System.Drawing.Point(18, 186)
+        Me.SaveSegmentDurationsCheckBox.Name = "SaveSegmentDurationsCheckBox"
+        Me.SaveSegmentDurationsCheckBox.Size = New System.Drawing.Size(183, 21)
+        Me.SaveSegmentDurationsCheckBox.TabIndex = 5
+        Me.SaveSegmentDurationsCheckBox.Text = "Save segment durations"
+        Me.SaveSegmentDurationsCheckBox.UseVisualStyleBackColor = True
+        '
+        'SaveCalibrationErrorCheckBox
+        '
+        Me.SaveCalibrationErrorCheckBox.AutoSize = True
+        Me.SaveCalibrationErrorCheckBox.Checked = True
+        Me.SaveCalibrationErrorCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.SaveCalibrationErrorCheckBox.Location = New System.Drawing.Point(18, 213)
+        Me.SaveCalibrationErrorCheckBox.Name = "SaveCalibrationErrorCheckBox"
+        Me.SaveCalibrationErrorCheckBox.Size = New System.Drawing.Size(166, 21)
+        Me.SaveCalibrationErrorCheckBox.TabIndex = 5
+        Me.SaveCalibrationErrorCheckBox.Text = "Save calibration error"
+        Me.SaveCalibrationErrorCheckBox.UseVisualStyleBackColor = True
+        '
+        'SaveFixationDurationsCheckBox
+        '
+        Me.SaveFixationDurationsCheckBox.AutoSize = True
+        Me.SaveFixationDurationsCheckBox.Checked = True
+        Me.SaveFixationDurationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.SaveFixationDurationsCheckBox.Location = New System.Drawing.Point(9, 75)
+        Me.SaveFixationDurationsCheckBox.Name = "SaveFixationDurationsCheckBox"
+        Me.SaveFixationDurationsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SaveFixationDurationsCheckBox.Size = New System.Drawing.Size(173, 21)
+        Me.SaveFixationDurationsCheckBox.TabIndex = 4
+        Me.SaveFixationDurationsCheckBox.Text = "Save fixation durations"
+        Me.SaveFixationDurationsCheckBox.UseVisualStyleBackColor = True
+        '
+        'SaveFixationCountsCheckBox
+        '
+        Me.SaveFixationCountsCheckBox.AutoSize = True
+        Me.SaveFixationCountsCheckBox.Checked = True
+        Me.SaveFixationCountsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.SaveFixationCountsCheckBox.Location = New System.Drawing.Point(9, 48)
+        Me.SaveFixationCountsCheckBox.Name = "SaveFixationCountsCheckBox"
+        Me.SaveFixationCountsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SaveFixationCountsCheckBox.Size = New System.Drawing.Size(156, 21)
+        Me.SaveFixationCountsCheckBox.TabIndex = 4
+        Me.SaveFixationCountsCheckBox.Text = "Save fixation counts"
+        Me.SaveFixationCountsCheckBox.UseVisualStyleBackColor = True
+        '
+        'ProcessButton
+        '
+        Me.ProcessButton.Enabled = False
+        Me.ProcessButton.Location = New System.Drawing.Point(18, 240)
+        Me.ProcessButton.Name = "ProcessButton"
+        Me.ProcessButton.Size = New System.Drawing.Size(183, 29)
+        Me.ProcessButton.TabIndex = 3
+        Me.ProcessButton.Text = "Process Eye Data"
+        Me.ProcessButton.UseVisualStyleBackColor = True
         '
         'FixationDurationTextBox
         '
-        Me.FixationDurationTextBox.Location = New System.Drawing.Point(162, 29)
+        Me.FixationDurationTextBox.Location = New System.Drawing.Point(159, 21)
         Me.FixationDurationTextBox.Name = "FixationDurationTextBox"
-        Me.FixationDurationTextBox.Size = New System.Drawing.Size(62, 22)
+        Me.FixationDurationTextBox.Size = New System.Drawing.Size(31, 22)
         Me.FixationDurationTextBox.TabIndex = 2
+        Me.FixationDurationTextBox.Text = "60"
         '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(6, 29)
+        Me.Label1.Location = New System.Drawing.Point(6, 23)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(147, 17)
         Me.Label1.TabIndex = 0
@@ -462,7 +518,7 @@ Partial Class MainForm
         Me.MainStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MainStatusLabel, Me.VideoFileStatusLabel, Me.XmlFileStatusLabel})
         Me.MainStatusStrip.Location = New System.Drawing.Point(0, 521)
         Me.MainStatusStrip.Name = "MainStatusStrip"
-        Me.MainStatusStrip.Size = New System.Drawing.Size(1298, 29)
+        Me.MainStatusStrip.Size = New System.Drawing.Size(1289, 29)
         Me.MainStatusStrip.SizingGrip = False
         Me.MainStatusStrip.TabIndex = 4
         Me.MainStatusStrip.Text = "StatusStrip1"
@@ -474,7 +530,7 @@ Partial Class MainForm
                     Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
         Me.MainStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenInner
         Me.MainStatusLabel.Name = "MainStatusLabel"
-        Me.MainStatusLabel.Size = New System.Drawing.Size(1239, 24)
+        Me.MainStatusLabel.Size = New System.Drawing.Size(1230, 24)
         Me.MainStatusLabel.Spring = True
         Me.MainStatusLabel.Text = "..."
         Me.MainStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -663,6 +719,7 @@ Partial Class MainForm
         'VideoGroupBox
         '
         Me.VideoGroupBox.Controls.Add(Me.VideoPanel)
+        Me.VideoGroupBox.Controls.Add(Me.VideoActualSizeCheckBox)
         Me.VideoGroupBox.Controls.Add(Me.Label2)
         Me.VideoGroupBox.Controls.Add(Me.VideoPositionLabel)
         Me.VideoGroupBox.Controls.Add(Me.SaveScreenshotButton)
@@ -717,7 +774,7 @@ Partial Class MainForm
         'VideoActualSizeCheckBox
         '
         Me.VideoActualSizeCheckBox.AutoSize = True
-        Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(14, 214)
+        Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(6, 452)
         Me.VideoActualSizeCheckBox.Name = "VideoActualSizeCheckBox"
         Me.VideoActualSizeCheckBox.Size = New System.Drawing.Size(172, 21)
         Me.VideoActualSizeCheckBox.TabIndex = 12
@@ -730,7 +787,7 @@ Partial Class MainForm
         '
         'RedrawTimer
         '
-        Me.RedrawTimer.Interval = 20
+        Me.RedrawTimer.Interval = 33
         '
         'MainColorDialog
         '
@@ -740,23 +797,22 @@ Partial Class MainForm
         'DisplaySettingsGroupBox
         '
         Me.DisplaySettingsGroupBox.Controls.Add(Me.AoiOpacityTrackBar)
-        Me.DisplaySettingsGroupBox.Controls.Add(Me.VideoActualSizeCheckBox)
         Me.DisplaySettingsGroupBox.Controls.Add(Me.Label16)
         Me.DisplaySettingsGroupBox.Controls.Add(Me.GroupBox2)
         Me.DisplaySettingsGroupBox.Enabled = False
-        Me.DisplaySettingsGroupBox.Location = New System.Drawing.Point(1058, 259)
+        Me.DisplaySettingsGroupBox.Location = New System.Drawing.Point(1058, 312)
         Me.DisplaySettingsGroupBox.Name = "DisplaySettingsGroupBox"
-        Me.DisplaySettingsGroupBox.Size = New System.Drawing.Size(234, 253)
+        Me.DisplaySettingsGroupBox.Size = New System.Drawing.Size(219, 200)
         Me.DisplaySettingsGroupBox.TabIndex = 15
         Me.DisplaySettingsGroupBox.TabStop = False
-        Me.DisplaySettingsGroupBox.Text = "Display Settings"
+        Me.DisplaySettingsGroupBox.Text = "AOI Display Settings"
         '
         'AoiOpacityTrackBar
         '
-        Me.AoiOpacityTrackBar.Location = New System.Drawing.Point(8, 152)
+        Me.AoiOpacityTrackBar.Location = New System.Drawing.Point(95, 125)
         Me.AoiOpacityTrackBar.Maximum = 255
         Me.AoiOpacityTrackBar.Name = "AoiOpacityTrackBar"
-        Me.AoiOpacityTrackBar.Size = New System.Drawing.Size(163, 56)
+        Me.AoiOpacityTrackBar.Size = New System.Drawing.Size(113, 56)
         Me.AoiOpacityTrackBar.TabIndex = 11
         Me.AoiOpacityTrackBar.TickStyle = System.Windows.Forms.TickStyle.None
         Me.AoiOpacityTrackBar.Value = 170
@@ -764,7 +820,7 @@ Partial Class MainForm
         'Label16
         '
         Me.Label16.AutoSize = True
-        Me.Label16.Location = New System.Drawing.Point(11, 127)
+        Me.Label16.Location = New System.Drawing.Point(6, 125)
         Me.Label16.Name = "Label16"
         Me.Label16.Size = New System.Drawing.Size(83, 17)
         Me.Label16.TabIndex = 10
@@ -780,50 +836,55 @@ Partial Class MainForm
         Me.GroupBox2.Controls.Add(Me.NonExclusiveAoiColorLabel)
         Me.GroupBox2.Controls.Add(Me.Label15)
         Me.GroupBox2.Controls.Add(Me.SelectedAoiColorLabel)
-        Me.GroupBox2.Location = New System.Drawing.Point(6, 23)
+        Me.GroupBox2.Location = New System.Drawing.Point(6, 21)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(216, 101)
+        Me.GroupBox2.Size = New System.Drawing.Size(202, 101)
         Me.GroupBox2.TabIndex = 9
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Colors"
         '
-        'SaveFixationCountsCheckBox
+        'MeasureFixationsGroupBox
         '
-        Me.SaveFixationCountsCheckBox.AutoSize = True
-        Me.SaveFixationCountsCheckBox.Location = New System.Drawing.Point(9, 65)
-        Me.SaveFixationCountsCheckBox.Name = "SaveFixationCountsCheckBox"
-        Me.SaveFixationCountsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SaveFixationCountsCheckBox.Size = New System.Drawing.Size(156, 21)
-        Me.SaveFixationCountsCheckBox.TabIndex = 4
-        Me.SaveFixationCountsCheckBox.Text = "Save fixation counts"
-        Me.SaveFixationCountsCheckBox.UseVisualStyleBackColor = True
+        Me.MeasureFixationsGroupBox.Controls.Add(Me.Label1)
+        Me.MeasureFixationsGroupBox.Controls.Add(Me.FixationDurationTextBox)
+        Me.MeasureFixationsGroupBox.Controls.Add(Me.SaveFixationDurationsCheckBox)
+        Me.MeasureFixationsGroupBox.Controls.Add(Me.SaveFixationCountsCheckBox)
+        Me.MeasureFixationsGroupBox.Location = New System.Drawing.Point(9, 74)
+        Me.MeasureFixationsGroupBox.Name = "MeasureFixationsGroupBox"
+        Me.MeasureFixationsGroupBox.Size = New System.Drawing.Size(199, 102)
+        Me.MeasureFixationsGroupBox.TabIndex = 6
+        Me.MeasureFixationsGroupBox.TabStop = False
+        Me.MeasureFixationsGroupBox.Text = "Fixations"
         '
-        'SaveFixationDurationsCheckBox
+        'MeasureFixationsCheckBox
         '
-        Me.SaveFixationDurationsCheckBox.AutoSize = True
-        Me.SaveFixationDurationsCheckBox.Location = New System.Drawing.Point(9, 92)
-        Me.SaveFixationDurationsCheckBox.Name = "SaveFixationDurationsCheckBox"
-        Me.SaveFixationDurationsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SaveFixationDurationsCheckBox.Size = New System.Drawing.Size(173, 21)
-        Me.SaveFixationDurationsCheckBox.TabIndex = 4
-        Me.SaveFixationDurationsCheckBox.Text = "Save fixation durations"
-        Me.SaveFixationDurationsCheckBox.UseVisualStyleBackColor = True
+        Me.MeasureFixationsCheckBox.AutoSize = True
+        Me.MeasureFixationsCheckBox.Checked = True
+        Me.MeasureFixationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.MeasureFixationsCheckBox.Location = New System.Drawing.Point(18, 49)
+        Me.MeasureFixationsCheckBox.Name = "MeasureFixationsCheckBox"
+        Me.MeasureFixationsCheckBox.Size = New System.Drawing.Size(140, 21)
+        Me.MeasureFixationsCheckBox.TabIndex = 5
+        Me.MeasureFixationsCheckBox.Text = "Measure fixations"
+        Me.MeasureFixationsCheckBox.UseVisualStyleBackColor = True
         '
-        'SaveCalibrationErrorCheckBox
+        'SaveFixationLocationsCheckBox
         '
-        Me.SaveCalibrationErrorCheckBox.AutoSize = True
-        Me.SaveCalibrationErrorCheckBox.Location = New System.Drawing.Point(9, 119)
-        Me.SaveCalibrationErrorCheckBox.Name = "SaveCalibrationErrorCheckBox"
-        Me.SaveCalibrationErrorCheckBox.Size = New System.Drawing.Size(166, 21)
-        Me.SaveCalibrationErrorCheckBox.TabIndex = 5
-        Me.SaveCalibrationErrorCheckBox.Text = "Save calibration error"
-        Me.SaveCalibrationErrorCheckBox.UseVisualStyleBackColor = True
+        Me.SaveFixationLocationsCheckBox.AutoSize = True
+        Me.SaveFixationLocationsCheckBox.Checked = True
+        Me.SaveFixationLocationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.SaveFixationLocationsCheckBox.Location = New System.Drawing.Point(18, 21)
+        Me.SaveFixationLocationsCheckBox.Name = "SaveFixationLocationsCheckBox"
+        Me.SaveFixationLocationsCheckBox.Size = New System.Drawing.Size(170, 21)
+        Me.SaveFixationLocationsCheckBox.TabIndex = 5
+        Me.SaveFixationLocationsCheckBox.Text = "Save fixation locations"
+        Me.SaveFixationLocationsCheckBox.UseVisualStyleBackColor = True
         '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1298, 550)
+        Me.ClientSize = New System.Drawing.Size(1289, 550)
         Me.Controls.Add(Me.DisplaySettingsGroupBox)
         Me.Controls.Add(Me.VideoGroupBox)
         Me.Controls.Add(Me.SegmentsGroupBox)
@@ -835,7 +896,7 @@ Partial Class MainForm
         Me.Name = "MainForm"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Fixation Measurement Tool"
+        Me.Text = "Eye Data Processing Tool"
         CType(Me.VideoPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.AoiGroupBox.ResumeLayout(False)
         Me.AoiGroupBox.PerformLayout()
@@ -862,6 +923,8 @@ Partial Class MainForm
         CType(Me.AoiOpacityTrackBar, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
+        Me.MeasureFixationsGroupBox.ResumeLayout(False)
+        Me.MeasureFixationsGroupBox.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -876,7 +939,7 @@ Partial Class MainForm
     Friend WithEvents HeatmapsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents AoiNameTextBox As System.Windows.Forms.TextBox
     Friend WithEvents SettingsGroupBox As System.Windows.Forms.GroupBox
-    Friend WithEvents ProcessFixationsButton As System.Windows.Forms.Button
+    Friend WithEvents ProcessButton As System.Windows.Forms.Button
     Friend WithEvents FixationDurationTextBox As System.Windows.Forms.TextBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents MainStatusStrip As System.Windows.Forms.StatusStrip
@@ -941,5 +1004,9 @@ Partial Class MainForm
     Friend WithEvents SaveFixationDurationsCheckBox As System.Windows.Forms.CheckBox
     Friend WithEvents SaveFixationCountsCheckBox As System.Windows.Forms.CheckBox
     Friend WithEvents SaveCalibrationErrorCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents SaveSegmentDurationsCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents MeasureFixationsGroupBox As System.Windows.Forms.GroupBox
+    Friend WithEvents MeasureFixationsCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents SaveFixationLocationsCheckBox As System.Windows.Forms.CheckBox
 
 End Class

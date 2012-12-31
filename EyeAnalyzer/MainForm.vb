@@ -4,9 +4,8 @@
 ''' </summary>
 Public Class MainForm
 
-    Private Const MIN_FIXATION_DURATION_MS As Integer = 40
     Private Const AOI_DRAW_WIDTH As Single = 1.0
-    Private Const SELECTED_AOI_DRAW_WIDTH As Single = 3.0
+    Private Const SELECTED_AOI_DRAW_WIDTH As Single = 2.0
 
     Private _newAoiPen As Pen
     Private _selectedAoiPen As Pen
@@ -55,7 +54,6 @@ Public Class MainForm
 
     Private Sub MainForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         updateAoiDrawObjects()
-        FixationDurationTextBox.Text = MIN_FIXATION_DURATION_MS
         resetForm()
     End Sub
 
@@ -103,7 +101,7 @@ Public Class MainForm
         AoiGroupBox.Enabled = False
         AddRenameAoiButton.Enabled = False
         DeleteAoiButton.Enabled = False
-        ProcessFixationsButton.Enabled = False
+        ProcessButton.Enabled = False
         ImportStimulusSegmentsToolStripMenuItem.Enabled = False
         ExportStimulusSegmentsToolStripMenuItem.Enabled = False
         VideoPictureBox.Image = Nothing
@@ -248,7 +246,7 @@ Public Class MainForm
                 Exit For
             End If
         Next
-        ProcessFixationsButton.Enabled = enableProcessing
+        ProcessButton.Enabled = enableProcessing
     End Sub
 
     Private Sub drawAois()
@@ -1045,5 +1043,58 @@ Public Class MainForm
             writer.WriteEndDocument()
             writer.Close()
         End Using
+    End Sub
+
+    Private Sub MeasureFixationsCheckBox_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MeasureFixationsCheckBox.CheckedChanged
+        MeasureFixationsGroupBox.Enabled = MeasureFixationsCheckBox.Checked
+        SaveFixationLocationsCheckBox.Enabled = MeasureFixationsCheckBox.Checked
+    End Sub
+
+    Private Sub ProcessButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ProcessButton.Click
+        Dim minFixationLength As Integer = Integer.Parse(FixationDurationTextBox.Text)
+        Dim results As ProcessingResults = _eyeTrackerData.process(minFixationLength, _stimulusSegments)
+        Dim filenameBase As String = XmlFileStatusLabel.Text.Substring(0, XmlFileStatusLabel.Text.Length - 4)
+
+        If SaveFixationLocationsCheckBox.Checked And MeasureFixationsCheckBox.Checked Then
+            MainSaveFileDialog.Title = "Save fixation locations"
+            MainSaveFileDialog.FileName = filenameBase & "-FixationLocations"
+            MainSaveFileDialog.Filter = "XML (*.xml)|*.xml"
+            If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                results.saveFixationLocations(MainSaveFileDialog.FileName)
+                setStatusMessage("Fixation locations saved to " & MainSaveFileDialog.FileName & ".")
+            End If
+        End If
+
+        If MeasureFixationsCheckBox.Checked Then
+            MainSaveFileDialog.Title = "Save fixation measurements"
+            MainSaveFileDialog.FileName = filenameBase & "-FixationMeasurements"
+            MainSaveFileDialog.Filter = "Comma-separated values (*.csv)|*.csv"
+            If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                results.saveFixationMeasurements(SaveFixationCountsCheckBox.Checked, _
+                                                 SaveFixationDurationsCheckBox.Checked, _
+                                                 MainSaveFileDialog.FileName)
+                setStatusMessage("Fixation measurements saved to " & MainSaveFileDialog.FileName & ".")
+            End If
+        End If
+
+        If SaveSegmentDurationsCheckBox.Checked Then
+            MainSaveFileDialog.Title = "Save segment durations"
+            MainSaveFileDialog.FileName = filenameBase & "-SegmentDurations"
+            MainSaveFileDialog.Filter = "Comma-separated values (*.csv)|*.csv"
+            If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                results.saveSegmentDurations(MainSaveFileDialog.FileName)
+                setStatusMessage("Segment durations saved to " & MainSaveFileDialog.FileName & ".")
+            End If
+        End If
+
+        If SaveCalibrationErrorCheckBox.Checked Then
+            MainSaveFileDialog.Title = "Save calibration error"
+            MainSaveFileDialog.FileName = filenameBase & "-CalibrationError"
+            MainSaveFileDialog.Filter = "Comma-separated values (*.csv)|*.csv"
+            If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                results.saveCalibrationError(MainSaveFileDialog.FileName)
+                setStatusMessage("Calibration error data saved to " & MainSaveFileDialog.FileName & ".")
+            End If
+        End If
     End Sub
 End Class
