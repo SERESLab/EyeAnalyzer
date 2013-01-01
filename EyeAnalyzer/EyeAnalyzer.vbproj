@@ -72,7 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaOfInterest.vb" />
-    <Compile Include="EyeTrackerData.vb" />
+    <Compile Include="MirametrixViewerData.vb" />
+    <Compile Include="Fixation.vb" />
     <Compile Include="HeatmapForm.Designer.vb">
       <DependentUpon>HeatmapForm.vb</DependentUpon>
     </Compile>

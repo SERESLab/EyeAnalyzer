@@ -23,7 +23,7 @@ Public Class MainForm
     Private _mouseDownLocation? As Point = Nothing
 
     Private _videoRecording As VideoRecording = Nothing
-    Private _eyeTrackerData As EyeTrackerData = Nothing
+    Private _eyeTrackerData As MirametrixViewerData = Nothing
     Private _isRedrawRequired As Boolean = False
 
     Private _isEditingSegment As Boolean = False
@@ -157,15 +157,30 @@ Public Class MainForm
         End If
 
         If videoFileFullName IsNot Nothing And xmlFileFullName IsNot Nothing Then
-            Dim recording As VideoRecording = VideoRecording.FromFile(videoFileFullName)
-            Dim eyeData As EyeTrackerData = EyeTrackerData.FromFile(xmlFileFullName)
+            setStatusMessage("Loading...")
+            Dim recording As VideoRecording = Nothing
+            Dim eyeData As MirametrixViewerData = Nothing
+            Try
+                recording = VideoRecording.FromFile(videoFileFullName)
+            Catch ex As Exception
+                setStatusMessage("Study data not loaded.")
+                MessageBox.Show("Could not load screen-capture video.", "Error loading study data", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End Try
+            Try
+                eyeData = MirametrixViewerData.FromFile(xmlFileFullName)
+            Catch ex As Exception
+                setStatusMessage("Study data not loaded.")
+                MessageBox.Show("Could not load eye tracker data.", "Error loading study data", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End Try
 
             ' reset and prepare form if everything loaded properly
             resetForm()
             _eyeTrackerData = eyeData
             _videoRecording = recording
             VideoFileStatusLabel.Text = videoFileName
-            _eyeTrackerData = EyeTrackerData.FromFile(xmlFileFullName)
+            _eyeTrackerData = MirametrixViewerData.FromFile(xmlFileFullName)
             XmlFileStatusLabel.Text = xmlFileName
             VideoGroupBox.Enabled = True
             SegmentsGroupBox.Enabled = True
@@ -173,7 +188,7 @@ Public Class MainForm
             AoiYUpDown.Maximum = _videoRecording.Height
             AoiWidthUpDown.Maximum = _videoRecording.Width
             AoiHeightUpDown.Maximum = _videoRecording.Height
-            setStatusMessage("Loaded study data.")
+            setStatusMessage("Loaded study data (" & _eyeTrackerData.GazeCount & " gaze points).")
             VideoPositionUpDown.Maximum = _videoRecording.LengthMs
             VideoPositionUpDown.Increment = _videoRecording.TimeBetweenFramesMs
             DisplaySettingsGroupBox.Enabled = True
