@@ -7,6 +7,12 @@ Public Class MainForm
     Private Const AOI_DRAW_WIDTH As Single = 1.0
     Private Const SELECTED_AOI_DRAW_WIDTH As Single = 2.0
 
+    Private _lastDirVideoData As String = Nothing
+    Private _lastDirEyeData As String = Nothing
+    Private _lastDirStimulusSegments As String = Nothing
+    Private _lastDirProcessingOutput As String = Nothing
+    Private _lastDirScreenshots As String = Nothing
+
     Private _newAoiPen As Pen
     Private _selectedAoiPen As Pen
     Private _aoiPen As Pen
@@ -139,9 +145,15 @@ Public Class MainForm
         MainOpenFileDialog.Title = "Select a video recording"
         MainOpenFileDialog.FileName = ""
         MainOpenFileDialog.Filter = "Video recording (*.avi)|*.avi"
+        If _lastDirVideoData IsNot Nothing Then
+            MainOpenFileDialog.InitialDirectory = _lastDirVideoData
+        End If
         If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
             videoFileFullName = MainOpenFileDialog.FileName
             videoFileName = MainOpenFileDialog.SafeFileName
+            _lastDirVideoData = MainOpenFileDialog.FileName _
+                .Substring(0, MainOpenFileDialog.FileName.Length _
+                           - MainOpenFileDialog.SafeFileName.Length)
         Else
             setStatusMessage("Study data not loaded.")
             Return
@@ -151,9 +163,15 @@ Public Class MainForm
         MainOpenFileDialog.Title = "Select eye-tracker data"
         MainOpenFileDialog.FileName = ""
         MainOpenFileDialog.Filter = "Eye-tracker data (*.xml)|*.xml"
+        If _lastDirEyeData IsNot Nothing Then
+            MainOpenFileDialog.InitialDirectory = _lastDirEyeData
+        End If
         If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
             xmlFileFullName = MainOpenFileDialog.FileName
             xmlFileName = MainOpenFileDialog.SafeFileName
+            _lastDirEyeData = MainOpenFileDialog.FileName _
+                .Substring(0, MainOpenFileDialog.FileName.Length _
+                           - MainOpenFileDialog.SafeFileName.Length)
         End If
 
         If videoFileFullName IsNot Nothing And xmlFileFullName IsNot Nothing Then
@@ -327,7 +345,11 @@ Public Class MainForm
             MainSaveFileDialog.Title = "Save screenshot"
             MainSaveFileDialog.FileName = "screenshot"
             MainSaveFileDialog.Filter = "PNG (*.png)|*.png"
+            If _lastDirScreenshots IsNot Nothing Then
+                MainSaveFileDialog.InitialDirectory = _lastDirScreenshots
+            End If
             If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                _lastDirScreenshots = MainSaveFileDialog.FileName
                 b.Save(MainSaveFileDialog.FileName, Imaging.ImageFormat.Png)
                 setStatusMessage("Screenshot saved to " & MainSaveFileDialog.FileName & ".")
             End If
@@ -954,7 +976,11 @@ Public Class MainForm
         MainSaveFileDialog.Title = "Export stimulus segments"
         MainSaveFileDialog.FileName = "segments"
         MainSaveFileDialog.Filter = "Stimulus Segment XML (*.xml)|*.xml"
+        If _lastDirStimulusSegments IsNot Nothing Then
+            MainSaveFileDialog.InitialDirectory = _lastDirStimulusSegments
+        End If
         If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            _lastDirStimulusSegments = MainSaveFileDialog.FileName
             Try
                 exportStimulusSegments(MainSaveFileDialog.FileName)
                 setStatusMessage("Exported stimulus segments to " & MainSaveFileDialog.FileName & ".")
@@ -975,7 +1001,13 @@ Public Class MainForm
         MainOpenFileDialog.Title = "Import stimulus segments"
         MainOpenFileDialog.FileName = ""
         MainOpenFileDialog.Filter = "Stimulus Segment XML (*.xml)|*.xml"
+        If _lastDirStimulusSegments IsNot Nothing Then
+            MainOpenFileDialog.InitialDirectory = _lastDirStimulusSegments
+        End If
         If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            _lastDirStimulusSegments = MainOpenFileDialog.FileName _
+                .Substring(0, MainOpenFileDialog.FileName.Length _
+                           - MainOpenFileDialog.SafeFileName.Length)
             Try
                 importStimulusSegments(MainOpenFileDialog.FileName)
                 setStatusMessage("Imported stimulus segments from " & MainOpenFileDialog.FileName & ".")
@@ -1070,11 +1102,16 @@ Public Class MainForm
         Dim results As ProcessingResults = _eyeTrackerData.process(minFixationLength, _stimulusSegments)
         Dim filenameBase As String = XmlFileStatusLabel.Text.Substring(0, XmlFileStatusLabel.Text.Length - 4)
 
+        If _lastDirProcessingOutput IsNot Nothing Then
+            MainSaveFileDialog.InitialDirectory = _lastDirProcessingOutput
+        End If
+
         If SaveFixationLocationsCheckBox.Checked And MeasureFixationsCheckBox.Checked Then
             MainSaveFileDialog.Title = "Save fixation locations"
             MainSaveFileDialog.FileName = filenameBase & "-FixationLocations"
             MainSaveFileDialog.Filter = "XML (*.xml)|*.xml"
             If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                _lastDirProcessingOutput = MainSaveFileDialog.FileName.Substring(0, MainSaveFileDialog.FileName.LastIndexOf("\") + 1)
                 results.saveFixationLocations(MainSaveFileDialog.FileName)
                 setStatusMessage("Fixation locations saved to " & MainSaveFileDialog.FileName & ".")
             End If
@@ -1085,6 +1122,7 @@ Public Class MainForm
             MainSaveFileDialog.FileName = filenameBase & "-FixationMeasurements"
             MainSaveFileDialog.Filter = "Comma-separated values (*.csv)|*.csv"
             If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                _lastDirProcessingOutput = MainSaveFileDialog.FileName.Substring(0, MainSaveFileDialog.FileName.LastIndexOf("\") + 1)
                 results.saveFixationMeasurements(SaveFixationCountsCheckBox.Checked, _
                                                  SaveFixationDurationsCheckBox.Checked, _
                                                  MainSaveFileDialog.FileName)
@@ -1097,6 +1135,7 @@ Public Class MainForm
             MainSaveFileDialog.FileName = filenameBase & "-SegmentDurations"
             MainSaveFileDialog.Filter = "Comma-separated values (*.csv)|*.csv"
             If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                _lastDirProcessingOutput = MainSaveFileDialog.FileName.Substring(0, MainSaveFileDialog.FileName.LastIndexOf("\") + 1)
                 results.saveSegmentDurations(MainSaveFileDialog.FileName)
                 setStatusMessage("Segment durations saved to " & MainSaveFileDialog.FileName & ".")
             End If
@@ -1107,6 +1146,7 @@ Public Class MainForm
             MainSaveFileDialog.FileName = filenameBase & "-CalibrationError"
             MainSaveFileDialog.Filter = "Comma-separated values (*.csv)|*.csv"
             If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                _lastDirProcessingOutput = MainSaveFileDialog.FileName.Substring(0, MainSaveFileDialog.FileName.LastIndexOf("\") + 1)
                 results.saveCalibrationError(MainSaveFileDialog.FileName)
                 setStatusMessage("Calibration error data saved to " & MainSaveFileDialog.FileName & ".")
             End If

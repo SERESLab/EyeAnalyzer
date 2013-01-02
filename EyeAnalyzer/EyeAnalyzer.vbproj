@@ -107,6 +107,9 @@
     <Compile Include="VideoRecording.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="HeatmapForm.resx">
+      <DependentUpon>HeatmapForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.vb</DependentUpon>
     </EmbeddedResource>
