@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaOfInterest.vb" />
+    <Compile Include="Heatmap.vb" />
     <Compile Include="MirametrixViewerData.vb" />
     <Compile Include="Fixation.vb" />
     <Compile Include="HeatmapForm.Designer.vb">

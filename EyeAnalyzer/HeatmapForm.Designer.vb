@@ -22,7 +22,7 @@ Partial Class HeatmapForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.HeatmapMenuStrip = New System.Windows.Forms.MenuStrip()
+        Me.MainMenuStrip = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImportFixationLocationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
@@ -35,33 +35,34 @@ Partial Class HeatmapForm
         Me.Label3 = New System.Windows.Forms.Label()
         Me.StatusTextBox = New System.Windows.Forms.RichTextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.HeatmapGroupBox = New System.Windows.Forms.GroupBox()
         Me.NumberOfSubjectsTextBox = New System.Windows.Forms.TextBox()
         Me.TotalFixationsTextBox = New System.Windows.Forms.TextBox()
         Me.StimulusImageTextBox = New System.Windows.Forms.TextBox()
         Me.LoadStimulusImageButton = New System.Windows.Forms.Button()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
-        Me.HeatmapsSaveFileDialog = New System.Windows.Forms.SaveFileDialog()
-        Me.HeatmapsOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
-        Me.HeatmapMenuStrip.SuspendLayout()
+        Me.MainSaveFileDialog = New System.Windows.Forms.SaveFileDialog()
+        Me.MainOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
+        Me.ClearFixationLocationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MainMenuStrip.SuspendLayout()
         CType(Me.HeatmapPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
-        Me.GroupBox2.SuspendLayout()
+        Me.HeatmapGroupBox.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.SuspendLayout()
         '
-        'HeatmapMenuStrip
+        'MainMenuStrip
         '
-        Me.HeatmapMenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem})
-        Me.HeatmapMenuStrip.Location = New System.Drawing.Point(0, 0)
-        Me.HeatmapMenuStrip.Name = "HeatmapMenuStrip"
-        Me.HeatmapMenuStrip.Size = New System.Drawing.Size(931, 28)
-        Me.HeatmapMenuStrip.TabIndex = 0
-        Me.HeatmapMenuStrip.Text = "MenuStrip1"
+        Me.MainMenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem})
+        Me.MainMenuStrip.Location = New System.Drawing.Point(0, 0)
+        Me.MainMenuStrip.Name = "MainMenuStrip"
+        Me.MainMenuStrip.Size = New System.Drawing.Size(931, 28)
+        Me.MainMenuStrip.TabIndex = 0
+        Me.MainMenuStrip.Text = "MenuStrip1"
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ImportFixationLocationsToolStripMenuItem, Me.ExportHeatmapsToolStripMenuItem, Me.ToolStripSeparator1, Me.CloseToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ClearFixationLocationsToolStripMenuItem, Me.ImportFixationLocationsToolStripMenuItem, Me.ExportHeatmapsToolStripMenuItem, Me.ToolStripSeparator1, Me.CloseToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(44, 24)
         Me.FileToolStripMenuItem.Text = "&File"
@@ -140,8 +141,8 @@ Partial Class HeatmapForm
         Me.StatusTextBox.Location = New System.Drawing.Point(6, 21)
         Me.StatusTextBox.Name = "StatusTextBox"
         Me.StatusTextBox.ReadOnly = True
-        Me.StatusTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical
-        Me.StatusTextBox.Size = New System.Drawing.Size(896, 73)
+        Me.StatusTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth
+        Me.StatusTextBox.Size = New System.Drawing.Size(896, 111)
         Me.StatusTextBox.TabIndex = 7
         Me.StatusTextBox.Text = ""
         Me.StatusTextBox.WordWrap = False
@@ -156,22 +157,23 @@ Partial Class HeatmapForm
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Stimulus Segments"
         '
-        'GroupBox2
+        'HeatmapGroupBox
         '
-        Me.GroupBox2.Controls.Add(Me.LoadStimulusImageButton)
-        Me.GroupBox2.Controls.Add(Me.StimulusImageTextBox)
-        Me.GroupBox2.Controls.Add(Me.TotalFixationsTextBox)
-        Me.GroupBox2.Controls.Add(Me.NumberOfSubjectsTextBox)
-        Me.GroupBox2.Controls.Add(Me.HeatmapPictureBox)
-        Me.GroupBox2.Controls.Add(Me.Label1)
-        Me.GroupBox2.Controls.Add(Me.Label2)
-        Me.GroupBox2.Controls.Add(Me.Label3)
-        Me.GroupBox2.Location = New System.Drawing.Point(360, 31)
-        Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(560, 214)
-        Me.GroupBox2.TabIndex = 9
-        Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "Heatmap"
+        Me.HeatmapGroupBox.Controls.Add(Me.LoadStimulusImageButton)
+        Me.HeatmapGroupBox.Controls.Add(Me.StimulusImageTextBox)
+        Me.HeatmapGroupBox.Controls.Add(Me.TotalFixationsTextBox)
+        Me.HeatmapGroupBox.Controls.Add(Me.NumberOfSubjectsTextBox)
+        Me.HeatmapGroupBox.Controls.Add(Me.HeatmapPictureBox)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label1)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label2)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label3)
+        Me.HeatmapGroupBox.Enabled = False
+        Me.HeatmapGroupBox.Location = New System.Drawing.Point(360, 31)
+        Me.HeatmapGroupBox.Name = "HeatmapGroupBox"
+        Me.HeatmapGroupBox.Size = New System.Drawing.Size(560, 214)
+        Me.HeatmapGroupBox.TabIndex = 9
+        Me.HeatmapGroupBox.TabStop = False
+        Me.HeatmapGroupBox.Text = "Stimulus Heatmap"
         '
         'NumberOfSubjectsTextBox
         '
@@ -211,39 +213,46 @@ Partial Class HeatmapForm
         Me.GroupBox3.Controls.Add(Me.StatusTextBox)
         Me.GroupBox3.Location = New System.Drawing.Point(12, 251)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(908, 100)
+        Me.GroupBox3.Size = New System.Drawing.Size(908, 138)
         Me.GroupBox3.TabIndex = 10
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Status"
+        '
+        'ClearFixationLocationsToolStripMenuItem
+        '
+        Me.ClearFixationLocationsToolStripMenuItem.Enabled = False
+        Me.ClearFixationLocationsToolStripMenuItem.Name = "ClearFixationLocationsToolStripMenuItem"
+        Me.ClearFixationLocationsToolStripMenuItem.Size = New System.Drawing.Size(246, 24)
+        Me.ClearFixationLocationsToolStripMenuItem.Text = "C&lear Fixation Locations"
         '
         'HeatmapForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(931, 361)
+        Me.ClientSize = New System.Drawing.Size(931, 401)
         Me.Controls.Add(Me.GroupBox3)
-        Me.Controls.Add(Me.GroupBox2)
+        Me.Controls.Add(Me.HeatmapGroupBox)
         Me.Controls.Add(Me.GroupBox1)
-        Me.Controls.Add(Me.HeatmapMenuStrip)
+        Me.Controls.Add(Me.MainMenuStrip)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
-        Me.MainMenuStrip = Me.HeatmapMenuStrip
+        Me.MainMenuStrip = Me.MainMenuStrip
         Me.MaximizeBox = False
         Me.Name = "HeatmapForm"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Generate Heatmaps"
-        Me.HeatmapMenuStrip.ResumeLayout(False)
-        Me.HeatmapMenuStrip.PerformLayout()
+        Me.MainMenuStrip.ResumeLayout(False)
+        Me.MainMenuStrip.PerformLayout()
         CType(Me.HeatmapPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox1.ResumeLayout(False)
-        Me.GroupBox2.ResumeLayout(False)
-        Me.GroupBox2.PerformLayout()
+        Me.HeatmapGroupBox.ResumeLayout(False)
+        Me.HeatmapGroupBox.PerformLayout()
         Me.GroupBox3.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents HeatmapMenuStrip As System.Windows.Forms.MenuStrip
+    Friend WithEvents MainMenuStrip As System.Windows.Forms.MenuStrip
     Friend WithEvents FileToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ImportFixationLocationsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
@@ -256,12 +265,13 @@ Partial Class HeatmapForm
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents StatusTextBox As System.Windows.Forms.RichTextBox
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
-    Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
+    Friend WithEvents HeatmapGroupBox As System.Windows.Forms.GroupBox
     Friend WithEvents LoadStimulusImageButton As System.Windows.Forms.Button
     Friend WithEvents StimulusImageTextBox As System.Windows.Forms.TextBox
     Friend WithEvents TotalFixationsTextBox As System.Windows.Forms.TextBox
     Friend WithEvents NumberOfSubjectsTextBox As System.Windows.Forms.TextBox
     Friend WithEvents GroupBox3 As System.Windows.Forms.GroupBox
-    Friend WithEvents HeatmapsSaveFileDialog As System.Windows.Forms.SaveFileDialog
-    Friend WithEvents HeatmapsOpenFileDialog As System.Windows.Forms.OpenFileDialog
+    Friend WithEvents MainSaveFileDialog As System.Windows.Forms.SaveFileDialog
+    Friend WithEvents MainOpenFileDialog As System.Windows.Forms.OpenFileDialog
+    Friend WithEvents ClearFixationLocationsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class
