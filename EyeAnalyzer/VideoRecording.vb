@@ -8,6 +8,8 @@ Public Class VideoRecording
     Private _width As Integer
     Private _height As Integer
 
+    Dim aviFile As New DexterLib.MediaDet
+
     ''' <summary>
     ''' Gets the length of the video in milliseconds.
     ''' </summary>
@@ -56,9 +58,12 @@ Public Class VideoRecording
     ''' </summary>
     Private Sub New(ByVal filename As String)
 
+        ' Load video and set values
+        aviFile.Filename = filename
+        _lengthMs = aviFile.StreamLength
+        _timeBetweenFramesMs = aviFile.FrameRate
+
         ' TODO load video and set these values
-        _lengthMs = 666666
-        _timeBetweenFramesMs = 10
         _width = 400
         _height = 700
     End Sub
@@ -80,6 +85,11 @@ Public Class VideoRecording
     Public Function drawFrameAtPosition(ByVal positionMs As ULong, ByVal width As Integer, ByVal height As Integer) As Bitmap
         Dim b As Bitmap = New Bitmap(width, height, Imaging.PixelFormat.Format32bppPArgb)
         Using g = Graphics.FromImage(b)
+
+            'get frame at positionMs
+            aviFile.CurrentStream = positionMs * _timeBetweenFramesMs
+
+            ' TODO figure out how to turn frame at CurrentStream into bitmap
 
             ' TODO scale and render the specified frame
             g.Clear(Color.Aquamarine)
