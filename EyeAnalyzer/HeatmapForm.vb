@@ -3,12 +3,6 @@
 ''' </summary>
 Public Class HeatmapForm
 
-    Private Structure HeatmapFixationPoint
-        Public x As Integer
-        Public y As Integer
-        Public strength As Single
-    End Structure
-
     Private _heatmaps As New List(Of Heatmap)
     Private _heatmapNameDictionary As New Dictionary(Of String, Heatmap)
     Private _lastDirImport As String = Nothing
@@ -42,7 +36,7 @@ Public Class HeatmapForm
     Private Sub importFixationLocations(ByVal filenames As String())
         For Each filename As String In filenames
             Dim fixationCount As Integer = 0
-            Dim fixations As New Stack(Of List(Of HeatmapFixationPoint))
+            Dim fixations As New Stack(Of List(Of Heatmap.FixationPoint))
             Dim stimulusNames As New Stack(Of String)
             Dim stimulusDurations As New Stack(Of ULong)
 
@@ -55,7 +49,7 @@ Public Class HeatmapForm
                         If xStr Is Nothing Or yStr Is Nothing Or durationStr Is Nothing Then
                             Throw New Exception("Bad format.")
                         End If
-                        Dim point As New HeatmapFixationPoint
+                        Dim point As New Heatmap.FixationPoint
                         point.x = Integer.Parse(xStr)
                         point.y = Integer.Parse(yStr)
                         point.strength = Single.Parse(durationStr) / stimulusDurations.Peek
@@ -70,10 +64,25 @@ Public Class HeatmapForm
                         End If
                         stimulusDurations.Push(ULong.Parse(durationStr))
                         stimulusNames.Push(name)
-                        fixations.Push(New List(Of HeatmapFixationPoint))
+                        fixations.Push(New List(Of Heatmap.FixationPoint))
                     End If
                 End While
             End Using
+
+            stimulusDurations.Clear()
+            While fixations.Count > 0
+                Dim fixationsList As List(Of Heatmap.FixationPoint) = fixations.Pop()
+                Dim stimulusName As String = stimulusNames.Pop()
+                Dim heatmap As Heatmap
+
+                If _heatmapNameDictionary.ContainsKey(stimulusName) Then
+                    heatmap = _heatmapNameDictionary.Item(stimulusName)
+                Else
+                    heatmap = New Heatmap()
+                    _heatmapNameDictionary.Add(stimulusName, heatmap)
+                End If
+                heatmap.addSubjectFixations(fixationsList)
+            End While
 
             writeStatusMessage("Imported " & fixationCount & " total fixations on " & stimulusNames.Count & " stimuli from " & filename & ".")
         Next
