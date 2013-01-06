@@ -3,9 +3,10 @@
 ''' </summary>
 Public Class HeatmapForm
 
-    Private _heatmaps As New List(Of Heatmap)
     Private _heatmapNameDictionary As New Dictionary(Of String, Heatmap)
     Private _lastDirImport As String = Nothing
+    Private _lastDirStimulusImage As String = Nothing
+    Private _clearStatusOnNextUpdate As Boolean
 
     Private Sub CloseToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CloseToolStripMenuItem.Click
         Close()
@@ -13,6 +14,7 @@ Public Class HeatmapForm
 
     Private Sub HeatmapForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         writeStatusMessage("No fixations loaded.")
+        _clearStatusOnNextUpdate = True
     End Sub
 
     Private Sub ImportFixationLocationsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ImportFixationLocationsToolStripMenuItem.Click
@@ -24,7 +26,7 @@ Public Class HeatmapForm
         MainOpenFileDialog.FileName = ""
         MainOpenFileDialog.Filter = "XML (*.xml)|*.xml"
         If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
-            _lastDirImport = MainOpenFileDialog.FileName.Substring(0, MainSaveFileDialog.FileName.LastIndexOf("\") + 1)
+            _lastDirImport = MainOpenFileDialog.FileName.Substring(0, MainOpenFileDialog.FileName.LastIndexOf("\") + 1)
             Try
                 importFixationLocations(MainOpenFileDialog.FileNames)
             Catch ex As Exception
@@ -36,6 +38,7 @@ Public Class HeatmapForm
     Private Sub importFixationLocations(ByVal filenames As String())
         For Each filename As String In filenames
             Dim fixationCount As Integer = 0
+            Dim stimulusCount As Integer = 0
             Dim fixations As New Stack(Of List(Of Heatmap.FixationPoint))
             Dim stimulusNames As New Stack(Of String)
             Dim stimulusDurations As New Stack(Of ULong)
@@ -78,17 +81,39 @@ Public Class HeatmapForm
                 If _heatmapNameDictionary.ContainsKey(stimulusName) Then
                     heatmap = _heatmapNameDictionary.Item(stimulusName)
                 Else
-                    heatmap = New Heatmap()
+                    heatmap = New Heatmap(stimulusName)
                     _heatmapNameDictionary.Add(stimulusName, heatmap)
+                    HeatmapsListBox.Items.Add(heatmap)
                 End If
-                heatmap.addSubjectFixations(fixationsList)
+                If fixationsList.Count > 0 Then
+                    heatmap.addSubjectFixations(fixationsList)
+                    stimulusCount += 1
+                End If
             End While
 
-            writeStatusMessage("Imported " & fixationCount & " total fixations on " & stimulusNames.Count & " stimuli from " & filename & ".")
+            If HeatmapsListBox.SelectedItem IsNot Nothing Then
+                Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+                NumberOfSubjectsTextBox.Text = heatmap.SubjectCount
+                TotalFixationsTextBox.Text = heatmap.FixationCount
+                StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+            End If
+
+            HeatmapsListBox.Refresh()
+            writeStatusMessage("Imported " & fixationCount & " total fixations on " & stimulusCount & " stimuli from " & filename & ".")
+            ClearFixationLocationsToolStripMenuItem.Enabled = (fixationCount > 0)
+            ExportHeatmapsToolStripMenuItem.Enabled = (fixationCount > 0)
+            SelectAllButton.Enabled = (fixationCount > 0)
+            SelectNoneButton.Enabled = (fixationCount > 0)
         Next
     End Sub
 
     Private Sub writeStatusMessage(ByVal msg As String)
+        If _clearStatusOnNextUpdate Then
+            clearStatus()
+            _clearStatusOnNextUpdate = False
+        End If
         Dim b As System.Text.StringBuilder = New System.Text.StringBuilder(StatusTextBox.Text)
         b.AppendLine(msg)
         StatusTextBox.Text = b.ToString()
@@ -96,5 +121,97 @@ Public Class HeatmapForm
 
     Private Sub clearStatus()
         StatusTextBox.Text = Nothing
+    End Sub
+
+    Private Sub ClearFixationLocationsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ClearFixationLocationsToolStripMenuItem.Click
+
+        If MessageBox.Show("Are you sure you would like to clear all fixations?", "Clear fixations", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.No Then
+            Return
+        End If
+
+        SelectAllButton.Enabled = False
+        SelectNoneButton.Enabled = False
+        HeatmapsListBox.ClearSelected()
+        HeatmapsListBox.Items.Clear()
+        HeatmapsListBox.Refresh()
+        _heatmapNameDictionary.Clear()
+        ClearFixationLocationsToolStripMenuItem.Enabled = False
+        ExportHeatmapsToolStripMenuItem.Enabled = False
+        clearStatus()
+        writeStatusMessage("Cleared all fixations.")
+        _clearStatusOnNextUpdate = True
+    End Sub
+
+    Private Sub HeatmapsListBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HeatmapsListBox.SelectedIndexChanged
+        If HeatmapsListBox.SelectedItem IsNot Nothing Then
+            Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+            HeatmapGroupBox.Enabled = True
+            NumberOfSubjectsTextBox.Text = heatmap.SubjectCount
+            TotalFixationsTextBox.Text = heatmap.FixationCount
+            StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+            HeatmapPictureBox.Image = heatmap.Image
+        Else
+            NumberOfSubjectsTextBox.Text = ""
+            TotalFixationsTextBox.Text = ""
+            StimulusImageTextBox.Text = ""
+            HeatmapPictureBox.Image = Nothing
+            HeatmapGroupBox.Enabled = False
+        End If
+    End Sub
+
+    Private Sub ClearStimulusImageButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ClearStimulusImageButton.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        heatmap.clearStimulusImage()
+        StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+        HeatmapPictureBox.Image = Nothing
+        HeatmapPictureBox.Image = heatmap.Image
+        HeatmapsListBox.Refresh()
+    End Sub
+
+    Private Sub LoadStimulusImageButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LoadStimulusImageButton.Click
+        If _lastDirStimulusImage IsNot Nothing Then
+            MainOpenFileDialog.InitialDirectory = _lastDirStimulusImage
+        End If
+        MainOpenFileDialog.Multiselect = False
+        MainOpenFileDialog.Title = "Load stimulus image"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG;*.TIFF)|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG;*.TIFF"
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            _lastDirStimulusImage = MainOpenFileDialog.FileName.Substring(0, MainOpenFileDialog.FileName.LastIndexOf("\") + 1)
+            Try
+                Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+                heatmap.loadStimulusImage(MainOpenFileDialog.FileName)
+                StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                HeatmapsListBox.Refresh()
+            Catch ex As Exception
+                MessageBox.Show("An error occurred while loading the stimulus image.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+    End Sub
+
+    Private Sub ExportHeatmapsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExportHeatmapsToolStripMenuItem.Click
+        For Each heatmap As Heatmap In HeatmapsListBox.CheckedItems
+            MainSaveFileDialog.Title = "Save " & heatmap.StimulusName & " heatmap"
+            MainSaveFileDialog.FileName = heatmap.StimulusName & "-Heatmap"
+            MainSaveFileDialog.Filter = "PNG (*.png)|*.png"
+            If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.Image.Save(MainSaveFileDialog.FileName, Imaging.ImageFormat.Png)
+                writeStatusMessage("Exported heatmap image for " & heatmap.StimulusName & " to " & MainSaveFileDialog.FileName & ".")
+            End If
+        Next
+    End Sub
+
+    Private Sub SelectAllButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectAllButton.Click
+        For i As Integer = 0 To HeatmapsListBox.Items.Count - 1
+            HeatmapsListBox.SetItemChecked(i, True)
+        Next
+    End Sub
+
+    Private Sub SelectNoneButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectNoneButton.Click
+        For i As Integer = 0 To HeatmapsListBox.Items.Count - 1
+            HeatmapsListBox.SetItemChecked(i, False)
+        Next
     End Sub
 End Class

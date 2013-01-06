@@ -24,26 +24,29 @@ Partial Class HeatmapForm
     Private Sub InitializeComponent()
         Me.MainMenuStrip = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ClearFixationLocationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImportFixationLocationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ExportHeatmapsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.CloseToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HeatmapPictureBox = New System.Windows.Forms.PictureBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
-        Me.ExportHeatmapsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SegmentsListBox = New System.Windows.Forms.CheckedListBox()
+        Me.HeatmapsListBox = New System.Windows.Forms.CheckedListBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.StatusTextBox = New System.Windows.Forms.RichTextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.HeatmapGroupBox = New System.Windows.Forms.GroupBox()
-        Me.NumberOfSubjectsTextBox = New System.Windows.Forms.TextBox()
-        Me.TotalFixationsTextBox = New System.Windows.Forms.TextBox()
-        Me.StimulusImageTextBox = New System.Windows.Forms.TextBox()
         Me.LoadStimulusImageButton = New System.Windows.Forms.Button()
+        Me.StimulusImageTextBox = New System.Windows.Forms.TextBox()
+        Me.TotalFixationsTextBox = New System.Windows.Forms.TextBox()
+        Me.NumberOfSubjectsTextBox = New System.Windows.Forms.TextBox()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.MainSaveFileDialog = New System.Windows.Forms.SaveFileDialog()
         Me.MainOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
-        Me.ClearFixationLocationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ClearStimulusImageButton = New System.Windows.Forms.Button()
+        Me.SelectAllButton = New System.Windows.Forms.Button()
+        Me.SelectNoneButton = New System.Windows.Forms.Button()
         Me.MainMenuStrip.SuspendLayout()
         CType(Me.HeatmapPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
@@ -67,11 +70,25 @@ Partial Class HeatmapForm
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(44, 24)
         Me.FileToolStripMenuItem.Text = "&File"
         '
+        'ClearFixationLocationsToolStripMenuItem
+        '
+        Me.ClearFixationLocationsToolStripMenuItem.Enabled = False
+        Me.ClearFixationLocationsToolStripMenuItem.Name = "ClearFixationLocationsToolStripMenuItem"
+        Me.ClearFixationLocationsToolStripMenuItem.Size = New System.Drawing.Size(246, 24)
+        Me.ClearFixationLocationsToolStripMenuItem.Text = "C&lear Fixation Locations"
+        '
         'ImportFixationLocationsToolStripMenuItem
         '
         Me.ImportFixationLocationsToolStripMenuItem.Name = "ImportFixationLocationsToolStripMenuItem"
         Me.ImportFixationLocationsToolStripMenuItem.Size = New System.Drawing.Size(246, 24)
         Me.ImportFixationLocationsToolStripMenuItem.Text = "&Import Fixation Locations"
+        '
+        'ExportHeatmapsToolStripMenuItem
+        '
+        Me.ExportHeatmapsToolStripMenuItem.Enabled = False
+        Me.ExportHeatmapsToolStripMenuItem.Name = "ExportHeatmapsToolStripMenuItem"
+        Me.ExportHeatmapsToolStripMenuItem.Size = New System.Drawing.Size(246, 24)
+        Me.ExportHeatmapsToolStripMenuItem.Text = "&Export Heatmap Images"
         '
         'ToolStripSeparator1
         '
@@ -91,6 +108,7 @@ Partial Class HeatmapForm
         Me.HeatmapPictureBox.Location = New System.Drawing.Point(6, 20)
         Me.HeatmapPictureBox.Name = "HeatmapPictureBox"
         Me.HeatmapPictureBox.Size = New System.Drawing.Size(320, 180)
+        Me.HeatmapPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.HeatmapPictureBox.TabIndex = 2
         Me.HeatmapPictureBox.TabStop = False
         '
@@ -112,19 +130,13 @@ Partial Class HeatmapForm
         Me.Label2.TabIndex = 4
         Me.Label2.Text = "Total fixation count:"
         '
-        'ExportHeatmapsToolStripMenuItem
+        'HeatmapsListBox
         '
-        Me.ExportHeatmapsToolStripMenuItem.Name = "ExportHeatmapsToolStripMenuItem"
-        Me.ExportHeatmapsToolStripMenuItem.Size = New System.Drawing.Size(246, 24)
-        Me.ExportHeatmapsToolStripMenuItem.Text = "&Export Heatmaps"
-        '
-        'SegmentsListBox
-        '
-        Me.SegmentsListBox.FormattingEnabled = True
-        Me.SegmentsListBox.Location = New System.Drawing.Point(6, 20)
-        Me.SegmentsListBox.Name = "SegmentsListBox"
-        Me.SegmentsListBox.Size = New System.Drawing.Size(320, 174)
-        Me.SegmentsListBox.TabIndex = 5
+        Me.HeatmapsListBox.FormattingEnabled = True
+        Me.HeatmapsListBox.Location = New System.Drawing.Point(6, 20)
+        Me.HeatmapsListBox.Name = "HeatmapsListBox"
+        Me.HeatmapsListBox.Size = New System.Drawing.Size(320, 140)
+        Me.HeatmapsListBox.TabIndex = 5
         '
         'Label3
         '
@@ -149,7 +161,9 @@ Partial Class HeatmapForm
         '
         'GroupBox1
         '
-        Me.GroupBox1.Controls.Add(Me.SegmentsListBox)
+        Me.GroupBox1.Controls.Add(Me.SelectNoneButton)
+        Me.GroupBox1.Controls.Add(Me.SelectAllButton)
+        Me.GroupBox1.Controls.Add(Me.HeatmapsListBox)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 31)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(342, 214)
@@ -159,6 +173,7 @@ Partial Class HeatmapForm
         '
         'HeatmapGroupBox
         '
+        Me.HeatmapGroupBox.Controls.Add(Me.ClearStimulusImageButton)
         Me.HeatmapGroupBox.Controls.Add(Me.LoadStimulusImageButton)
         Me.HeatmapGroupBox.Controls.Add(Me.StimulusImageTextBox)
         Me.HeatmapGroupBox.Controls.Add(Me.TotalFixationsTextBox)
@@ -175,13 +190,22 @@ Partial Class HeatmapForm
         Me.HeatmapGroupBox.TabStop = False
         Me.HeatmapGroupBox.Text = "Stimulus Heatmap"
         '
-        'NumberOfSubjectsTextBox
+        'LoadStimulusImageButton
         '
-        Me.NumberOfSubjectsTextBox.Enabled = False
-        Me.NumberOfSubjectsTextBox.Location = New System.Drawing.Point(484, 21)
-        Me.NumberOfSubjectsTextBox.Name = "NumberOfSubjectsTextBox"
-        Me.NumberOfSubjectsTextBox.Size = New System.Drawing.Size(60, 22)
-        Me.NumberOfSubjectsTextBox.TabIndex = 7
+        Me.LoadStimulusImageButton.Location = New System.Drawing.Point(487, 177)
+        Me.LoadStimulusImageButton.Name = "LoadStimulusImageButton"
+        Me.LoadStimulusImageButton.Size = New System.Drawing.Size(30, 23)
+        Me.LoadStimulusImageButton.TabIndex = 8
+        Me.LoadStimulusImageButton.Text = "..."
+        Me.LoadStimulusImageButton.UseVisualStyleBackColor = True
+        '
+        'StimulusImageTextBox
+        '
+        Me.StimulusImageTextBox.Enabled = False
+        Me.StimulusImageTextBox.Location = New System.Drawing.Point(347, 178)
+        Me.StimulusImageTextBox.Name = "StimulusImageTextBox"
+        Me.StimulusImageTextBox.Size = New System.Drawing.Size(134, 22)
+        Me.StimulusImageTextBox.TabIndex = 7
         '
         'TotalFixationsTextBox
         '
@@ -191,22 +215,13 @@ Partial Class HeatmapForm
         Me.TotalFixationsTextBox.Size = New System.Drawing.Size(60, 22)
         Me.TotalFixationsTextBox.TabIndex = 7
         '
-        'StimulusImageTextBox
+        'NumberOfSubjectsTextBox
         '
-        Me.StimulusImageTextBox.Enabled = False
-        Me.StimulusImageTextBox.Location = New System.Drawing.Point(347, 178)
-        Me.StimulusImageTextBox.Name = "StimulusImageTextBox"
-        Me.StimulusImageTextBox.Size = New System.Drawing.Size(161, 22)
-        Me.StimulusImageTextBox.TabIndex = 7
-        '
-        'LoadStimulusImageButton
-        '
-        Me.LoadStimulusImageButton.Location = New System.Drawing.Point(514, 177)
-        Me.LoadStimulusImageButton.Name = "LoadStimulusImageButton"
-        Me.LoadStimulusImageButton.Size = New System.Drawing.Size(30, 23)
-        Me.LoadStimulusImageButton.TabIndex = 8
-        Me.LoadStimulusImageButton.Text = "..."
-        Me.LoadStimulusImageButton.UseVisualStyleBackColor = True
+        Me.NumberOfSubjectsTextBox.Enabled = False
+        Me.NumberOfSubjectsTextBox.Location = New System.Drawing.Point(484, 21)
+        Me.NumberOfSubjectsTextBox.Name = "NumberOfSubjectsTextBox"
+        Me.NumberOfSubjectsTextBox.Size = New System.Drawing.Size(60, 22)
+        Me.NumberOfSubjectsTextBox.TabIndex = 7
         '
         'GroupBox3
         '
@@ -218,12 +233,34 @@ Partial Class HeatmapForm
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Status"
         '
-        'ClearFixationLocationsToolStripMenuItem
+        'ClearStimulusImageButton
         '
-        Me.ClearFixationLocationsToolStripMenuItem.Enabled = False
-        Me.ClearFixationLocationsToolStripMenuItem.Name = "ClearFixationLocationsToolStripMenuItem"
-        Me.ClearFixationLocationsToolStripMenuItem.Size = New System.Drawing.Size(246, 24)
-        Me.ClearFixationLocationsToolStripMenuItem.Text = "C&lear Fixation Locations"
+        Me.ClearStimulusImageButton.Location = New System.Drawing.Point(523, 177)
+        Me.ClearStimulusImageButton.Name = "ClearStimulusImageButton"
+        Me.ClearStimulusImageButton.Size = New System.Drawing.Size(21, 23)
+        Me.ClearStimulusImageButton.TabIndex = 8
+        Me.ClearStimulusImageButton.Text = "X"
+        Me.ClearStimulusImageButton.UseVisualStyleBackColor = True
+        '
+        'SelectAllButton
+        '
+        Me.SelectAllButton.Enabled = False
+        Me.SelectAllButton.Location = New System.Drawing.Point(6, 173)
+        Me.SelectAllButton.Name = "SelectAllButton"
+        Me.SelectAllButton.Size = New System.Drawing.Size(115, 32)
+        Me.SelectAllButton.TabIndex = 6
+        Me.SelectAllButton.Text = "Select All"
+        Me.SelectAllButton.UseVisualStyleBackColor = True
+        '
+        'SelectNoneButton
+        '
+        Me.SelectNoneButton.Enabled = False
+        Me.SelectNoneButton.Location = New System.Drawing.Point(127, 172)
+        Me.SelectNoneButton.Name = "SelectNoneButton"
+        Me.SelectNoneButton.Size = New System.Drawing.Size(115, 32)
+        Me.SelectNoneButton.TabIndex = 6
+        Me.SelectNoneButton.Text = "Select None"
+        Me.SelectNoneButton.UseVisualStyleBackColor = True
         '
         'HeatmapForm
         '
@@ -235,7 +272,6 @@ Partial Class HeatmapForm
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.MainMenuStrip)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
-        Me.MainMenuStrip = Me.MainMenuStrip
         Me.MaximizeBox = False
         Me.Name = "HeatmapForm"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
@@ -261,7 +297,7 @@ Partial Class HeatmapForm
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents ExportHeatmapsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents SegmentsListBox As System.Windows.Forms.CheckedListBox
+    Friend WithEvents HeatmapsListBox As System.Windows.Forms.CheckedListBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents StatusTextBox As System.Windows.Forms.RichTextBox
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
@@ -274,4 +310,7 @@ Partial Class HeatmapForm
     Friend WithEvents MainSaveFileDialog As System.Windows.Forms.SaveFileDialog
     Friend WithEvents MainOpenFileDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents ClearFixationLocationsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ClearStimulusImageButton As System.Windows.Forms.Button
+    Friend WithEvents SelectNoneButton As System.Windows.Forms.Button
+    Friend WithEvents SelectAllButton As System.Windows.Forms.Button
 End Class
