@@ -3,6 +3,12 @@
 ''' </summary>
 Public Class HeatmapForm
 
+    Private _defaultRadius As Integer = 6
+    Private _defaultOpacity As Integer = 255
+    Private _defaultLowColor As Color = Color.Green
+    Private _defaultMidColor As Color = Color.Yellow
+    Private _defaultHighColor As Color = Color.Red
+
     Private _heatmapNameDictionary As New Dictionary(Of String, Heatmap)
     Private _lastDirImport As String = Nothing
     Private _lastDirStimulusImage As String = Nothing
@@ -72,7 +78,6 @@ Public Class HeatmapForm
                 End While
             End Using
 
-            stimulusDurations.Clear()
             While fixations.Count > 0
                 Dim fixationsList As List(Of Heatmap.FixationPoint) = fixations.Pop()
                 Dim stimulusName As String = stimulusNames.Pop()
@@ -81,7 +86,8 @@ Public Class HeatmapForm
                 If _heatmapNameDictionary.ContainsKey(stimulusName) Then
                     heatmap = _heatmapNameDictionary.Item(stimulusName)
                 Else
-                    heatmap = New Heatmap(stimulusName)
+                    heatmap = New Heatmap(stimulusName, _defaultRadius, _defaultOpacity, _defaultLowColor, _
+                                          _defaultMidColor, _defaultHighColor)
                     _heatmapNameDictionary.Add(stimulusName, heatmap)
                     HeatmapsListBox.Items.Add(heatmap)
                 End If
@@ -90,6 +96,7 @@ Public Class HeatmapForm
                     stimulusCount += 1
                 End If
             End While
+            stimulusDurations.Clear()
 
             If HeatmapsListBox.SelectedItem IsNot Nothing Then
                 Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
@@ -150,7 +157,17 @@ Public Class HeatmapForm
             TotalFixationsTextBox.Text = heatmap.FixationCount
             StimulusImageTextBox.Text = heatmap.StimulusImageFilename
             HeatmapPictureBox.Image = heatmap.Image
+            LowFixationsColorLabel.BackColor = heatmap.LowFixationsColor
+            MidFixationsColorLabel.BackColor = heatmap.MidFixationsColor
+            HighFixationsColorLabel.BackColor = heatmap.HighFixationsColor
+            RadiusNumericUpDown.Value = heatmap.FixationRadius
+            AlphaTrackBar.Value = heatmap.FixationAlpha
         Else
+            LowFixationsColorLabel.BackColor = Color.Black
+            MidFixationsColorLabel.BackColor = Color.Black
+            HighFixationsColorLabel.BackColor = Color.Black
+            RadiusNumericUpDown.Value = 2
+            AlphaTrackBar.Value = 255
             NumberOfSubjectsTextBox.Text = ""
             TotalFixationsTextBox.Text = ""
             StimulusImageTextBox.Text = ""
@@ -213,5 +230,62 @@ Public Class HeatmapForm
         For i As Integer = 0 To HeatmapsListBox.Items.Count - 1
             HeatmapsListBox.SetItemChecked(i, False)
         Next
+    End Sub
+
+    Private Sub AlphaTrackBar_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AlphaTrackBar.Scroll
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            heatmap.FixationAlpha = AlphaTrackBar.Value
+            HeatmapPictureBox.Image = Nothing
+            HeatmapPictureBox.Image = heatmap.Image
+        End If
+    End Sub
+
+    Private Sub RadiusNumericUpDown_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RadiusNumericUpDown.ValueChanged
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            heatmap.FixationRadius = RadiusNumericUpDown.Value
+            HeatmapPictureBox.Image = Nothing
+            HeatmapPictureBox.Image = heatmap.Image
+        End If
+    End Sub
+
+    Private Sub LowFixationsColorLabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LowFixationsColorLabel.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            MainColorDialog.Color = LowFixationsColorLabel.BackColor
+            If MainColorDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.LowFixationsColor = MainColorDialog.Color
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                LowFixationsColorLabel.BackColor = MainColorDialog.Color
+            End If
+        End If
+    End Sub
+
+    Private Sub MidFixationsColorLabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MidFixationsColorLabel.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            MainColorDialog.Color = MidFixationsColorLabel.BackColor
+            If MainColorDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.MidFixationsColor = MainColorDialog.Color
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                MidFixationsColorLabel.BackColor = MainColorDialog.Color
+            End If
+        End If
+    End Sub
+
+    Private Sub HighFixationsColorLabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HighFixationsColorLabel.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            MainColorDialog.Color = HighFixationsColorLabel.BackColor
+            If MainColorDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.HighFixationsColor = MainColorDialog.Color
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                HighFixationsColorLabel.BackColor = MainColorDialog.Color
+            End If
+        End If
     End Sub
 End Class

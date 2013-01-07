@@ -55,7 +55,8 @@ Public Class MainForm
     End Sub
 
     Private Sub GenerateNewHeatmapToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GenerateNewHeatmapToolStripMenuItem.Click
-        HeatmapForm.Show(Me)
+        Dim form As New HeatmapForm()
+        form.Show(Me)
     End Sub
 
     Private Sub MainForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load

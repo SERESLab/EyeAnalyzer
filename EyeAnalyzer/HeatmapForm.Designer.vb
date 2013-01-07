@@ -36,7 +36,20 @@ Partial Class HeatmapForm
         Me.Label3 = New System.Windows.Forms.Label()
         Me.StatusTextBox = New System.Windows.Forms.RichTextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.SelectNoneButton = New System.Windows.Forms.Button()
+        Me.SelectAllButton = New System.Windows.Forms.Button()
         Me.HeatmapGroupBox = New System.Windows.Forms.GroupBox()
+        Me.AlphaTrackBar = New System.Windows.Forms.TrackBar()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.RadiusNumericUpDown = New System.Windows.Forms.NumericUpDown()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.HighFixationsColorLabel = New System.Windows.Forms.Label()
+        Me.MidFixationsColorLabel = New System.Windows.Forms.Label()
+        Me.LowFixationsColorLabel = New System.Windows.Forms.Label()
+        Me.ClearStimulusImageButton = New System.Windows.Forms.Button()
         Me.LoadStimulusImageButton = New System.Windows.Forms.Button()
         Me.StimulusImageTextBox = New System.Windows.Forms.TextBox()
         Me.TotalFixationsTextBox = New System.Windows.Forms.TextBox()
@@ -44,13 +57,13 @@ Partial Class HeatmapForm
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.MainSaveFileDialog = New System.Windows.Forms.SaveFileDialog()
         Me.MainOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
-        Me.ClearStimulusImageButton = New System.Windows.Forms.Button()
-        Me.SelectAllButton = New System.Windows.Forms.Button()
-        Me.SelectNoneButton = New System.Windows.Forms.Button()
+        Me.MainColorDialog = New System.Windows.Forms.ColorDialog()
         Me.MainMenuStrip.SuspendLayout()
         CType(Me.HeatmapPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         Me.HeatmapGroupBox.SuspendLayout()
+        CType(Me.AlphaTrackBar, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.RadiusNumericUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox3.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -59,7 +72,7 @@ Partial Class HeatmapForm
         Me.MainMenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem})
         Me.MainMenuStrip.Location = New System.Drawing.Point(0, 0)
         Me.MainMenuStrip.Name = "MainMenuStrip"
-        Me.MainMenuStrip.Size = New System.Drawing.Size(931, 28)
+        Me.MainMenuStrip.Size = New System.Drawing.Size(1094, 28)
         Me.MainMenuStrip.TabIndex = 0
         Me.MainMenuStrip.Text = "MenuStrip1"
         '
@@ -104,10 +117,10 @@ Partial Class HeatmapForm
         'HeatmapPictureBox
         '
         Me.HeatmapPictureBox.BackColor = System.Drawing.Color.Black
-        Me.HeatmapPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.HeatmapPictureBox.Location = New System.Drawing.Point(6, 20)
+        Me.HeatmapPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.HeatmapPictureBox.Location = New System.Drawing.Point(17, 32)
         Me.HeatmapPictureBox.Name = "HeatmapPictureBox"
-        Me.HeatmapPictureBox.Size = New System.Drawing.Size(320, 180)
+        Me.HeatmapPictureBox.Size = New System.Drawing.Size(480, 274)
         Me.HeatmapPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.HeatmapPictureBox.TabIndex = 2
         Me.HeatmapPictureBox.TabStop = False
@@ -115,7 +128,7 @@ Partial Class HeatmapForm
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(344, 21)
+        Me.Label1.Location = New System.Drawing.Point(505, 20)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(134, 17)
         Me.Label1.TabIndex = 3
@@ -124,7 +137,7 @@ Partial Class HeatmapForm
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(344, 49)
+        Me.Label2.Location = New System.Drawing.Point(505, 48)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(131, 17)
         Me.Label2.TabIndex = 4
@@ -133,15 +146,15 @@ Partial Class HeatmapForm
         'HeatmapsListBox
         '
         Me.HeatmapsListBox.FormattingEnabled = True
-        Me.HeatmapsListBox.Location = New System.Drawing.Point(6, 20)
+        Me.HeatmapsListBox.Location = New System.Drawing.Point(6, 32)
         Me.HeatmapsListBox.Name = "HeatmapsListBox"
-        Me.HeatmapsListBox.Size = New System.Drawing.Size(320, 140)
+        Me.HeatmapsListBox.Size = New System.Drawing.Size(320, 225)
         Me.HeatmapsListBox.TabIndex = 5
         '
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(344, 158)
+        Me.Label3.Location = New System.Drawing.Point(505, 90)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(107, 17)
         Me.Label3.TabIndex = 6
@@ -154,7 +167,7 @@ Partial Class HeatmapForm
         Me.StatusTextBox.Name = "StatusTextBox"
         Me.StatusTextBox.ReadOnly = True
         Me.StatusTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth
-        Me.StatusTextBox.Size = New System.Drawing.Size(896, 111)
+        Me.StatusTextBox.Size = New System.Drawing.Size(1060, 111)
         Me.StatusTextBox.TabIndex = 7
         Me.StatusTextBox.Text = ""
         Me.StatusTextBox.WordWrap = False
@@ -166,33 +179,166 @@ Partial Class HeatmapForm
         Me.GroupBox1.Controls.Add(Me.HeatmapsListBox)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 31)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(342, 214)
+        Me.GroupBox1.Size = New System.Drawing.Size(342, 322)
         Me.GroupBox1.TabIndex = 8
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Stimulus Segments"
         '
+        'SelectNoneButton
+        '
+        Me.SelectNoneButton.Enabled = False
+        Me.SelectNoneButton.Location = New System.Drawing.Point(127, 274)
+        Me.SelectNoneButton.Name = "SelectNoneButton"
+        Me.SelectNoneButton.Size = New System.Drawing.Size(115, 32)
+        Me.SelectNoneButton.TabIndex = 6
+        Me.SelectNoneButton.Text = "Select None"
+        Me.SelectNoneButton.UseVisualStyleBackColor = True
+        '
+        'SelectAllButton
+        '
+        Me.SelectAllButton.Enabled = False
+        Me.SelectAllButton.Location = New System.Drawing.Point(6, 275)
+        Me.SelectAllButton.Name = "SelectAllButton"
+        Me.SelectAllButton.Size = New System.Drawing.Size(115, 32)
+        Me.SelectAllButton.TabIndex = 6
+        Me.SelectAllButton.Text = "Select All"
+        Me.SelectAllButton.UseVisualStyleBackColor = True
+        '
         'HeatmapGroupBox
         '
+        Me.HeatmapGroupBox.Controls.Add(Me.AlphaTrackBar)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label8)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label4)
+        Me.HeatmapGroupBox.Controls.Add(Me.RadiusNumericUpDown)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label7)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label6)
+        Me.HeatmapGroupBox.Controls.Add(Me.Label5)
+        Me.HeatmapGroupBox.Controls.Add(Me.HighFixationsColorLabel)
+        Me.HeatmapGroupBox.Controls.Add(Me.MidFixationsColorLabel)
+        Me.HeatmapGroupBox.Controls.Add(Me.LowFixationsColorLabel)
         Me.HeatmapGroupBox.Controls.Add(Me.ClearStimulusImageButton)
         Me.HeatmapGroupBox.Controls.Add(Me.LoadStimulusImageButton)
         Me.HeatmapGroupBox.Controls.Add(Me.StimulusImageTextBox)
+        Me.HeatmapGroupBox.Controls.Add(Me.HeatmapPictureBox)
         Me.HeatmapGroupBox.Controls.Add(Me.TotalFixationsTextBox)
         Me.HeatmapGroupBox.Controls.Add(Me.NumberOfSubjectsTextBox)
-        Me.HeatmapGroupBox.Controls.Add(Me.HeatmapPictureBox)
         Me.HeatmapGroupBox.Controls.Add(Me.Label1)
         Me.HeatmapGroupBox.Controls.Add(Me.Label2)
         Me.HeatmapGroupBox.Controls.Add(Me.Label3)
         Me.HeatmapGroupBox.Enabled = False
         Me.HeatmapGroupBox.Location = New System.Drawing.Point(360, 31)
         Me.HeatmapGroupBox.Name = "HeatmapGroupBox"
-        Me.HeatmapGroupBox.Size = New System.Drawing.Size(560, 214)
+        Me.HeatmapGroupBox.Size = New System.Drawing.Size(724, 322)
         Me.HeatmapGroupBox.TabIndex = 9
         Me.HeatmapGroupBox.TabStop = False
         Me.HeatmapGroupBox.Text = "Stimulus Heatmap"
         '
+        'AlphaTrackBar
+        '
+        Me.AlphaTrackBar.LargeChange = 50
+        Me.AlphaTrackBar.Location = New System.Drawing.Point(620, 251)
+        Me.AlphaTrackBar.Maximum = 255
+        Me.AlphaTrackBar.Name = "AlphaTrackBar"
+        Me.AlphaTrackBar.Size = New System.Drawing.Size(85, 56)
+        Me.AlphaTrackBar.SmallChange = 20
+        Me.AlphaTrackBar.TabIndex = 16
+        Me.AlphaTrackBar.TickFrequency = 20
+        Me.AlphaTrackBar.TickStyle = System.Windows.Forms.TickStyle.None
+        Me.AlphaTrackBar.Value = 255
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(505, 251)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(109, 17)
+        Me.Label8.TabIndex = 15
+        Me.Label8.Text = "Fixation opacity:"
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(505, 219)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(103, 17)
+        Me.Label4.TabIndex = 14
+        Me.Label4.Text = "Fixation radius:"
+        '
+        'RadiusNumericUpDown
+        '
+        Me.RadiusNumericUpDown.Location = New System.Drawing.Point(648, 219)
+        Me.RadiusNumericUpDown.Minimum = New Decimal(New Integer() {2, 0, 0, 0})
+        Me.RadiusNumericUpDown.Name = "RadiusNumericUpDown"
+        Me.RadiusNumericUpDown.Size = New System.Drawing.Size(57, 22)
+        Me.RadiusNumericUpDown.TabIndex = 13
+        Me.RadiusNumericUpDown.Value = New Decimal(New Integer() {2, 0, 0, 0})
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(505, 192)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(131, 17)
+        Me.Label7.TabIndex = 12
+        Me.Label7.Text = "High fixations color:"
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(505, 173)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(151, 17)
+        Me.Label6.TabIndex = 11
+        Me.Label6.Text = "Medium fixations color:"
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(505, 153)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(127, 17)
+        Me.Label5.TabIndex = 10
+        Me.Label5.Text = "Low fixations color:"
+        '
+        'HighFixationsColorLabel
+        '
+        Me.HighFixationsColorLabel.BackColor = System.Drawing.Color.Black
+        Me.HighFixationsColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.HighFixationsColorLabel.Location = New System.Drawing.Point(682, 193)
+        Me.HighFixationsColorLabel.Name = "HighFixationsColorLabel"
+        Me.HighFixationsColorLabel.Size = New System.Drawing.Size(23, 19)
+        Me.HighFixationsColorLabel.TabIndex = 9
+        '
+        'MidFixationsColorLabel
+        '
+        Me.MidFixationsColorLabel.BackColor = System.Drawing.Color.Black
+        Me.MidFixationsColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.MidFixationsColorLabel.Location = New System.Drawing.Point(682, 173)
+        Me.MidFixationsColorLabel.Name = "MidFixationsColorLabel"
+        Me.MidFixationsColorLabel.Size = New System.Drawing.Size(23, 19)
+        Me.MidFixationsColorLabel.TabIndex = 9
+        '
+        'LowFixationsColorLabel
+        '
+        Me.LowFixationsColorLabel.BackColor = System.Drawing.Color.Black
+        Me.LowFixationsColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.LowFixationsColorLabel.Location = New System.Drawing.Point(682, 153)
+        Me.LowFixationsColorLabel.Name = "LowFixationsColorLabel"
+        Me.LowFixationsColorLabel.Size = New System.Drawing.Size(23, 19)
+        Me.LowFixationsColorLabel.TabIndex = 9
+        '
+        'ClearStimulusImageButton
+        '
+        Me.ClearStimulusImageButton.Location = New System.Drawing.Point(684, 109)
+        Me.ClearStimulusImageButton.Name = "ClearStimulusImageButton"
+        Me.ClearStimulusImageButton.Size = New System.Drawing.Size(21, 23)
+        Me.ClearStimulusImageButton.TabIndex = 8
+        Me.ClearStimulusImageButton.Text = "X"
+        Me.ClearStimulusImageButton.UseVisualStyleBackColor = True
+        '
         'LoadStimulusImageButton
         '
-        Me.LoadStimulusImageButton.Location = New System.Drawing.Point(487, 177)
+        Me.LoadStimulusImageButton.Location = New System.Drawing.Point(648, 109)
         Me.LoadStimulusImageButton.Name = "LoadStimulusImageButton"
         Me.LoadStimulusImageButton.Size = New System.Drawing.Size(30, 23)
         Me.LoadStimulusImageButton.TabIndex = 8
@@ -202,7 +348,7 @@ Partial Class HeatmapForm
         'StimulusImageTextBox
         '
         Me.StimulusImageTextBox.Enabled = False
-        Me.StimulusImageTextBox.Location = New System.Drawing.Point(347, 178)
+        Me.StimulusImageTextBox.Location = New System.Drawing.Point(508, 110)
         Me.StimulusImageTextBox.Name = "StimulusImageTextBox"
         Me.StimulusImageTextBox.Size = New System.Drawing.Size(134, 22)
         Me.StimulusImageTextBox.TabIndex = 7
@@ -210,7 +356,7 @@ Partial Class HeatmapForm
         'TotalFixationsTextBox
         '
         Me.TotalFixationsTextBox.Enabled = False
-        Me.TotalFixationsTextBox.Location = New System.Drawing.Point(484, 49)
+        Me.TotalFixationsTextBox.Location = New System.Drawing.Point(645, 48)
         Me.TotalFixationsTextBox.Name = "TotalFixationsTextBox"
         Me.TotalFixationsTextBox.Size = New System.Drawing.Size(60, 22)
         Me.TotalFixationsTextBox.TabIndex = 7
@@ -218,7 +364,7 @@ Partial Class HeatmapForm
         'NumberOfSubjectsTextBox
         '
         Me.NumberOfSubjectsTextBox.Enabled = False
-        Me.NumberOfSubjectsTextBox.Location = New System.Drawing.Point(484, 21)
+        Me.NumberOfSubjectsTextBox.Location = New System.Drawing.Point(645, 20)
         Me.NumberOfSubjectsTextBox.Name = "NumberOfSubjectsTextBox"
         Me.NumberOfSubjectsTextBox.Size = New System.Drawing.Size(60, 22)
         Me.NumberOfSubjectsTextBox.TabIndex = 7
@@ -226,47 +372,18 @@ Partial Class HeatmapForm
         'GroupBox3
         '
         Me.GroupBox3.Controls.Add(Me.StatusTextBox)
-        Me.GroupBox3.Location = New System.Drawing.Point(12, 251)
+        Me.GroupBox3.Location = New System.Drawing.Point(12, 359)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(908, 138)
+        Me.GroupBox3.Size = New System.Drawing.Size(1072, 138)
         Me.GroupBox3.TabIndex = 10
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Status"
-        '
-        'ClearStimulusImageButton
-        '
-        Me.ClearStimulusImageButton.Location = New System.Drawing.Point(523, 177)
-        Me.ClearStimulusImageButton.Name = "ClearStimulusImageButton"
-        Me.ClearStimulusImageButton.Size = New System.Drawing.Size(21, 23)
-        Me.ClearStimulusImageButton.TabIndex = 8
-        Me.ClearStimulusImageButton.Text = "X"
-        Me.ClearStimulusImageButton.UseVisualStyleBackColor = True
-        '
-        'SelectAllButton
-        '
-        Me.SelectAllButton.Enabled = False
-        Me.SelectAllButton.Location = New System.Drawing.Point(6, 173)
-        Me.SelectAllButton.Name = "SelectAllButton"
-        Me.SelectAllButton.Size = New System.Drawing.Size(115, 32)
-        Me.SelectAllButton.TabIndex = 6
-        Me.SelectAllButton.Text = "Select All"
-        Me.SelectAllButton.UseVisualStyleBackColor = True
-        '
-        'SelectNoneButton
-        '
-        Me.SelectNoneButton.Enabled = False
-        Me.SelectNoneButton.Location = New System.Drawing.Point(127, 172)
-        Me.SelectNoneButton.Name = "SelectNoneButton"
-        Me.SelectNoneButton.Size = New System.Drawing.Size(115, 32)
-        Me.SelectNoneButton.TabIndex = 6
-        Me.SelectNoneButton.Text = "Select None"
-        Me.SelectNoneButton.UseVisualStyleBackColor = True
         '
         'HeatmapForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(931, 401)
+        Me.ClientSize = New System.Drawing.Size(1094, 504)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.HeatmapGroupBox)
         Me.Controls.Add(Me.GroupBox1)
@@ -283,6 +400,8 @@ Partial Class HeatmapForm
         Me.GroupBox1.ResumeLayout(False)
         Me.HeatmapGroupBox.ResumeLayout(False)
         Me.HeatmapGroupBox.PerformLayout()
+        CType(Me.AlphaTrackBar, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.RadiusNumericUpDown, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox3.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -313,4 +432,15 @@ Partial Class HeatmapForm
     Friend WithEvents ClearStimulusImageButton As System.Windows.Forms.Button
     Friend WithEvents SelectNoneButton As System.Windows.Forms.Button
     Friend WithEvents SelectAllButton As System.Windows.Forms.Button
+    Friend WithEvents Label7 As System.Windows.Forms.Label
+    Friend WithEvents Label6 As System.Windows.Forms.Label
+    Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents HighFixationsColorLabel As System.Windows.Forms.Label
+    Friend WithEvents MidFixationsColorLabel As System.Windows.Forms.Label
+    Friend WithEvents LowFixationsColorLabel As System.Windows.Forms.Label
+    Friend WithEvents RadiusNumericUpDown As System.Windows.Forms.NumericUpDown
+    Friend WithEvents AlphaTrackBar As System.Windows.Forms.TrackBar
+    Friend WithEvents Label8 As System.Windows.Forms.Label
+    Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents MainColorDialog As System.Windows.Forms.ColorDialog
 End Class
