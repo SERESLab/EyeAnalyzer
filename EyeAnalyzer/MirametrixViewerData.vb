@@ -8,24 +8,14 @@ Public Class MirametrixViewerData
     ''' Models a gaze point on the screen.
     ''' </summary>
     Private Structure PointOfGaze
-        Implements IComparable(Of PointOfGaze)
-        Public time As ULong
+        Public start As ULong
+        Public duration As ULong
         Public isValid As Boolean
         Public x As Integer
         Public y As Integer
-        Public Function compareTo(ByVal other As PointOfGaze) As Integer _
-            Implements IComparable(Of EyeAnalyzer.MirametrixViewerData.PointOfGaze).CompareTo
-            If time < other.time Then
-                Return -1
-            ElseIf time > other.time Then
-                Return 1
-            Else
-                Return 0
-            End If
-        End Function
     End Structure
 
-    Private _gazes As New List(Of PointOfGaze)
+    Private _gazes As New Dictionary(Of String, PointOfGaze)
     Private _screenWidth As Integer = 0
     Private _screenHeight As Integer = 0
     Private _averageCalibrationError As Single = 0.0
@@ -87,25 +77,34 @@ Public Class MirametrixViewerData
     ''' Private constructor.
     ''' </summary>
     Private Sub New(ByVal filename As String)
-        Dim firstTimeMs As ULong = 0
+
+        Dim firstGazeMs As ULong = 0
+
         Using reader As New System.Xml.XmlTextReader(filename)
             While reader.Read()
                 If reader.IsStartElement("REC") Then
-                    Dim timeStr As String = reader.GetAttribute("TIME")
+
+                    Dim id As String = reader.GetAttribute("FPOGID")
+                    Dim startStr As String = reader.GetAttribute("FPOGS")
+                    Dim durationStr As String = reader.GetAttribute("FPOGD")
                     Dim xPercentStr As String = reader.GetAttribute("FPOGX")
                     Dim yPercentStr As String = reader.GetAttribute("FPOGY")
                     Dim isValidStr As String = reader.GetAttribute("FPOGV")
-                    If timeStr IsNot Nothing And xPercentStr IsNot Nothing And _
-                        yPercentStr IsNot Nothing And isValidStr IsNot Nothing Then
+
+                    If id Is Nothing Or startStr Is Nothing Or durationStr Is Nothing Or _
+                        xPercentStr Is Nothing Or yPercentStr Is Nothing Or isValidStr Is Nothing Then
+                        Throw New Exception("Bad format.")
+                    End If
+
+                    Dim startMs As ULong = Double.Parse(startStr) * 1000
+                    If firstGazeMs = 0 Then
+                        firstGazeMs = startMs
+                    End If
+
+                    If isValidStr = "1" Then
                         Dim gaze As New PointOfGaze
-                        gaze.isValid = (isValidStr = "1")
-
-                        Dim timeMs As ULong = Double.Parse(timeStr) * 1000
-                        If firstTimeMs = 0 Then
-                            firstTimeMs = timeMs
-                        End If
-                        gaze.time = timeMs - firstTimeMs
-
+                        gaze.start = startMs - firstGazeMs
+                        gaze.duration = Double.Parse(durationStr) * 1000
                         If _screenWidth > 0 And _screenHeight > 0 Then
                             Dim xPercent As Single = Single.Parse(xPercentStr)
                             Dim yPercent As Single = Single.Parse(yPercentStr)
@@ -115,9 +114,12 @@ Public Class MirametrixViewerData
                             Throw New Exception("Bad format.")
                         End If
 
-                        _gazes.Add(gaze)
-                    Else
-                        Throw New Exception("Bad format.")
+                        If Not _gazes.ContainsKey(id) Then
+                            _gazes.Add(id, gaze)
+                        Else
+                            _gazes.Item(id) = gaze
+                        End If
+
                     End If
                 ElseIf reader.IsStartElement("SCREEN_SIZE") Then
                     Dim width As String = reader.GetAttribute("WIDTH")
@@ -138,7 +140,7 @@ Public Class MirametrixViewerData
                 End If
             End While
         End Using
-        _gazes.Sort()
+
         If _screenWidth = 0 Or _screenHeight = 0 Or _gazes.Count = 0 Then
             Throw New Exception("Invalid data.")
         End If
@@ -160,66 +162,47 @@ Public Class MirametrixViewerData
         Next
 
         ' process fixations
-        Dim lastSegment As StimulusSegment = Nothing
-        Dim currentFixation As Fixation = Nothing
-        For Each pog As PointOfGaze In _gazes
+        For Each pog As PointOfGaze In _gazes.Values
 
-            ' locate segment in which the current gaze falls
-            Dim currentSegment As StimulusSegment = Nothing
+            ' locate segment in which the current gaze begins
+            Dim segment As StimulusSegment = Nothing
             For Each s As StimulusSegment In stimulusSegments
-                If pog.time >= s.StartMs And pog.time <= s.EndMs Then
-                    currentSegment = s
+                If pog.start >= s.StartMs And pog.start <= s.EndMs Then
+                    segment = s
                     Exit For
                 End If
             Next
-            If currentSegment Is Nothing Then
+            If segment Is Nothing Then
                 Continue For
             End If
 
-            ' check whether to start a new fixation object or continue the last one
-            If currentSegment IsNot lastSegment And lastSegment IsNot Nothing Then
-                If currentFixation.Duration >= minFixationDuration Then
-                    addFixationToSegment(currentFixation, lastSegment, results)
-                End If
-                currentFixation = New Fixation(New Point(pog.x, pog.y))
-                currentFixation.StartMs = pog.time
-            ElseIf currentFixation Is Nothing Then
-                currentFixation = New Fixation(New Point(pog.x, pog.y))
-                currentFixation.StartMs = pog.time
-            ElseIf Not (currentFixation.Point.X = pog.x And currentFixation.Point.Y = pog.y) Then
-                If currentFixation.Duration >= minFixationDuration Then
-                    addFixationToSegment(currentFixation, currentSegment, results)
-                End If
-                currentFixation = New Fixation(New Point(pog.x, pog.y))
-                currentFixation.StartMs = pog.time
-            Else
-                currentFixation.EndMs = pog.time
+            Dim fixation As New Fixation(New Point(pog.x, pog.y))
+            fixation.StartMs = pog.start
+            fixation.EndMs = pog.start + pog.duration
+
+            ' clip fixation to segment boundary
+            If fixation.EndMs > segment.EndMs Then
+                fixation.EndMs = segment.EndMs
             End If
 
-            lastSegment = currentSegment
+            ' skip fixations less than the minimum duration
+            If fixation.Duration < minFixationDuration Then
+                Continue For
+            End If
+
+            ' find AOIs in which the fixation falls
+            Dim excluded As Boolean = False
+            For Each aoi In segment.AOIs
+                If aoi.Area.Contains(fixation.Point) And _
+                    (aoi.NonExclusive Or Not excluded) Then
+                    results.addFixation(segment.Name, aoi.Name, fixation)
+                    If Not aoi.NonExclusive Then
+                        excluded = True
+                    End If
+                End If
+            Next
         Next
-        If currentFixation.Duration >= minFixationDuration Then
-            addFixationToSegment(currentFixation, lastSegment, results)
-        End If
 
         Return results
     End Function
-
-    ''' <summary>
-    ''' Finds the AOI in which the fixation falls and adds it to the results.
-    ''' </summary>
-    Private Sub addFixationToSegment(ByVal fixation As Fixation, _
-                                     ByVal segment As StimulusSegment, _
-                                     ByVal results As ProcessingResults)
-        Dim excluded As Boolean = False
-        For Each aoi In segment.AOIs
-            If aoi.Area.Contains(fixation.Point) And _
-                (aoi.NonExclusive Or Not excluded) Then
-                results.addFixation(segment.Name, aoi.Name, fixation)
-                If Not aoi.NonExclusive Then
-                    excluded = True
-                End If
-            End If
-        Next
-    End Sub
 End Class
