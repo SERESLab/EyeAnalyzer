@@ -23,6 +23,7 @@ Partial Class MainForm
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Me.VideoPictureBox = New System.Windows.Forms.PictureBox()
         Me.AoiGroupBox = New System.Windows.Forms.GroupBox()
         Me.AoiHeightUpDown = New System.Windows.Forms.NumericUpDown()
@@ -102,6 +103,7 @@ Partial Class MainForm
         Me.AoiOpacityTrackBar = New System.Windows.Forms.TrackBar()
         Me.Label16 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.AxWindowsMediaPlayer1 = New AxWMPLib.AxWindowsMediaPlayer()
         CType(Me.VideoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.AoiGroupBox.SuspendLayout()
         CType(Me.AoiHeightUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -120,12 +122,14 @@ Partial Class MainForm
         Me.DisplaySettingsGroupBox.SuspendLayout()
         CType(Me.AoiOpacityTrackBar, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox2.SuspendLayout()
+        CType(Me.AxWindowsMediaPlayer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'VideoPictureBox
         '
         Me.VideoPictureBox.BackColor = System.Drawing.Color.Black
         Me.VideoPictureBox.Location = New System.Drawing.Point(0, 0)
+        Me.VideoPictureBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.VideoPictureBox.Name = "VideoPictureBox"
         Me.VideoPictureBox.Size = New System.Drawing.Size(640, 360)
         Me.VideoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
@@ -149,9 +153,11 @@ Partial Class MainForm
         Me.AoiGroupBox.Controls.Add(Me.AddRenameAoiButton)
         Me.AoiGroupBox.Controls.Add(Me.AoiListBox)
         Me.AoiGroupBox.Enabled = False
-        Me.AoiGroupBox.Location = New System.Drawing.Point(16, 248)
+        Me.AoiGroupBox.Location = New System.Drawing.Point(12, 202)
+        Me.AoiGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiGroupBox.Name = "AoiGroupBox"
-        Me.AoiGroupBox.Size = New System.Drawing.Size(320, 222)
+        Me.AoiGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiGroupBox.Size = New System.Drawing.Size(240, 180)
         Me.AoiGroupBox.TabIndex = 1
         Me.AoiGroupBox.TabStop = False
         Me.AoiGroupBox.Text = "AOIs"
@@ -159,46 +165,51 @@ Partial Class MainForm
         'AoiHeightUpDown
         '
         Me.AoiHeightUpDown.Enabled = False
-        Me.AoiHeightUpDown.Location = New System.Drawing.Point(242, 139)
+        Me.AoiHeightUpDown.Location = New System.Drawing.Point(182, 113)
+        Me.AoiHeightUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiHeightUpDown.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me.AoiHeightUpDown.Name = "AoiHeightUpDown"
-        Me.AoiHeightUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiHeightUpDown.Size = New System.Drawing.Size(54, 20)
         Me.AoiHeightUpDown.TabIndex = 14
         Me.AoiHeightUpDown.Value = New Decimal(New Integer() {1, 0, 0, 0})
         '
         'AoiWidthUpDown
         '
         Me.AoiWidthUpDown.Enabled = False
-        Me.AoiWidthUpDown.Location = New System.Drawing.Point(242, 111)
+        Me.AoiWidthUpDown.Location = New System.Drawing.Point(182, 90)
+        Me.AoiWidthUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiWidthUpDown.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me.AoiWidthUpDown.Name = "AoiWidthUpDown"
-        Me.AoiWidthUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiWidthUpDown.Size = New System.Drawing.Size(54, 20)
         Me.AoiWidthUpDown.TabIndex = 14
         Me.AoiWidthUpDown.Value = New Decimal(New Integer() {1, 0, 0, 0})
         '
         'AoiYUpDown
         '
         Me.AoiYUpDown.Enabled = False
-        Me.AoiYUpDown.Location = New System.Drawing.Point(242, 83)
+        Me.AoiYUpDown.Location = New System.Drawing.Point(182, 67)
+        Me.AoiYUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiYUpDown.Name = "AoiYUpDown"
-        Me.AoiYUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiYUpDown.Size = New System.Drawing.Size(54, 20)
         Me.AoiYUpDown.TabIndex = 14
         '
         'AoiXUpDown
         '
         Me.AoiXUpDown.Enabled = False
-        Me.AoiXUpDown.Location = New System.Drawing.Point(242, 55)
+        Me.AoiXUpDown.Location = New System.Drawing.Point(182, 45)
+        Me.AoiXUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiXUpDown.Name = "AoiXUpDown"
-        Me.AoiXUpDown.Size = New System.Drawing.Size(72, 22)
+        Me.AoiXUpDown.Size = New System.Drawing.Size(54, 20)
         Me.AoiXUpDown.TabIndex = 14
         '
         'AoiNonexclusiveCheckBox
         '
         Me.AoiNonexclusiveCheckBox.AutoSize = True
-        Me.AoiNonexclusiveCheckBox.Location = New System.Drawing.Point(196, 177)
+        Me.AoiNonexclusiveCheckBox.Location = New System.Drawing.Point(147, 144)
+        Me.AoiNonexclusiveCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiNonexclusiveCheckBox.Name = "AoiNonexclusiveCheckBox"
         Me.AoiNonexclusiveCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.AoiNonexclusiveCheckBox.Size = New System.Drawing.Size(118, 21)
+        Me.AoiNonexclusiveCheckBox.Size = New System.Drawing.Size(93, 17)
         Me.AoiNonexclusiveCheckBox.TabIndex = 13
         Me.AoiNonexclusiveCheckBox.Text = "Non-exclusive"
         Me.AoiNonexclusiveCheckBox.UseVisualStyleBackColor = True
@@ -206,61 +217,68 @@ Partial Class MainForm
         'Label14
         '
         Me.Label14.AutoSize = True
-        Me.Label14.Location = New System.Drawing.Point(183, 139)
+        Me.Label14.Location = New System.Drawing.Point(137, 113)
+        Me.Label14.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(53, 17)
+        Me.Label14.Size = New System.Drawing.Size(41, 13)
         Me.Label14.TabIndex = 12
         Me.Label14.Text = "Height:"
         '
         'Label13
         '
         Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(188, 111)
+        Me.Label13.Location = New System.Drawing.Point(141, 90)
+        Me.Label13.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(48, 17)
+        Me.Label13.Size = New System.Drawing.Size(38, 13)
         Me.Label13.TabIndex = 11
         Me.Label13.Text = "Width:"
         '
         'Label12
         '
         Me.Label12.AutoSize = True
-        Me.Label12.Location = New System.Drawing.Point(215, 83)
+        Me.Label12.Location = New System.Drawing.Point(161, 67)
+        Me.Label12.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(21, 17)
+        Me.Label12.Size = New System.Drawing.Size(17, 13)
         Me.Label12.TabIndex = 10
         Me.Label12.Text = "Y:"
         '
         'Label11
         '
         Me.Label11.AutoSize = True
-        Me.Label11.Location = New System.Drawing.Point(215, 55)
+        Me.Label11.Location = New System.Drawing.Point(161, 45)
+        Me.Label11.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label11.Name = "Label11"
-        Me.Label11.Size = New System.Drawing.Size(21, 17)
+        Me.Label11.Size = New System.Drawing.Size(17, 13)
         Me.Label11.TabIndex = 9
         Me.Label11.Text = "X:"
         '
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(6, 24)
+        Me.Label7.Location = New System.Drawing.Point(4, 20)
+        Me.Label7.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(49, 17)
+        Me.Label7.Size = New System.Drawing.Size(38, 13)
         Me.Label7.TabIndex = 4
         Me.Label7.Text = "Name:"
         '
         'AoiNameTextBox
         '
-        Me.AoiNameTextBox.Location = New System.Drawing.Point(61, 21)
+        Me.AoiNameTextBox.Location = New System.Drawing.Point(46, 17)
+        Me.AoiNameTextBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiNameTextBox.Name = "AoiNameTextBox"
-        Me.AoiNameTextBox.Size = New System.Drawing.Size(128, 22)
+        Me.AoiNameTextBox.Size = New System.Drawing.Size(97, 20)
         Me.AoiNameTextBox.TabIndex = 3
         '
         'DeleteAoiButton
         '
         Me.DeleteAoiButton.Enabled = False
-        Me.DeleteAoiButton.Location = New System.Drawing.Point(9, 185)
+        Me.DeleteAoiButton.Location = New System.Drawing.Point(7, 150)
+        Me.DeleteAoiButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.DeleteAoiButton.Name = "DeleteAoiButton"
-        Me.DeleteAoiButton.Size = New System.Drawing.Size(131, 30)
+        Me.DeleteAoiButton.Size = New System.Drawing.Size(98, 24)
         Me.DeleteAoiButton.TabIndex = 2
         Me.DeleteAoiButton.Text = "Delete Selected"
         Me.DeleteAoiButton.UseVisualStyleBackColor = True
@@ -268,9 +286,10 @@ Partial Class MainForm
         'AddRenameAoiButton
         '
         Me.AddRenameAoiButton.Enabled = False
-        Me.AddRenameAoiButton.Location = New System.Drawing.Point(195, 18)
+        Me.AddRenameAoiButton.Location = New System.Drawing.Point(146, 15)
+        Me.AddRenameAoiButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AddRenameAoiButton.Name = "AddRenameAoiButton"
-        Me.AddRenameAoiButton.Size = New System.Drawing.Size(119, 28)
+        Me.AddRenameAoiButton.Size = New System.Drawing.Size(89, 23)
         Me.AddRenameAoiButton.TabIndex = 1
         Me.AddRenameAoiButton.Text = "Add New"
         Me.AddRenameAoiButton.UseVisualStyleBackColor = True
@@ -278,81 +297,89 @@ Partial Class MainForm
         'AoiListBox
         '
         Me.AoiListBox.FormattingEnabled = True
-        Me.AoiListBox.ItemHeight = 16
-        Me.AoiListBox.Location = New System.Drawing.Point(9, 55)
+        Me.AoiListBox.Location = New System.Drawing.Point(7, 45)
+        Me.AoiListBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiListBox.Name = "AoiListBox"
-        Me.AoiListBox.Size = New System.Drawing.Size(156, 116)
+        Me.AoiListBox.Size = New System.Drawing.Size(118, 95)
         Me.AoiListBox.TabIndex = 0
         '
         'AoiColorLabel
         '
         Me.AoiColorLabel.BackColor = System.Drawing.Color.Blue
         Me.AoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.AoiColorLabel.Location = New System.Drawing.Point(15, 36)
+        Me.AoiColorLabel.Location = New System.Drawing.Point(11, 29)
+        Me.AoiColorLabel.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.AoiColorLabel.Name = "AoiColorLabel"
-        Me.AoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.AoiColorLabel.Size = New System.Drawing.Size(15, 15)
         Me.AoiColorLabel.TabIndex = 8
         '
         'NewAoiColorLabel
         '
         Me.NewAoiColorLabel.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.NewAoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.NewAoiColorLabel.Location = New System.Drawing.Point(15, 18)
+        Me.NewAoiColorLabel.Location = New System.Drawing.Point(11, 15)
+        Me.NewAoiColorLabel.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.NewAoiColorLabel.Name = "NewAoiColorLabel"
-        Me.NewAoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.NewAoiColorLabel.Size = New System.Drawing.Size(15, 15)
         Me.NewAoiColorLabel.TabIndex = 8
         '
         'NonExclusiveAoiColorLabel
         '
         Me.NonExclusiveAoiColorLabel.BackColor = System.Drawing.Color.Green
         Me.NonExclusiveAoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.NonExclusiveAoiColorLabel.Location = New System.Drawing.Point(15, 54)
+        Me.NonExclusiveAoiColorLabel.Location = New System.Drawing.Point(11, 44)
+        Me.NonExclusiveAoiColorLabel.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.NonExclusiveAoiColorLabel.Name = "NonExclusiveAoiColorLabel"
-        Me.NonExclusiveAoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.NonExclusiveAoiColorLabel.Size = New System.Drawing.Size(15, 15)
         Me.NonExclusiveAoiColorLabel.TabIndex = 8
         '
         'SelectedAoiColorLabel
         '
         Me.SelectedAoiColorLabel.BackColor = System.Drawing.Color.Maroon
         Me.SelectedAoiColorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.SelectedAoiColorLabel.Location = New System.Drawing.Point(15, 72)
+        Me.SelectedAoiColorLabel.Location = New System.Drawing.Point(11, 58)
+        Me.SelectedAoiColorLabel.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.SelectedAoiColorLabel.Name = "SelectedAoiColorLabel"
-        Me.SelectedAoiColorLabel.Size = New System.Drawing.Size(20, 18)
+        Me.SelectedAoiColorLabel.Size = New System.Drawing.Size(15, 15)
         Me.SelectedAoiColorLabel.TabIndex = 8
         '
         'Label10
         '
         Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(41, 36)
+        Me.Label10.Location = New System.Drawing.Point(31, 29)
+        Me.Label10.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(93, 17)
+        Me.Label10.Size = New System.Drawing.Size(73, 13)
         Me.Label10.TabIndex = 7
         Me.Label10.Text = "Exclusive AOI"
         '
         'Label15
         '
         Me.Label15.AutoSize = True
-        Me.Label15.Location = New System.Drawing.Point(41, 54)
+        Me.Label15.Location = New System.Drawing.Point(31, 44)
+        Me.Label15.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label15.Name = "Label15"
-        Me.Label15.Size = New System.Drawing.Size(123, 17)
+        Me.Label15.Size = New System.Drawing.Size(95, 13)
         Me.Label15.TabIndex = 6
         Me.Label15.Text = "Non-exclusive AOI"
         '
         'Label9
         '
         Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(41, 72)
+        Me.Label9.Location = New System.Drawing.Point(31, 58)
+        Me.Label9.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(90, 17)
+        Me.Label9.Size = New System.Drawing.Size(70, 13)
         Me.Label9.TabIndex = 6
         Me.Label9.Text = "Selected AOI"
         '
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(41, 18)
+        Me.Label8.Location = New System.Drawing.Point(31, 15)
+        Me.Label8.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(62, 17)
+        Me.Label8.Size = New System.Drawing.Size(50, 13)
         Me.Label8.TabIndex = 6
         Me.Label8.Text = "New AOI"
         '
@@ -361,7 +388,8 @@ Partial Class MainForm
         Me.MainMenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.HeatmapsToolStripMenuItem})
         Me.MainMenuStrip.Location = New System.Drawing.Point(0, 0)
         Me.MainMenuStrip.Name = "MainMenuStrip"
-        Me.MainMenuStrip.Size = New System.Drawing.Size(1289, 28)
+        Me.MainMenuStrip.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
+        Me.MainMenuStrip.Size = New System.Drawing.Size(1187, 24)
         Me.MainMenuStrip.TabIndex = 1
         Me.MainMenuStrip.Text = "MenuStrip1"
         '
@@ -369,56 +397,56 @@ Partial Class MainForm
         '
         Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenStudyDataToolStripMenuItem, Me.ToolStripSeparator2, Me.ImportStimulusSegmentsToolStripMenuItem, Me.ExportStimulusSegmentsToolStripMenuItem, Me.ToolStripSeparator1, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(44, 24)
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "&File"
         '
         'OpenStudyDataToolStripMenuItem
         '
         Me.OpenStudyDataToolStripMenuItem.Name = "OpenStudyDataToolStripMenuItem"
-        Me.OpenStudyDataToolStripMenuItem.Size = New System.Drawing.Size(252, 24)
+        Me.OpenStudyDataToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
         Me.OpenStudyDataToolStripMenuItem.Text = "&Load Study Data"
         '
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(249, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(211, 6)
         '
         'ImportStimulusSegmentsToolStripMenuItem
         '
         Me.ImportStimulusSegmentsToolStripMenuItem.Enabled = False
         Me.ImportStimulusSegmentsToolStripMenuItem.Name = "ImportStimulusSegmentsToolStripMenuItem"
-        Me.ImportStimulusSegmentsToolStripMenuItem.Size = New System.Drawing.Size(252, 24)
+        Me.ImportStimulusSegmentsToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
         Me.ImportStimulusSegmentsToolStripMenuItem.Text = "&Import Stimulus Segments"
         '
         'ExportStimulusSegmentsToolStripMenuItem
         '
         Me.ExportStimulusSegmentsToolStripMenuItem.Enabled = False
         Me.ExportStimulusSegmentsToolStripMenuItem.Name = "ExportStimulusSegmentsToolStripMenuItem"
-        Me.ExportStimulusSegmentsToolStripMenuItem.Size = New System.Drawing.Size(252, 24)
+        Me.ExportStimulusSegmentsToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
         Me.ExportStimulusSegmentsToolStripMenuItem.Text = "&Export Stimulus Segments"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(249, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(211, 6)
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(252, 24)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
         Me.ExitToolStripMenuItem.Text = "E&xit"
         '
         'HeatmapsToolStripMenuItem
         '
         Me.HeatmapsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GenerateNewHeatmapToolStripMenuItem})
         Me.HeatmapsToolStripMenuItem.Name = "HeatmapsToolStripMenuItem"
-        Me.HeatmapsToolStripMenuItem.Size = New System.Drawing.Size(89, 24)
+        Me.HeatmapsToolStripMenuItem.Size = New System.Drawing.Size(73, 20)
         Me.HeatmapsToolStripMenuItem.Text = "Heat&maps"
         '
         'GenerateNewHeatmapToolStripMenuItem
         '
         Me.GenerateNewHeatmapToolStripMenuItem.Name = "GenerateNewHeatmapToolStripMenuItem"
-        Me.GenerateNewHeatmapToolStripMenuItem.Size = New System.Drawing.Size(210, 24)
+        Me.GenerateNewHeatmapToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.GenerateNewHeatmapToolStripMenuItem.Text = "&Generate Heatmaps"
         '
         'SettingsGroupBox
@@ -429,9 +457,11 @@ Partial Class MainForm
         Me.SettingsGroupBox.Controls.Add(Me.SaveSegmentDurationsCheckBox)
         Me.SettingsGroupBox.Controls.Add(Me.SaveCalibrationErrorCheckBox)
         Me.SettingsGroupBox.Controls.Add(Me.ProcessButton)
-        Me.SettingsGroupBox.Location = New System.Drawing.Point(1058, 31)
+        Me.SettingsGroupBox.Location = New System.Drawing.Point(794, 25)
+        Me.SettingsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SettingsGroupBox.Name = "SettingsGroupBox"
-        Me.SettingsGroupBox.Size = New System.Drawing.Size(219, 275)
+        Me.SettingsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SettingsGroupBox.Size = New System.Drawing.Size(164, 223)
         Me.SettingsGroupBox.TabIndex = 3
         Me.SettingsGroupBox.TabStop = False
         Me.SettingsGroupBox.Text = "Processing Settings"
@@ -442,9 +472,11 @@ Partial Class MainForm
         Me.MeasureFixationsGroupBox.Controls.Add(Me.FixationDurationTextBox)
         Me.MeasureFixationsGroupBox.Controls.Add(Me.SaveFixationDurationsCheckBox)
         Me.MeasureFixationsGroupBox.Controls.Add(Me.SaveFixationCountsCheckBox)
-        Me.MeasureFixationsGroupBox.Location = New System.Drawing.Point(9, 74)
+        Me.MeasureFixationsGroupBox.Location = New System.Drawing.Point(7, 60)
+        Me.MeasureFixationsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.MeasureFixationsGroupBox.Name = "MeasureFixationsGroupBox"
-        Me.MeasureFixationsGroupBox.Size = New System.Drawing.Size(199, 102)
+        Me.MeasureFixationsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.MeasureFixationsGroupBox.Size = New System.Drawing.Size(149, 83)
         Me.MeasureFixationsGroupBox.TabIndex = 6
         Me.MeasureFixationsGroupBox.TabStop = False
         Me.MeasureFixationsGroupBox.Text = "Fixations"
@@ -452,17 +484,19 @@ Partial Class MainForm
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(6, 23)
+        Me.Label1.Location = New System.Drawing.Point(4, 19)
+        Me.Label1.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(147, 17)
+        Me.Label1.Size = New System.Drawing.Size(109, 13)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Minimum fixation (ms):"
         '
         'FixationDurationTextBox
         '
-        Me.FixationDurationTextBox.Location = New System.Drawing.Point(159, 21)
+        Me.FixationDurationTextBox.Location = New System.Drawing.Point(119, 17)
+        Me.FixationDurationTextBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.FixationDurationTextBox.Name = "FixationDurationTextBox"
-        Me.FixationDurationTextBox.Size = New System.Drawing.Size(31, 22)
+        Me.FixationDurationTextBox.Size = New System.Drawing.Size(24, 20)
         Me.FixationDurationTextBox.TabIndex = 2
         Me.FixationDurationTextBox.Text = "60"
         '
@@ -471,10 +505,11 @@ Partial Class MainForm
         Me.SaveFixationDurationsCheckBox.AutoSize = True
         Me.SaveFixationDurationsCheckBox.Checked = True
         Me.SaveFixationDurationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.SaveFixationDurationsCheckBox.Location = New System.Drawing.Point(9, 75)
+        Me.SaveFixationDurationsCheckBox.Location = New System.Drawing.Point(7, 61)
+        Me.SaveFixationDurationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SaveFixationDurationsCheckBox.Name = "SaveFixationDurationsCheckBox"
         Me.SaveFixationDurationsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SaveFixationDurationsCheckBox.Size = New System.Drawing.Size(173, 21)
+        Me.SaveFixationDurationsCheckBox.Size = New System.Drawing.Size(100, 14)
         Me.SaveFixationDurationsCheckBox.TabIndex = 4
         Me.SaveFixationDurationsCheckBox.Text = "Save fixation durations"
         Me.SaveFixationDurationsCheckBox.UseVisualStyleBackColor = True
@@ -484,10 +519,11 @@ Partial Class MainForm
         Me.SaveFixationCountsCheckBox.AutoSize = True
         Me.SaveFixationCountsCheckBox.Checked = True
         Me.SaveFixationCountsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.SaveFixationCountsCheckBox.Location = New System.Drawing.Point(9, 48)
+        Me.SaveFixationCountsCheckBox.Location = New System.Drawing.Point(7, 39)
+        Me.SaveFixationCountsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SaveFixationCountsCheckBox.Name = "SaveFixationCountsCheckBox"
         Me.SaveFixationCountsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SaveFixationCountsCheckBox.Size = New System.Drawing.Size(156, 21)
+        Me.SaveFixationCountsCheckBox.Size = New System.Drawing.Size(92, 14)
         Me.SaveFixationCountsCheckBox.TabIndex = 4
         Me.SaveFixationCountsCheckBox.Text = "Save fixation counts"
         Me.SaveFixationCountsCheckBox.UseVisualStyleBackColor = True
@@ -497,9 +533,10 @@ Partial Class MainForm
         Me.MeasureFixationsCheckBox.AutoSize = True
         Me.MeasureFixationsCheckBox.Checked = True
         Me.MeasureFixationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.MeasureFixationsCheckBox.Location = New System.Drawing.Point(18, 49)
+        Me.MeasureFixationsCheckBox.Location = New System.Drawing.Point(14, 40)
+        Me.MeasureFixationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.MeasureFixationsCheckBox.Name = "MeasureFixationsCheckBox"
-        Me.MeasureFixationsCheckBox.Size = New System.Drawing.Size(140, 21)
+        Me.MeasureFixationsCheckBox.Size = New System.Drawing.Size(81, 14)
         Me.MeasureFixationsCheckBox.TabIndex = 5
         Me.MeasureFixationsCheckBox.Text = "Measure fixations"
         Me.MeasureFixationsCheckBox.UseVisualStyleBackColor = True
@@ -509,9 +546,10 @@ Partial Class MainForm
         Me.SaveFixationLocationsCheckBox.AutoSize = True
         Me.SaveFixationLocationsCheckBox.Checked = True
         Me.SaveFixationLocationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.SaveFixationLocationsCheckBox.Location = New System.Drawing.Point(18, 21)
+        Me.SaveFixationLocationsCheckBox.Location = New System.Drawing.Point(14, 17)
+        Me.SaveFixationLocationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SaveFixationLocationsCheckBox.Name = "SaveFixationLocationsCheckBox"
-        Me.SaveFixationLocationsCheckBox.Size = New System.Drawing.Size(170, 21)
+        Me.SaveFixationLocationsCheckBox.Size = New System.Drawing.Size(99, 14)
         Me.SaveFixationLocationsCheckBox.TabIndex = 5
         Me.SaveFixationLocationsCheckBox.Text = "Save fixation locations"
         Me.SaveFixationLocationsCheckBox.UseVisualStyleBackColor = True
@@ -521,9 +559,10 @@ Partial Class MainForm
         Me.SaveSegmentDurationsCheckBox.AutoSize = True
         Me.SaveSegmentDurationsCheckBox.Checked = True
         Me.SaveSegmentDurationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.SaveSegmentDurationsCheckBox.Location = New System.Drawing.Point(18, 186)
+        Me.SaveSegmentDurationsCheckBox.Location = New System.Drawing.Point(14, 151)
+        Me.SaveSegmentDurationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SaveSegmentDurationsCheckBox.Name = "SaveSegmentDurationsCheckBox"
-        Me.SaveSegmentDurationsCheckBox.Size = New System.Drawing.Size(183, 21)
+        Me.SaveSegmentDurationsCheckBox.Size = New System.Drawing.Size(105, 14)
         Me.SaveSegmentDurationsCheckBox.TabIndex = 5
         Me.SaveSegmentDurationsCheckBox.Text = "Save segment durations"
         Me.SaveSegmentDurationsCheckBox.UseVisualStyleBackColor = True
@@ -533,9 +572,10 @@ Partial Class MainForm
         Me.SaveCalibrationErrorCheckBox.AutoSize = True
         Me.SaveCalibrationErrorCheckBox.Checked = True
         Me.SaveCalibrationErrorCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.SaveCalibrationErrorCheckBox.Location = New System.Drawing.Point(18, 213)
+        Me.SaveCalibrationErrorCheckBox.Location = New System.Drawing.Point(14, 173)
+        Me.SaveCalibrationErrorCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SaveCalibrationErrorCheckBox.Name = "SaveCalibrationErrorCheckBox"
-        Me.SaveCalibrationErrorCheckBox.Size = New System.Drawing.Size(166, 21)
+        Me.SaveCalibrationErrorCheckBox.Size = New System.Drawing.Size(94, 14)
         Me.SaveCalibrationErrorCheckBox.TabIndex = 5
         Me.SaveCalibrationErrorCheckBox.Text = "Save calibration error"
         Me.SaveCalibrationErrorCheckBox.UseVisualStyleBackColor = True
@@ -543,9 +583,10 @@ Partial Class MainForm
         'ProcessButton
         '
         Me.ProcessButton.Enabled = False
-        Me.ProcessButton.Location = New System.Drawing.Point(18, 240)
+        Me.ProcessButton.Location = New System.Drawing.Point(14, 195)
+        Me.ProcessButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.ProcessButton.Name = "ProcessButton"
-        Me.ProcessButton.Size = New System.Drawing.Size(183, 29)
+        Me.ProcessButton.Size = New System.Drawing.Size(137, 24)
         Me.ProcessButton.TabIndex = 3
         Me.ProcessButton.Text = "Process Eye Data"
         Me.ProcessButton.UseVisualStyleBackColor = True
@@ -553,9 +594,10 @@ Partial Class MainForm
         'MainStatusStrip
         '
         Me.MainStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MainStatusLabel, Me.VideoFileStatusLabel, Me.XmlFileStatusLabel})
-        Me.MainStatusStrip.Location = New System.Drawing.Point(0, 521)
+        Me.MainStatusStrip.Location = New System.Drawing.Point(0, 423)
         Me.MainStatusStrip.Name = "MainStatusStrip"
-        Me.MainStatusStrip.Size = New System.Drawing.Size(1289, 29)
+        Me.MainStatusStrip.Padding = New System.Windows.Forms.Padding(1, 0, 10, 0)
+        Me.MainStatusStrip.Size = New System.Drawing.Size(1187, 24)
         Me.MainStatusStrip.SizingGrip = False
         Me.MainStatusStrip.TabIndex = 4
         Me.MainStatusStrip.Text = "StatusStrip1"
@@ -567,7 +609,7 @@ Partial Class MainForm
                     Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
         Me.MainStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenInner
         Me.MainStatusLabel.Name = "MainStatusLabel"
-        Me.MainStatusLabel.Size = New System.Drawing.Size(1230, 24)
+        Me.MainStatusLabel.Size = New System.Drawing.Size(1136, 19)
         Me.MainStatusLabel.Spring = True
         Me.MainStatusLabel.Text = "..."
         Me.MainStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -578,7 +620,7 @@ Partial Class MainForm
                     Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
                     Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
         Me.VideoFileStatusLabel.Name = "VideoFileStatusLabel"
-        Me.VideoFileStatusLabel.Size = New System.Drawing.Size(22, 24)
+        Me.VideoFileStatusLabel.Size = New System.Drawing.Size(20, 19)
         Me.VideoFileStatusLabel.Text = "..."
         '
         'XmlFileStatusLabel
@@ -587,7 +629,7 @@ Partial Class MainForm
                     Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
                     Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
         Me.XmlFileStatusLabel.Name = "XmlFileStatusLabel"
-        Me.XmlFileStatusLabel.Size = New System.Drawing.Size(22, 24)
+        Me.XmlFileStatusLabel.Size = New System.Drawing.Size(20, 19)
         Me.XmlFileStatusLabel.Text = "..."
         '
         'SegmentsGroupBox
@@ -606,9 +648,11 @@ Partial Class MainForm
         Me.SegmentsGroupBox.Controls.Add(Me.DeleteSegmentButton)
         Me.SegmentsGroupBox.Controls.Add(Me.SegmentsListBox)
         Me.SegmentsGroupBox.Enabled = False
-        Me.SegmentsGroupBox.Location = New System.Drawing.Point(692, 31)
+        Me.SegmentsGroupBox.Location = New System.Drawing.Point(519, 25)
+        Me.SegmentsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SegmentsGroupBox.Name = "SegmentsGroupBox"
-        Me.SegmentsGroupBox.Size = New System.Drawing.Size(349, 481)
+        Me.SegmentsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SegmentsGroupBox.Size = New System.Drawing.Size(262, 391)
         Me.SegmentsGroupBox.TabIndex = 5
         Me.SegmentsGroupBox.TabStop = False
         Me.SegmentsGroupBox.Text = "Stimulus Segments"
@@ -617,9 +661,10 @@ Partial Class MainForm
         '
         Me.SegmentEndLinkLabel.AutoSize = True
         Me.SegmentEndLinkLabel.Enabled = False
-        Me.SegmentEndLinkLabel.Location = New System.Drawing.Point(65, 78)
+        Me.SegmentEndLinkLabel.Location = New System.Drawing.Point(49, 63)
+        Me.SegmentEndLinkLabel.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.SegmentEndLinkLabel.Name = "SegmentEndLinkLabel"
-        Me.SegmentEndLinkLabel.Size = New System.Drawing.Size(64, 17)
+        Me.SegmentEndLinkLabel.Size = New System.Drawing.Size(49, 13)
         Me.SegmentEndLinkLabel.TabIndex = 10
         Me.SegmentEndLinkLabel.TabStop = True
         Me.SegmentEndLinkLabel.Text = "00:00:00"
@@ -627,9 +672,10 @@ Partial Class MainForm
         'UnselectSegmentButton
         '
         Me.UnselectSegmentButton.Enabled = False
-        Me.UnselectSegmentButton.Location = New System.Drawing.Point(217, 57)
+        Me.UnselectSegmentButton.Location = New System.Drawing.Point(163, 46)
+        Me.UnselectSegmentButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.UnselectSegmentButton.Name = "UnselectSegmentButton"
-        Me.UnselectSegmentButton.Size = New System.Drawing.Size(119, 29)
+        Me.UnselectSegmentButton.Size = New System.Drawing.Size(89, 24)
         Me.UnselectSegmentButton.TabIndex = 9
         Me.UnselectSegmentButton.Text = "Unselect"
         Me.UnselectSegmentButton.UseVisualStyleBackColor = True
@@ -638,27 +684,30 @@ Partial Class MainForm
         '
         Me.SegmentStartLinkLabel.AutoSize = True
         Me.SegmentStartLinkLabel.Enabled = False
-        Me.SegmentStartLinkLabel.Location = New System.Drawing.Point(65, 47)
+        Me.SegmentStartLinkLabel.Location = New System.Drawing.Point(49, 38)
+        Me.SegmentStartLinkLabel.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.SegmentStartLinkLabel.Name = "SegmentStartLinkLabel"
-        Me.SegmentStartLinkLabel.Size = New System.Drawing.Size(64, 17)
+        Me.SegmentStartLinkLabel.Size = New System.Drawing.Size(49, 13)
         Me.SegmentStartLinkLabel.TabIndex = 10
         Me.SegmentStartLinkLabel.TabStop = True
         Me.SegmentStartLinkLabel.Text = "00:00:00"
         '
         'SegmentEndButton
         '
-        Me.SegmentEndButton.Location = New System.Drawing.Point(153, 78)
+        Me.SegmentEndButton.Location = New System.Drawing.Point(115, 63)
+        Me.SegmentEndButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SegmentEndButton.Name = "SegmentEndButton"
-        Me.SegmentEndButton.Size = New System.Drawing.Size(28, 23)
+        Me.SegmentEndButton.Size = New System.Drawing.Size(21, 19)
         Me.SegmentEndButton.TabIndex = 8
         Me.SegmentEndButton.Text = "..."
         Me.SegmentEndButton.UseVisualStyleBackColor = True
         '
         'SegmentStartButton
         '
-        Me.SegmentStartButton.Location = New System.Drawing.Point(153, 49)
+        Me.SegmentStartButton.Location = New System.Drawing.Point(115, 40)
+        Me.SegmentStartButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SegmentStartButton.Name = "SegmentStartButton"
-        Me.SegmentStartButton.Size = New System.Drawing.Size(28, 23)
+        Me.SegmentStartButton.Size = New System.Drawing.Size(21, 19)
         Me.SegmentStartButton.TabIndex = 8
         Me.SegmentStartButton.Text = "..."
         Me.SegmentStartButton.UseVisualStyleBackColor = True
@@ -666,43 +715,48 @@ Partial Class MainForm
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(13, 80)
+        Me.Label5.Location = New System.Drawing.Point(10, 65)
+        Me.Label5.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(37, 17)
+        Me.Label5.Size = New System.Drawing.Size(29, 13)
         Me.Label5.TabIndex = 7
         Me.Label5.Text = "End:"
         '
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(13, 47)
+        Me.Label4.Location = New System.Drawing.Point(10, 38)
+        Me.Label4.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(42, 17)
+        Me.Label4.Size = New System.Drawing.Size(32, 13)
         Me.Label4.TabIndex = 5
         Me.Label4.Text = "Start:"
         '
         'SegmentNameTextBox
         '
-        Me.SegmentNameTextBox.Location = New System.Drawing.Point(68, 21)
+        Me.SegmentNameTextBox.Location = New System.Drawing.Point(51, 17)
+        Me.SegmentNameTextBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SegmentNameTextBox.Name = "SegmentNameTextBox"
-        Me.SegmentNameTextBox.Size = New System.Drawing.Size(143, 22)
+        Me.SegmentNameTextBox.Size = New System.Drawing.Size(108, 20)
         Me.SegmentNameTextBox.TabIndex = 4
         '
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(13, 21)
+        Me.Label3.Location = New System.Drawing.Point(10, 17)
+        Me.Label3.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(49, 17)
+        Me.Label3.Size = New System.Drawing.Size(38, 13)
         Me.Label3.TabIndex = 3
         Me.Label3.Text = "Name:"
         '
         'AddUpdateSegmentButton
         '
         Me.AddUpdateSegmentButton.Enabled = False
-        Me.AddUpdateSegmentButton.Location = New System.Drawing.Point(217, 21)
+        Me.AddUpdateSegmentButton.Location = New System.Drawing.Point(163, 17)
+        Me.AddUpdateSegmentButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AddUpdateSegmentButton.Name = "AddUpdateSegmentButton"
-        Me.AddUpdateSegmentButton.Size = New System.Drawing.Size(119, 27)
+        Me.AddUpdateSegmentButton.Size = New System.Drawing.Size(89, 22)
         Me.AddUpdateSegmentButton.TabIndex = 2
         Me.AddUpdateSegmentButton.Text = "Add New"
         Me.AddUpdateSegmentButton.UseVisualStyleBackColor = True
@@ -710,9 +764,10 @@ Partial Class MainForm
         'DeleteSegmentButton
         '
         Me.DeleteSegmentButton.Enabled = False
-        Me.DeleteSegmentButton.Location = New System.Drawing.Point(217, 213)
+        Me.DeleteSegmentButton.Location = New System.Drawing.Point(163, 173)
+        Me.DeleteSegmentButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.DeleteSegmentButton.Name = "DeleteSegmentButton"
-        Me.DeleteSegmentButton.Size = New System.Drawing.Size(119, 29)
+        Me.DeleteSegmentButton.Size = New System.Drawing.Size(89, 24)
         Me.DeleteSegmentButton.TabIndex = 1
         Me.DeleteSegmentButton.Text = "Delete Selected"
         Me.DeleteSegmentButton.UseVisualStyleBackColor = True
@@ -720,36 +775,39 @@ Partial Class MainForm
         'SegmentsListBox
         '
         Me.SegmentsListBox.FormattingEnabled = True
-        Me.SegmentsListBox.ItemHeight = 16
-        Me.SegmentsListBox.Location = New System.Drawing.Point(16, 107)
+        Me.SegmentsListBox.Location = New System.Drawing.Point(12, 87)
+        Me.SegmentsListBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SegmentsListBox.Name = "SegmentsListBox"
-        Me.SegmentsListBox.Size = New System.Drawing.Size(320, 100)
+        Me.SegmentsListBox.Size = New System.Drawing.Size(241, 82)
         Me.SegmentsListBox.TabIndex = 0
         '
         'VideoPositionTrackBar
         '
         Me.VideoPositionTrackBar.LargeChange = 10
-        Me.VideoPositionTrackBar.Location = New System.Drawing.Point(6, 390)
+        Me.VideoPositionTrackBar.Location = New System.Drawing.Point(4, 317)
+        Me.VideoPositionTrackBar.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.VideoPositionTrackBar.Maximum = 100
         Me.VideoPositionTrackBar.Name = "VideoPositionTrackBar"
-        Me.VideoPositionTrackBar.Size = New System.Drawing.Size(337, 56)
+        Me.VideoPositionTrackBar.Size = New System.Drawing.Size(253, 45)
         Me.VideoPositionTrackBar.TabIndex = 6
         Me.VideoPositionTrackBar.TickStyle = System.Windows.Forms.TickStyle.None
         '
         'VideoPositionUpDown
         '
-        Me.VideoPositionUpDown.Location = New System.Drawing.Point(500, 390)
+        Me.VideoPositionUpDown.Location = New System.Drawing.Point(375, 317)
+        Me.VideoPositionUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.VideoPositionUpDown.Name = "VideoPositionUpDown"
         Me.VideoPositionUpDown.ReadOnly = True
-        Me.VideoPositionUpDown.Size = New System.Drawing.Size(115, 22)
+        Me.VideoPositionUpDown.Size = New System.Drawing.Size(86, 20)
         Me.VideoPositionUpDown.TabIndex = 7
         '
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(381, 390)
+        Me.Label6.Location = New System.Drawing.Point(286, 317)
+        Me.Label6.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(112, 17)
+        Me.Label6.Size = New System.Drawing.Size(83, 13)
         Me.Label6.TabIndex = 8
         Me.Label6.Text = "Current position:"
         '
@@ -764,9 +822,11 @@ Partial Class MainForm
         Me.VideoGroupBox.Controls.Add(Me.VideoPositionUpDown)
         Me.VideoGroupBox.Controls.Add(Me.VideoPositionTrackBar)
         Me.VideoGroupBox.Enabled = False
-        Me.VideoGroupBox.Location = New System.Drawing.Point(12, 31)
+        Me.VideoGroupBox.Location = New System.Drawing.Point(9, 25)
+        Me.VideoGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.VideoGroupBox.Name = "VideoGroupBox"
-        Me.VideoGroupBox.Size = New System.Drawing.Size(661, 481)
+        Me.VideoGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoGroupBox.Size = New System.Drawing.Size(496, 391)
         Me.VideoGroupBox.TabIndex = 9
         Me.VideoGroupBox.TabStop = False
         Me.VideoGroupBox.Text = "Video Preview"
@@ -776,17 +836,19 @@ Partial Class MainForm
         Me.VideoPanel.AutoScroll = True
         Me.VideoPanel.BackColor = System.Drawing.Color.Black
         Me.VideoPanel.Controls.Add(Me.VideoPictureBox)
-        Me.VideoPanel.Location = New System.Drawing.Point(6, 21)
+        Me.VideoPanel.Location = New System.Drawing.Point(4, 17)
+        Me.VideoPanel.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.VideoPanel.Name = "VideoPanel"
-        Me.VideoPanel.Size = New System.Drawing.Size(640, 360)
+        Me.VideoPanel.Size = New System.Drawing.Size(480, 292)
         Me.VideoPanel.TabIndex = 13
         '
         'VideoActualSizeCheckBox
         '
         Me.VideoActualSizeCheckBox.AutoSize = True
-        Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(6, 452)
+        Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(4, 367)
+        Me.VideoActualSizeCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.VideoActualSizeCheckBox.Name = "VideoActualSizeCheckBox"
-        Me.VideoActualSizeCheckBox.Size = New System.Drawing.Size(172, 21)
+        Me.VideoActualSizeCheckBox.Size = New System.Drawing.Size(132, 17)
         Me.VideoActualSizeCheckBox.TabIndex = 12
         Me.VideoActualSizeCheckBox.Text = "Full-size video preview"
         Me.VideoActualSizeCheckBox.UseVisualStyleBackColor = True
@@ -794,26 +856,29 @@ Partial Class MainForm
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(620, 390)
+        Me.Label2.Location = New System.Drawing.Point(465, 317)
+        Me.Label2.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(26, 17)
+        Me.Label2.Size = New System.Drawing.Size(20, 13)
         Me.Label2.TabIndex = 11
         Me.Label2.Text = "ms"
         '
         'VideoPositionLabel
         '
         Me.VideoPositionLabel.AutoSize = True
-        Me.VideoPositionLabel.Location = New System.Drawing.Point(430, 407)
+        Me.VideoPositionLabel.Location = New System.Drawing.Point(322, 331)
+        Me.VideoPositionLabel.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.VideoPositionLabel.Name = "VideoPositionLabel"
-        Me.VideoPositionLabel.Size = New System.Drawing.Size(64, 17)
+        Me.VideoPositionLabel.Size = New System.Drawing.Size(49, 13)
         Me.VideoPositionLabel.TabIndex = 10
         Me.VideoPositionLabel.Text = "00:00:00"
         '
         'SaveScreenshotButton
         '
-        Me.SaveScreenshotButton.Location = New System.Drawing.Point(500, 435)
+        Me.SaveScreenshotButton.Location = New System.Drawing.Point(375, 353)
+        Me.SaveScreenshotButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.SaveScreenshotButton.Name = "SaveScreenshotButton"
-        Me.SaveScreenshotButton.Size = New System.Drawing.Size(146, 32)
+        Me.SaveScreenshotButton.Size = New System.Drawing.Size(110, 26)
         Me.SaveScreenshotButton.TabIndex = 9
         Me.SaveScreenshotButton.Text = "Save Screenshot"
         Me.SaveScreenshotButton.UseVisualStyleBackColor = True
@@ -837,19 +902,22 @@ Partial Class MainForm
         Me.DisplaySettingsGroupBox.Controls.Add(Me.Label16)
         Me.DisplaySettingsGroupBox.Controls.Add(Me.GroupBox2)
         Me.DisplaySettingsGroupBox.Enabled = False
-        Me.DisplaySettingsGroupBox.Location = New System.Drawing.Point(1058, 312)
+        Me.DisplaySettingsGroupBox.Location = New System.Drawing.Point(794, 254)
+        Me.DisplaySettingsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.DisplaySettingsGroupBox.Name = "DisplaySettingsGroupBox"
-        Me.DisplaySettingsGroupBox.Size = New System.Drawing.Size(219, 200)
+        Me.DisplaySettingsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.DisplaySettingsGroupBox.Size = New System.Drawing.Size(164, 162)
         Me.DisplaySettingsGroupBox.TabIndex = 15
         Me.DisplaySettingsGroupBox.TabStop = False
         Me.DisplaySettingsGroupBox.Text = "AOI Display Settings"
         '
         'AoiOpacityTrackBar
         '
-        Me.AoiOpacityTrackBar.Location = New System.Drawing.Point(95, 125)
+        Me.AoiOpacityTrackBar.Location = New System.Drawing.Point(71, 102)
+        Me.AoiOpacityTrackBar.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.AoiOpacityTrackBar.Maximum = 255
         Me.AoiOpacityTrackBar.Name = "AoiOpacityTrackBar"
-        Me.AoiOpacityTrackBar.Size = New System.Drawing.Size(113, 56)
+        Me.AoiOpacityTrackBar.Size = New System.Drawing.Size(85, 45)
         Me.AoiOpacityTrackBar.TabIndex = 11
         Me.AoiOpacityTrackBar.TickStyle = System.Windows.Forms.TickStyle.None
         Me.AoiOpacityTrackBar.Value = 170
@@ -857,9 +925,10 @@ Partial Class MainForm
         'Label16
         '
         Me.Label16.AutoSize = True
-        Me.Label16.Location = New System.Drawing.Point(6, 125)
+        Me.Label16.Location = New System.Drawing.Point(4, 102)
+        Me.Label16.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.Label16.Name = "Label16"
-        Me.Label16.Size = New System.Drawing.Size(83, 17)
+        Me.Label16.Size = New System.Drawing.Size(64, 13)
         Me.Label16.TabIndex = 10
         Me.Label16.Text = "AOI Opacity"
         '
@@ -873,18 +942,30 @@ Partial Class MainForm
         Me.GroupBox2.Controls.Add(Me.NonExclusiveAoiColorLabel)
         Me.GroupBox2.Controls.Add(Me.Label15)
         Me.GroupBox2.Controls.Add(Me.SelectedAoiColorLabel)
-        Me.GroupBox2.Location = New System.Drawing.Point(6, 21)
+        Me.GroupBox2.Location = New System.Drawing.Point(4, 17)
+        Me.GroupBox2.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(202, 101)
+        Me.GroupBox2.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.GroupBox2.Size = New System.Drawing.Size(152, 82)
         Me.GroupBox2.TabIndex = 9
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Colors"
         '
+        'AxWindowsMediaPlayer1
+        '
+        Me.AxWindowsMediaPlayer1.Enabled = True
+        Me.AxWindowsMediaPlayer1.Location = New System.Drawing.Point(994, 104)
+        Me.AxWindowsMediaPlayer1.Name = "AxWindowsMediaPlayer1"
+        Me.AxWindowsMediaPlayer1.OcxState = CType(resources.GetObject("AxWindowsMediaPlayer1.OcxState"), System.Windows.Forms.AxHost.State)
+        Me.AxWindowsMediaPlayer1.Size = New System.Drawing.Size(75, 23)
+        Me.AxWindowsMediaPlayer1.TabIndex = 16
+        '
         'MainForm
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1289, 550)
+        Me.ClientSize = New System.Drawing.Size(1187, 447)
+        Me.Controls.Add(Me.AxWindowsMediaPlayer1)
         Me.Controls.Add(Me.DisplaySettingsGroupBox)
         Me.Controls.Add(Me.VideoGroupBox)
         Me.Controls.Add(Me.SegmentsGroupBox)
@@ -892,6 +973,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.SettingsGroupBox)
         Me.Controls.Add(Me.MainMenuStrip)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
+        Me.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.MaximizeBox = False
         Me.Name = "MainForm"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
@@ -925,6 +1007,7 @@ Partial Class MainForm
         CType(Me.AoiOpacityTrackBar, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
+        CType(Me.AxWindowsMediaPlayer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1008,5 +1091,6 @@ Partial Class MainForm
     Friend WithEvents MeasureFixationsGroupBox As System.Windows.Forms.GroupBox
     Friend WithEvents MeasureFixationsCheckBox As System.Windows.Forms.CheckBox
     Friend WithEvents SaveFixationLocationsCheckBox As System.Windows.Forms.CheckBox
+    Friend WithEvents AxWindowsMediaPlayer1 As AxWMPLib.AxWindowsMediaPlayer
 
 End Class

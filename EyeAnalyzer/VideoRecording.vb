@@ -64,8 +64,8 @@ Public Class VideoRecording
         _timeBetweenFramesMs = aviFile.FrameRate
 
         ' TODO load video and set these values
-        _width = 400
-        _height = 700
+        _width = 1920
+        _height = 1080
     End Sub
 
     ''' <summary>
