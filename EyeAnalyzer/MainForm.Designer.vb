@@ -129,7 +129,7 @@ Partial Class MainForm
         '
         Me.VideoPictureBox.BackColor = System.Drawing.Color.Black
         Me.VideoPictureBox.Location = New System.Drawing.Point(0, 0)
-        Me.VideoPictureBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoPictureBox.Margin = New System.Windows.Forms.Padding(2)
         Me.VideoPictureBox.Name = "VideoPictureBox"
         Me.VideoPictureBox.Size = New System.Drawing.Size(640, 360)
         Me.VideoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
@@ -154,9 +154,9 @@ Partial Class MainForm
         Me.AoiGroupBox.Controls.Add(Me.AoiListBox)
         Me.AoiGroupBox.Enabled = False
         Me.AoiGroupBox.Location = New System.Drawing.Point(12, 202)
-        Me.AoiGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiGroupBox.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiGroupBox.Name = "AoiGroupBox"
-        Me.AoiGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiGroupBox.Padding = New System.Windows.Forms.Padding(2)
         Me.AoiGroupBox.Size = New System.Drawing.Size(240, 180)
         Me.AoiGroupBox.TabIndex = 1
         Me.AoiGroupBox.TabStop = False
@@ -166,7 +166,7 @@ Partial Class MainForm
         '
         Me.AoiHeightUpDown.Enabled = False
         Me.AoiHeightUpDown.Location = New System.Drawing.Point(182, 113)
-        Me.AoiHeightUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiHeightUpDown.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiHeightUpDown.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me.AoiHeightUpDown.Name = "AoiHeightUpDown"
         Me.AoiHeightUpDown.Size = New System.Drawing.Size(54, 20)
@@ -177,7 +177,7 @@ Partial Class MainForm
         '
         Me.AoiWidthUpDown.Enabled = False
         Me.AoiWidthUpDown.Location = New System.Drawing.Point(182, 90)
-        Me.AoiWidthUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiWidthUpDown.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiWidthUpDown.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me.AoiWidthUpDown.Name = "AoiWidthUpDown"
         Me.AoiWidthUpDown.Size = New System.Drawing.Size(54, 20)
@@ -188,7 +188,7 @@ Partial Class MainForm
         '
         Me.AoiYUpDown.Enabled = False
         Me.AoiYUpDown.Location = New System.Drawing.Point(182, 67)
-        Me.AoiYUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiYUpDown.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiYUpDown.Name = "AoiYUpDown"
         Me.AoiYUpDown.Size = New System.Drawing.Size(54, 20)
         Me.AoiYUpDown.TabIndex = 14
@@ -197,7 +197,7 @@ Partial Class MainForm
         '
         Me.AoiXUpDown.Enabled = False
         Me.AoiXUpDown.Location = New System.Drawing.Point(182, 45)
-        Me.AoiXUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiXUpDown.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiXUpDown.Name = "AoiXUpDown"
         Me.AoiXUpDown.Size = New System.Drawing.Size(54, 20)
         Me.AoiXUpDown.TabIndex = 14
@@ -206,7 +206,7 @@ Partial Class MainForm
         '
         Me.AoiNonexclusiveCheckBox.AutoSize = True
         Me.AoiNonexclusiveCheckBox.Location = New System.Drawing.Point(147, 144)
-        Me.AoiNonexclusiveCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiNonexclusiveCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiNonexclusiveCheckBox.Name = "AoiNonexclusiveCheckBox"
         Me.AoiNonexclusiveCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes
         Me.AoiNonexclusiveCheckBox.Size = New System.Drawing.Size(93, 17)
@@ -267,7 +267,7 @@ Partial Class MainForm
         'AoiNameTextBox
         '
         Me.AoiNameTextBox.Location = New System.Drawing.Point(46, 17)
-        Me.AoiNameTextBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiNameTextBox.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiNameTextBox.Name = "AoiNameTextBox"
         Me.AoiNameTextBox.Size = New System.Drawing.Size(97, 20)
         Me.AoiNameTextBox.TabIndex = 3
@@ -276,7 +276,7 @@ Partial Class MainForm
         '
         Me.DeleteAoiButton.Enabled = False
         Me.DeleteAoiButton.Location = New System.Drawing.Point(7, 150)
-        Me.DeleteAoiButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.DeleteAoiButton.Margin = New System.Windows.Forms.Padding(2)
         Me.DeleteAoiButton.Name = "DeleteAoiButton"
         Me.DeleteAoiButton.Size = New System.Drawing.Size(98, 24)
         Me.DeleteAoiButton.TabIndex = 2
@@ -287,7 +287,7 @@ Partial Class MainForm
         '
         Me.AddRenameAoiButton.Enabled = False
         Me.AddRenameAoiButton.Location = New System.Drawing.Point(146, 15)
-        Me.AddRenameAoiButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AddRenameAoiButton.Margin = New System.Windows.Forms.Padding(2)
         Me.AddRenameAoiButton.Name = "AddRenameAoiButton"
         Me.AddRenameAoiButton.Size = New System.Drawing.Size(89, 23)
         Me.AddRenameAoiButton.TabIndex = 1
@@ -298,7 +298,7 @@ Partial Class MainForm
         '
         Me.AoiListBox.FormattingEnabled = True
         Me.AoiListBox.Location = New System.Drawing.Point(7, 45)
-        Me.AoiListBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiListBox.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiListBox.Name = "AoiListBox"
         Me.AoiListBox.Size = New System.Drawing.Size(118, 95)
         Me.AoiListBox.TabIndex = 0
@@ -458,9 +458,9 @@ Partial Class MainForm
         Me.SettingsGroupBox.Controls.Add(Me.SaveCalibrationErrorCheckBox)
         Me.SettingsGroupBox.Controls.Add(Me.ProcessButton)
         Me.SettingsGroupBox.Location = New System.Drawing.Point(794, 25)
-        Me.SettingsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SettingsGroupBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SettingsGroupBox.Name = "SettingsGroupBox"
-        Me.SettingsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SettingsGroupBox.Padding = New System.Windows.Forms.Padding(2)
         Me.SettingsGroupBox.Size = New System.Drawing.Size(164, 223)
         Me.SettingsGroupBox.TabIndex = 3
         Me.SettingsGroupBox.TabStop = False
@@ -473,9 +473,9 @@ Partial Class MainForm
         Me.MeasureFixationsGroupBox.Controls.Add(Me.SaveFixationDurationsCheckBox)
         Me.MeasureFixationsGroupBox.Controls.Add(Me.SaveFixationCountsCheckBox)
         Me.MeasureFixationsGroupBox.Location = New System.Drawing.Point(7, 60)
-        Me.MeasureFixationsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.MeasureFixationsGroupBox.Margin = New System.Windows.Forms.Padding(2)
         Me.MeasureFixationsGroupBox.Name = "MeasureFixationsGroupBox"
-        Me.MeasureFixationsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.MeasureFixationsGroupBox.Padding = New System.Windows.Forms.Padding(2)
         Me.MeasureFixationsGroupBox.Size = New System.Drawing.Size(149, 83)
         Me.MeasureFixationsGroupBox.TabIndex = 6
         Me.MeasureFixationsGroupBox.TabStop = False
@@ -494,7 +494,7 @@ Partial Class MainForm
         'FixationDurationTextBox
         '
         Me.FixationDurationTextBox.Location = New System.Drawing.Point(119, 17)
-        Me.FixationDurationTextBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.FixationDurationTextBox.Margin = New System.Windows.Forms.Padding(2)
         Me.FixationDurationTextBox.Name = "FixationDurationTextBox"
         Me.FixationDurationTextBox.Size = New System.Drawing.Size(24, 20)
         Me.FixationDurationTextBox.TabIndex = 2
@@ -506,10 +506,10 @@ Partial Class MainForm
         Me.SaveFixationDurationsCheckBox.Checked = True
         Me.SaveFixationDurationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.SaveFixationDurationsCheckBox.Location = New System.Drawing.Point(7, 61)
-        Me.SaveFixationDurationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SaveFixationDurationsCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SaveFixationDurationsCheckBox.Name = "SaveFixationDurationsCheckBox"
         Me.SaveFixationDurationsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SaveFixationDurationsCheckBox.Size = New System.Drawing.Size(100, 14)
+        Me.SaveFixationDurationsCheckBox.Size = New System.Drawing.Size(133, 17)
         Me.SaveFixationDurationsCheckBox.TabIndex = 4
         Me.SaveFixationDurationsCheckBox.Text = "Save fixation durations"
         Me.SaveFixationDurationsCheckBox.UseVisualStyleBackColor = True
@@ -520,10 +520,10 @@ Partial Class MainForm
         Me.SaveFixationCountsCheckBox.Checked = True
         Me.SaveFixationCountsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.SaveFixationCountsCheckBox.Location = New System.Drawing.Point(7, 39)
-        Me.SaveFixationCountsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SaveFixationCountsCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SaveFixationCountsCheckBox.Name = "SaveFixationCountsCheckBox"
         Me.SaveFixationCountsCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SaveFixationCountsCheckBox.Size = New System.Drawing.Size(92, 14)
+        Me.SaveFixationCountsCheckBox.Size = New System.Drawing.Size(122, 17)
         Me.SaveFixationCountsCheckBox.TabIndex = 4
         Me.SaveFixationCountsCheckBox.Text = "Save fixation counts"
         Me.SaveFixationCountsCheckBox.UseVisualStyleBackColor = True
@@ -534,9 +534,9 @@ Partial Class MainForm
         Me.MeasureFixationsCheckBox.Checked = True
         Me.MeasureFixationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.MeasureFixationsCheckBox.Location = New System.Drawing.Point(14, 40)
-        Me.MeasureFixationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.MeasureFixationsCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.MeasureFixationsCheckBox.Name = "MeasureFixationsCheckBox"
-        Me.MeasureFixationsCheckBox.Size = New System.Drawing.Size(81, 14)
+        Me.MeasureFixationsCheckBox.Size = New System.Drawing.Size(108, 17)
         Me.MeasureFixationsCheckBox.TabIndex = 5
         Me.MeasureFixationsCheckBox.Text = "Measure fixations"
         Me.MeasureFixationsCheckBox.UseVisualStyleBackColor = True
@@ -547,9 +547,9 @@ Partial Class MainForm
         Me.SaveFixationLocationsCheckBox.Checked = True
         Me.SaveFixationLocationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.SaveFixationLocationsCheckBox.Location = New System.Drawing.Point(14, 17)
-        Me.SaveFixationLocationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SaveFixationLocationsCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SaveFixationLocationsCheckBox.Name = "SaveFixationLocationsCheckBox"
-        Me.SaveFixationLocationsCheckBox.Size = New System.Drawing.Size(99, 14)
+        Me.SaveFixationLocationsCheckBox.Size = New System.Drawing.Size(132, 17)
         Me.SaveFixationLocationsCheckBox.TabIndex = 5
         Me.SaveFixationLocationsCheckBox.Text = "Save fixation locations"
         Me.SaveFixationLocationsCheckBox.UseVisualStyleBackColor = True
@@ -560,9 +560,9 @@ Partial Class MainForm
         Me.SaveSegmentDurationsCheckBox.Checked = True
         Me.SaveSegmentDurationsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.SaveSegmentDurationsCheckBox.Location = New System.Drawing.Point(14, 151)
-        Me.SaveSegmentDurationsCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SaveSegmentDurationsCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SaveSegmentDurationsCheckBox.Name = "SaveSegmentDurationsCheckBox"
-        Me.SaveSegmentDurationsCheckBox.Size = New System.Drawing.Size(105, 14)
+        Me.SaveSegmentDurationsCheckBox.Size = New System.Drawing.Size(140, 17)
         Me.SaveSegmentDurationsCheckBox.TabIndex = 5
         Me.SaveSegmentDurationsCheckBox.Text = "Save segment durations"
         Me.SaveSegmentDurationsCheckBox.UseVisualStyleBackColor = True
@@ -573,9 +573,9 @@ Partial Class MainForm
         Me.SaveCalibrationErrorCheckBox.Checked = True
         Me.SaveCalibrationErrorCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.SaveCalibrationErrorCheckBox.Location = New System.Drawing.Point(14, 173)
-        Me.SaveCalibrationErrorCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SaveCalibrationErrorCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SaveCalibrationErrorCheckBox.Name = "SaveCalibrationErrorCheckBox"
-        Me.SaveCalibrationErrorCheckBox.Size = New System.Drawing.Size(94, 14)
+        Me.SaveCalibrationErrorCheckBox.Size = New System.Drawing.Size(126, 17)
         Me.SaveCalibrationErrorCheckBox.TabIndex = 5
         Me.SaveCalibrationErrorCheckBox.Text = "Save calibration error"
         Me.SaveCalibrationErrorCheckBox.UseVisualStyleBackColor = True
@@ -584,7 +584,7 @@ Partial Class MainForm
         '
         Me.ProcessButton.Enabled = False
         Me.ProcessButton.Location = New System.Drawing.Point(14, 195)
-        Me.ProcessButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.ProcessButton.Margin = New System.Windows.Forms.Padding(2)
         Me.ProcessButton.Name = "ProcessButton"
         Me.ProcessButton.Size = New System.Drawing.Size(137, 24)
         Me.ProcessButton.TabIndex = 3
@@ -649,9 +649,9 @@ Partial Class MainForm
         Me.SegmentsGroupBox.Controls.Add(Me.SegmentsListBox)
         Me.SegmentsGroupBox.Enabled = False
         Me.SegmentsGroupBox.Location = New System.Drawing.Point(519, 25)
-        Me.SegmentsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SegmentsGroupBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SegmentsGroupBox.Name = "SegmentsGroupBox"
-        Me.SegmentsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SegmentsGroupBox.Padding = New System.Windows.Forms.Padding(2)
         Me.SegmentsGroupBox.Size = New System.Drawing.Size(262, 391)
         Me.SegmentsGroupBox.TabIndex = 5
         Me.SegmentsGroupBox.TabStop = False
@@ -673,7 +673,7 @@ Partial Class MainForm
         '
         Me.UnselectSegmentButton.Enabled = False
         Me.UnselectSegmentButton.Location = New System.Drawing.Point(163, 46)
-        Me.UnselectSegmentButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.UnselectSegmentButton.Margin = New System.Windows.Forms.Padding(2)
         Me.UnselectSegmentButton.Name = "UnselectSegmentButton"
         Me.UnselectSegmentButton.Size = New System.Drawing.Size(89, 24)
         Me.UnselectSegmentButton.TabIndex = 9
@@ -695,7 +695,7 @@ Partial Class MainForm
         'SegmentEndButton
         '
         Me.SegmentEndButton.Location = New System.Drawing.Point(115, 63)
-        Me.SegmentEndButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SegmentEndButton.Margin = New System.Windows.Forms.Padding(2)
         Me.SegmentEndButton.Name = "SegmentEndButton"
         Me.SegmentEndButton.Size = New System.Drawing.Size(21, 19)
         Me.SegmentEndButton.TabIndex = 8
@@ -705,7 +705,7 @@ Partial Class MainForm
         'SegmentStartButton
         '
         Me.SegmentStartButton.Location = New System.Drawing.Point(115, 40)
-        Me.SegmentStartButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SegmentStartButton.Margin = New System.Windows.Forms.Padding(2)
         Me.SegmentStartButton.Name = "SegmentStartButton"
         Me.SegmentStartButton.Size = New System.Drawing.Size(21, 19)
         Me.SegmentStartButton.TabIndex = 8
@@ -735,7 +735,7 @@ Partial Class MainForm
         'SegmentNameTextBox
         '
         Me.SegmentNameTextBox.Location = New System.Drawing.Point(51, 17)
-        Me.SegmentNameTextBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SegmentNameTextBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SegmentNameTextBox.Name = "SegmentNameTextBox"
         Me.SegmentNameTextBox.Size = New System.Drawing.Size(108, 20)
         Me.SegmentNameTextBox.TabIndex = 4
@@ -754,7 +754,7 @@ Partial Class MainForm
         '
         Me.AddUpdateSegmentButton.Enabled = False
         Me.AddUpdateSegmentButton.Location = New System.Drawing.Point(163, 17)
-        Me.AddUpdateSegmentButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AddUpdateSegmentButton.Margin = New System.Windows.Forms.Padding(2)
         Me.AddUpdateSegmentButton.Name = "AddUpdateSegmentButton"
         Me.AddUpdateSegmentButton.Size = New System.Drawing.Size(89, 22)
         Me.AddUpdateSegmentButton.TabIndex = 2
@@ -765,7 +765,7 @@ Partial Class MainForm
         '
         Me.DeleteSegmentButton.Enabled = False
         Me.DeleteSegmentButton.Location = New System.Drawing.Point(163, 173)
-        Me.DeleteSegmentButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.DeleteSegmentButton.Margin = New System.Windows.Forms.Padding(2)
         Me.DeleteSegmentButton.Name = "DeleteSegmentButton"
         Me.DeleteSegmentButton.Size = New System.Drawing.Size(89, 24)
         Me.DeleteSegmentButton.TabIndex = 1
@@ -776,7 +776,7 @@ Partial Class MainForm
         '
         Me.SegmentsListBox.FormattingEnabled = True
         Me.SegmentsListBox.Location = New System.Drawing.Point(12, 87)
-        Me.SegmentsListBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SegmentsListBox.Margin = New System.Windows.Forms.Padding(2)
         Me.SegmentsListBox.Name = "SegmentsListBox"
         Me.SegmentsListBox.Size = New System.Drawing.Size(241, 82)
         Me.SegmentsListBox.TabIndex = 0
@@ -785,7 +785,7 @@ Partial Class MainForm
         '
         Me.VideoPositionTrackBar.LargeChange = 10
         Me.VideoPositionTrackBar.Location = New System.Drawing.Point(4, 317)
-        Me.VideoPositionTrackBar.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoPositionTrackBar.Margin = New System.Windows.Forms.Padding(2)
         Me.VideoPositionTrackBar.Maximum = 100
         Me.VideoPositionTrackBar.Name = "VideoPositionTrackBar"
         Me.VideoPositionTrackBar.Size = New System.Drawing.Size(253, 45)
@@ -795,7 +795,7 @@ Partial Class MainForm
         'VideoPositionUpDown
         '
         Me.VideoPositionUpDown.Location = New System.Drawing.Point(375, 317)
-        Me.VideoPositionUpDown.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoPositionUpDown.Margin = New System.Windows.Forms.Padding(2)
         Me.VideoPositionUpDown.Name = "VideoPositionUpDown"
         Me.VideoPositionUpDown.ReadOnly = True
         Me.VideoPositionUpDown.Size = New System.Drawing.Size(86, 20)
@@ -823,9 +823,9 @@ Partial Class MainForm
         Me.VideoGroupBox.Controls.Add(Me.VideoPositionTrackBar)
         Me.VideoGroupBox.Enabled = False
         Me.VideoGroupBox.Location = New System.Drawing.Point(9, 25)
-        Me.VideoGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoGroupBox.Margin = New System.Windows.Forms.Padding(2)
         Me.VideoGroupBox.Name = "VideoGroupBox"
-        Me.VideoGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoGroupBox.Padding = New System.Windows.Forms.Padding(2)
         Me.VideoGroupBox.Size = New System.Drawing.Size(496, 391)
         Me.VideoGroupBox.TabIndex = 9
         Me.VideoGroupBox.TabStop = False
@@ -837,7 +837,7 @@ Partial Class MainForm
         Me.VideoPanel.BackColor = System.Drawing.Color.Black
         Me.VideoPanel.Controls.Add(Me.VideoPictureBox)
         Me.VideoPanel.Location = New System.Drawing.Point(4, 17)
-        Me.VideoPanel.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoPanel.Margin = New System.Windows.Forms.Padding(2)
         Me.VideoPanel.Name = "VideoPanel"
         Me.VideoPanel.Size = New System.Drawing.Size(480, 292)
         Me.VideoPanel.TabIndex = 13
@@ -846,7 +846,7 @@ Partial Class MainForm
         '
         Me.VideoActualSizeCheckBox.AutoSize = True
         Me.VideoActualSizeCheckBox.Location = New System.Drawing.Point(4, 367)
-        Me.VideoActualSizeCheckBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.VideoActualSizeCheckBox.Margin = New System.Windows.Forms.Padding(2)
         Me.VideoActualSizeCheckBox.Name = "VideoActualSizeCheckBox"
         Me.VideoActualSizeCheckBox.Size = New System.Drawing.Size(132, 17)
         Me.VideoActualSizeCheckBox.TabIndex = 12
@@ -876,7 +876,7 @@ Partial Class MainForm
         'SaveScreenshotButton
         '
         Me.SaveScreenshotButton.Location = New System.Drawing.Point(375, 353)
-        Me.SaveScreenshotButton.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.SaveScreenshotButton.Margin = New System.Windows.Forms.Padding(2)
         Me.SaveScreenshotButton.Name = "SaveScreenshotButton"
         Me.SaveScreenshotButton.Size = New System.Drawing.Size(110, 26)
         Me.SaveScreenshotButton.TabIndex = 9
@@ -903,9 +903,9 @@ Partial Class MainForm
         Me.DisplaySettingsGroupBox.Controls.Add(Me.GroupBox2)
         Me.DisplaySettingsGroupBox.Enabled = False
         Me.DisplaySettingsGroupBox.Location = New System.Drawing.Point(794, 254)
-        Me.DisplaySettingsGroupBox.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.DisplaySettingsGroupBox.Margin = New System.Windows.Forms.Padding(2)
         Me.DisplaySettingsGroupBox.Name = "DisplaySettingsGroupBox"
-        Me.DisplaySettingsGroupBox.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.DisplaySettingsGroupBox.Padding = New System.Windows.Forms.Padding(2)
         Me.DisplaySettingsGroupBox.Size = New System.Drawing.Size(164, 162)
         Me.DisplaySettingsGroupBox.TabIndex = 15
         Me.DisplaySettingsGroupBox.TabStop = False
@@ -914,7 +914,7 @@ Partial Class MainForm
         'AoiOpacityTrackBar
         '
         Me.AoiOpacityTrackBar.Location = New System.Drawing.Point(71, 102)
-        Me.AoiOpacityTrackBar.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.AoiOpacityTrackBar.Margin = New System.Windows.Forms.Padding(2)
         Me.AoiOpacityTrackBar.Maximum = 255
         Me.AoiOpacityTrackBar.Name = "AoiOpacityTrackBar"
         Me.AoiOpacityTrackBar.Size = New System.Drawing.Size(85, 45)
@@ -943,9 +943,9 @@ Partial Class MainForm
         Me.GroupBox2.Controls.Add(Me.Label15)
         Me.GroupBox2.Controls.Add(Me.SelectedAoiColorLabel)
         Me.GroupBox2.Location = New System.Drawing.Point(4, 17)
-        Me.GroupBox2.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.GroupBox2.Margin = New System.Windows.Forms.Padding(2)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.GroupBox2.Padding = New System.Windows.Forms.Padding(2)
         Me.GroupBox2.Size = New System.Drawing.Size(152, 82)
         Me.GroupBox2.TabIndex = 9
         Me.GroupBox2.TabStop = False
@@ -954,10 +954,10 @@ Partial Class MainForm
         'AxWindowsMediaPlayer1
         '
         Me.AxWindowsMediaPlayer1.Enabled = True
-        Me.AxWindowsMediaPlayer1.Location = New System.Drawing.Point(994, 104)
+        Me.AxWindowsMediaPlayer1.Location = New System.Drawing.Point(1010, 124)
         Me.AxWindowsMediaPlayer1.Name = "AxWindowsMediaPlayer1"
         Me.AxWindowsMediaPlayer1.OcxState = CType(resources.GetObject("AxWindowsMediaPlayer1.OcxState"), System.Windows.Forms.AxHost.State)
-        Me.AxWindowsMediaPlayer1.Size = New System.Drawing.Size(75, 23)
+        Me.AxWindowsMediaPlayer1.Size = New System.Drawing.Size(145, 101)
         Me.AxWindowsMediaPlayer1.TabIndex = 16
         '
         'MainForm
@@ -973,7 +973,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.SettingsGroupBox)
         Me.Controls.Add(Me.MainMenuStrip)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
-        Me.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.Margin = New System.Windows.Forms.Padding(2)
         Me.MaximizeBox = False
         Me.Name = "MainForm"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
