@@ -117,7 +117,11 @@ Public Class MirametrixViewerData
                         If Not _gazes.ContainsKey(id) Then
                             _gazes.Add(id, gaze)
                         Else
-                            _gazes.Item(id) = gaze
+                            Dim avg As PointOfGaze = _gazes.Item(id)
+                            avg.duration = Math.Max(avg.duration, gaze.duration)
+                            avg.x = (avg.x + gaze.x) / 2
+                            avg.y = (avg.y + gaze.y) / 2
+                            _gazes.Item(id) = avg
                         End If
 
                     End If
