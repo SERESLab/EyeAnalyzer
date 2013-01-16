@@ -1,14 +1,23 @@
-﻿''' <summary>
+﻿Imports System.Runtime.InteropServices
+Imports System.Drawing.Imaging
+Imports DirectShowLib
+
+''' <summary>
 ''' Represents a video recording with frames that can be rendered on request.
+''' Uses the DirectShow.NET library from: http://directshownet.sourceforge.net/
 ''' </summary>
 Public Class VideoRecording
+    Implements ISampleGrabberCB, IDisposable
 
     Private _lengthMs As ULong
     Private _timeBetweenFramesMs As UInteger
     Private _width As Integer
     Private _height As Integer
-
-    Dim aviFile As New DexterLib.MediaDet
+    Private _filterGraph As IFilterGraph2 = Nothing
+    Private _seek As IMediaSeeking = Nothing
+    Private _control As IMediaControl = Nothing
+    Private _frameImage As Bitmap = Nothing
+    Private _imageAvailable As Boolean = False
 
     ''' <summary>
     ''' Gets the length of the video in milliseconds.
@@ -57,22 +66,38 @@ Public Class VideoRecording
     ''' Private constructor that loads the specified video file.
     ''' </summary>
     Private Sub New(ByVal filename As String)
+        Try
+            setupFilterGraph(filename)
+            ' create frame image, assuming 24 bits per pixel for video
+            _frameImage = New Bitmap(_width, _height, PixelFormat.Format24bppRgb)
+        Catch
+            Dispose()
+        End Try
 
-        ' Load video and set values
-        aviFile.Filename = filename
-        _lengthMs = aviFile.StreamLength
-        _timeBetweenFramesMs = aviFile.FrameRate
-
-        ' TODO load video and set these values
-        _width = 1920
-        _height = 1080
+        _timeBetweenFramesMs = 60
     End Sub
 
     ''' <summary>
     ''' Destructor.
     ''' </summary>
     Protected Overrides Sub Finalize()
-        
+        Dispose()
+    End Sub
+
+    ''' <summary>
+    ''' Release media interfaces.
+    ''' </summary>
+    Public Sub Dispose() Implements System.IDisposable.Dispose
+
+        _control = Nothing
+        _seek = Nothing
+
+        If _filterGraph IsNot Nothing Then
+            Marshal.ReleaseComObject(_filterGraph)
+            _filterGraph = Nothing
+        End If
+
+        GC.Collect()
     End Sub
 
     ''' <summary>
@@ -83,19 +108,149 @@ Public Class VideoRecording
     ''' <param name="width">width of the frame image</param>
     ''' <param name="height">height of the frame image</param>
     Public Function drawFrameAtPosition(ByVal positionMs As ULong, ByVal width As Integer, ByVal height As Integer) As Bitmap
+
+        _imageAvailable = False
+        Dim posRefUnits = positionMs * 10000
+        DsError.ThrowExceptionForHR(_seek.SetPositions(posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning, posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning))
+
+        DsError.ThrowExceptionForHR(_control.Run())
+        ' spin wait for frame image to become available
+        For i As Long = 0 To Long.MaxValue
+            If _imageAvailable Then
+                Exit For
+            End If
+        Next
+        DsError.ThrowExceptionForHR(_control.Stop())
+
         Dim b As Bitmap = New Bitmap(width, height, Imaging.PixelFormat.Format32bppPArgb)
         Using g = Graphics.FromImage(b)
 
-            'get frame at positionMs
-            aviFile.CurrentStream = positionMs * _timeBetweenFramesMs
-
-            ' TODO figure out how to turn frame at CurrentStream into bitmap
-
-            ' TODO scale and render the specified frame
-            g.Clear(Color.Aquamarine)
-            g.DrawString("Frame " & positionMs, SystemFonts.DefaultFont, Brushes.Black, 50, 50)
-
+            If Not _imageAvailable Then
+                g.Clear(Color.Black)
+                g.DrawString("Preview is not available.", SystemFonts.DefaultFont, Brushes.White, 50, 50)
+            Else
+                g.Clear(Color.Black)
+                g.DrawImage(_frameImage, New Rectangle(0, 0, width, height), New Rectangle(0, 0, _width, _height), GraphicsUnit.Pixel)
+            End If
         End Using
         Return b
+    End Function
+
+
+    ''' <summary>
+    ''' Sets up the filter graph for DirectShowLib.
+    ''' </summary>
+    Private Sub setupFilterGraph(ByVal filename As String)
+
+        Dim capFilter As IBaseFilter = Nothing
+        Dim sampleGrabber As ISampleGrabber = Nothing
+        Dim nullRenderer As IBaseFilter = Nothing
+
+        Try
+            ' create filter graph
+            Dim filterGraph As IFilterGraph2 = New FilterGraph()
+            DsError.ThrowExceptionForHR(filterGraph.AddSourceFilter(filename, "Ds.NET FileFilter", capFilter))
+
+
+            ' configure sample grabber to use buffer callback
+            sampleGrabber = New SampleGrabber()
+            Dim mt As New AMMediaType()
+            mt.majorType = MediaType.Video
+            mt.subType = MediaSubType.RGB24
+            mt.formatType = FormatType.VideoInfo
+            DsError.ThrowExceptionForHR(sampleGrabber.SetMediaType(mt))
+            DsUtils.FreeAMMediaType(mt)
+            DsError.ThrowExceptionForHR(sampleGrabber.SetCallback(Me, 1))
+            DsError.ThrowExceptionForHR(filterGraph.AddFilter(sampleGrabber, "Ds.NET Grabber"))
+
+
+
+            ' connect media source
+            Dim pinOut As IPin = DsFindPin.ByDirection(capFilter, PinDirection.Output, 0)
+            Dim pinIn As IPin = DsFindPin.ByDirection(sampleGrabber, PinDirection.Input, 0)
+            DsError.ThrowExceptionForHR(filterGraph.Connect(pinOut, pinIn))
+
+
+            ' connect null renderer
+            nullRenderer = New NullRenderer()
+            DsError.ThrowExceptionForHR(filterGraph.AddFilter(nullRenderer, "Null renderer"))
+            pinOut = DsFindPin.ByDirection(sampleGrabber, PinDirection.Output, 0)
+            pinIn = DsFindPin.ByDirection(nullRenderer, PinDirection.Input, 0)
+            DsError.ThrowExceptionForHR(filterGraph.Connect(pinOut, pinIn))
+
+
+            ' read size data
+            mt = New AMMediaType()
+            DsError.ThrowExceptionForHR(sampleGrabber.GetConnectedMediaType(mt))
+            If Not mt.formatType = FormatType.VideoInfo Or mt.formatPtr = IntPtr.Zero Then
+                Throw New NotSupportedException()
+            End If
+            Dim info As VideoInfoHeader = Marshal.PtrToStructure(mt.formatPtr, GetType(VideoInfoHeader))
+            _width = info.BmiHeader.Width
+            _height = info.BmiHeader.Height
+            DsUtils.FreeAMMediaType(mt)
+
+
+            ' read time data
+            Dim seek As IMediaSeeking = filterGraph
+            Dim durationRefTime As Long ' duration in 100 ns units
+            DsError.ThrowExceptionForHR(seek.GetDuration(durationRefTime))
+            _lengthMs = durationRefTime * 0.0001
+
+            _seek = seek
+            _control = filterGraph
+            _filterGraph = filterGraph
+        Finally
+            If capFilter IsNot Nothing Then
+                Marshal.ReleaseComObject(capFilter)
+            End If
+
+            If sampleGrabber IsNot Nothing Then
+                Marshal.ReleaseComObject(sampleGrabber)
+            End If
+
+            If nullRenderer IsNot Nothing Then
+                Marshal.ReleaseComObject(nullRenderer)
+            End If
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Sample callback, required for ISampleGrabberCB.
+    ''' </summary>
+    Public Function SampleCB(ByVal sampleTime As Double, ByVal pSample As IMediaSample) As Integer _
+        Implements ISampleGrabberCB.SampleCB
+
+        Marshal.ReleaseComObject(pSample)
+        Return 0
+    End Function
+
+    ''' <summary>
+    ''' Buffer callback for getting frame images.
+    ''' </summary>
+    Public Function BufferCB(ByVal sampleTime As Double, ByVal pBuffer As System.IntPtr, ByVal bufferLen As Integer) As Integer _
+        Implements ISampleGrabberCB.BufferCB
+
+        Dim rgbValues(bufferLen - 1) As Byte
+        Dim flipped(bufferLen - 1) As Byte
+        Dim frameImageData As BitmapData = _frameImage.LockBits(New Rectangle(0, 0, _width, _height), _
+            ImageLockMode.WriteOnly, _frameImage.PixelFormat)
+
+        Marshal.Copy(pBuffer, rgbValues, 0, bufferLen)
+
+        ' flip image vertically
+        Dim orig_i As Integer = bufferLen - frameImageData.Stride
+        For i As Integer = 0 To bufferLen - 1 Step frameImageData.Stride
+            For j As Integer = 0 To frameImageData.Stride - 1
+                flipped(i + j) = rgbValues(orig_i + j)
+            Next
+            orig_i = orig_i - frameImageData.Stride
+        Next
+
+        Marshal.Copy(flipped, 0, frameImageData.Scan0, bufferLen)
+        _frameImage.UnlockBits(frameImageData)
+        _imageAvailable = True
+
+        Return 0
     End Function
 End Class
