@@ -19,6 +19,9 @@ Public Class VideoRecording
     Private _frameImage As Bitmap = Nothing
     Private _imageAvailable As Boolean = False
 
+    Private _lastRequestedPosition As ULong = ULong.MaxValue
+
+
     ''' <summary>
     ''' Gets the length of the video in milliseconds.
     ''' </summary>
@@ -109,18 +112,21 @@ Public Class VideoRecording
     ''' <param name="height">height of the frame image</param>
     Public Function drawFrameAtPosition(ByVal positionMs As ULong, ByVal width As Integer, ByVal height As Integer) As Bitmap
 
-        _imageAvailable = False
-        Dim posRefUnits = positionMs * 10000
-        DsError.ThrowExceptionForHR(_seek.SetPositions(posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning, posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning))
+        If Not positionMs = _lastRequestedPosition Then
+            _imageAvailable = False
+            Dim posRefUnits = positionMs * 10000
+            DsError.ThrowExceptionForHR(_seek.SetPositions(posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning, posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning))
 
-        DsError.ThrowExceptionForHR(_control.Run())
-        ' spin wait for frame image to become available
-        For i As Long = 0 To Long.MaxValue
-            If _imageAvailable Then
-                Exit For
-            End If
-        Next
-        DsError.ThrowExceptionForHR(_control.Stop())
+            DsError.ThrowExceptionForHR(_control.Run())
+            ' spin wait for frame image to become available
+            For i As Long = 0 To Long.MaxValue
+                If _imageAvailable Then
+                    Exit For
+                End If
+            Next
+            DsError.ThrowExceptionForHR(_control.Stop())
+            _lastRequestedPosition = positionMs
+        End If
 
         Dim b As Bitmap = New Bitmap(width, height, Imaging.PixelFormat.Format32bppPArgb)
         Using g = Graphics.FromImage(b)
