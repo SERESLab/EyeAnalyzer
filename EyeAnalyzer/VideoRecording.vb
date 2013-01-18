@@ -9,6 +9,8 @@ Imports DirectShowLib
 Public Class VideoRecording
     Implements ISampleGrabberCB, IDisposable
 
+    Public Shared Event FrameImageChanged()
+
     Private _lengthMs As ULong
     Private _timeBetweenFramesMs As UInteger
     Private _width As Integer
@@ -17,12 +19,28 @@ Public Class VideoRecording
     Private _seek As IMediaSeeking = Nothing
     Private _control As IMediaControl = Nothing
     Private _frameImage As Bitmap = Nothing
-    Private _imageAvailable As Boolean = False
     Private _imageBytes(0) As Byte
-    Private _imageFlippedBytes(0) As Byte
+    Private _currentPosition As ULong = 0
 
-    Private _lastRequestedPosition As ULong = ULong.MaxValue
 
+    ''' <summary>
+    ''' Gets or sets the current position within the recording.
+    ''' </summary>
+    Public Property Position As ULong
+        Get
+            Return _currentPosition
+        End Get
+        Set(ByVal value As ULong)
+            If Not value = _currentPosition Then
+                Dim posRefUnits = value * 10000
+                DsError.ThrowExceptionForHR(_seek.SetPositions(posRefUnits, _
+                                            AMSeekingSeekingFlags.AbsolutePositioning, _
+                                            posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning))
+                DsError.ThrowExceptionForHR(_control.Run())
+                _currentPosition = value
+            End If
+        End Set
+    End Property
 
     ''' <summary>
     ''' Gets the length of the video in milliseconds.
@@ -75,11 +93,16 @@ Public Class VideoRecording
             setupFilterGraph(filename)
             ' create frame image, assuming 24 bits per pixel for video
             _frameImage = New Bitmap(_width, _height, PixelFormat.Format24bppRgb)
+
+            DsError.ThrowExceptionForHR(_seek.SetPositions(0, _
+                                            AMSeekingSeekingFlags.AbsolutePositioning, _
+                                            0, AMSeekingSeekingFlags.AbsolutePositioning))
+            DsError.ThrowExceptionForHR(_control.Run())
         Catch
             Dispose()
         End Try
 
-        _timeBetweenFramesMs = 60
+        _timeBetweenFramesMs = 30
     End Sub
 
     ''' <summary>
@@ -106,40 +129,17 @@ Public Class VideoRecording
     End Sub
 
     ''' <summary>
-    ''' Renders the frame at the specified position, scaled to the fit the specified
+    ''' Renders the frame at the current position, scaled to the fit the specified
     ''' dimensions.
     ''' </summary>
-    ''' <param name="positionMs">the position within the recording, in milliseconds</param>
     ''' <param name="width">width of the frame image</param>
     ''' <param name="height">height of the frame image</param>
-    Public Function drawFrameAtPosition(ByVal positionMs As ULong, ByVal width As Integer, ByVal height As Integer) As Bitmap
+    Public Function getScaledFrame(ByVal width As Integer, ByVal height As Integer) As Bitmap
 
-        If Not positionMs = _lastRequestedPosition Then
-            _imageAvailable = False
-            Dim posRefUnits = positionMs * 10000
-            DsError.ThrowExceptionForHR(_seek.SetPositions(posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning, posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning))
-
-            DsError.ThrowExceptionForHR(_control.Run())
-            ' spin wait for frame image to become available
-            For i As Integer = 0 To Integer.MaxValue - 1
-                If _imageAvailable Then
-                    Exit For
-                End If
-            Next
-            DsError.ThrowExceptionForHR(_control.Stop())
-            _lastRequestedPosition = positionMs
-        End If
-
-        Dim b As Bitmap = New Bitmap(width, height, Imaging.PixelFormat.Format32bppPArgb)
+        Dim b As Bitmap = New Bitmap(width, height, Imaging.PixelFormat.Format24bppRgb)
         Using g = Graphics.FromImage(b)
-
-            If Not _imageAvailable Then
-                g.Clear(Color.Black)
-                g.DrawString("Preview is not available.", SystemFonts.DefaultFont, Brushes.White, 50, 50)
-            Else
-                g.Clear(Color.Black)
-                g.DrawImage(_frameImage, New Rectangle(0, 0, width, height), New Rectangle(0, 0, _width, _height), GraphicsUnit.Pixel)
-            End If
+            g.Clear(Color.Black)
+            g.DrawImage(_frameImage, New Rectangle(0, 0, width, height), New Rectangle(0, 0, _width, _height), GraphicsUnit.Pixel)
         End Using
         Return b
     End Function
@@ -240,24 +240,26 @@ Public Class VideoRecording
         Implements ISampleGrabberCB.BufferCB
 
         ReDim _imageBytes(bufferLen - 1)
-        ReDim _imageFlippedBytes(bufferLen - 1)
         Dim frameImageData As BitmapData = _frameImage.LockBits(New Rectangle(0, 0, _width, _height), _
-            ImageLockMode.WriteOnly, _frameImage.PixelFormat)
+            ImageLockMode.ReadWrite, _frameImage.PixelFormat)
 
         Marshal.Copy(pBuffer, _imageBytes, 0, bufferLen)
 
         ' flip image vertically
         Dim orig_i As Integer = bufferLen - frameImageData.Stride
-        For i As Integer = 0 To bufferLen - 1 Step frameImageData.Stride
+        For i As Integer = 0 To (bufferLen / 2) - 1 Step frameImageData.Stride
             For j As Integer = 0 To frameImageData.Stride - 1
-                _imageFlippedBytes(i + j) = _imageBytes(orig_i + j)
+                Dim tmp As Byte = _imageBytes(orig_i + j)
+                _imageBytes(orig_i + j) = _imageBytes(i + j)
+                _imageBytes(i + j) = tmp
             Next
             orig_i = orig_i - frameImageData.Stride
         Next
 
-        Marshal.Copy(_imageFlippedBytes, 0, frameImageData.Scan0, bufferLen)
+        Marshal.Copy(_imageBytes, 0, frameImageData.Scan0, bufferLen)
         _frameImage.UnlockBits(frameImageData)
-        _imageAvailable = True
+
+        RaiseEvent FrameImageChanged()
 
         Return 0
     End Function

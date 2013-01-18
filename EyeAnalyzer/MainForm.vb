@@ -28,7 +28,7 @@ Public Class MainForm
     Private _newAoiRect? As Rectangle = Nothing
     Private _mouseDownLocation? As Point = Nothing
 
-    Private _videoRecording As VideoRecording = Nothing
+    Private WithEvents _videoRecording As VideoRecording = Nothing
     Private _eyeTrackerData As MirametrixViewerData = Nothing
     Private _isRedrawRequired As Boolean = False
 
@@ -220,28 +220,26 @@ Public Class MainForm
     End Sub
 
     Private Sub VideoPositionUpDown_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VideoPositionUpDown.ValueChanged
-        _isRedrawRequired = True
         Dim percent As Single = CType(VideoPositionUpDown.Value, Single) / _videoRecording.LengthMs
         VideoPositionTrackBar.Value = percent * 100
         VideoPositionLabel.Text = makeTimeString(VideoPositionUpDown.Value)
+        _videoRecording.Position = VideoPositionUpDown.Value
     End Sub
 
     Private Sub VideoPositionTrackBar_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VideoPositionTrackBar.Scroll
-        _isRedrawRequired = True
         Dim percent As Single = VideoPositionTrackBar.Value / 100.0
         Dim value As ULong = Math.Round(percent * _videoRecording.LengthMs)
         value -= value Mod _videoRecording.TimeBetweenFramesMs
         VideoPositionUpDown.Value = value
+        _videoRecording.Position = VideoPositionUpDown.Value
     End Sub
 
     Private Sub RedrawTimer_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RedrawTimer.Tick
         If _isRedrawRequired Then
             If Not VideoActualSizeCheckBox.Checked Then
-                VideoPictureBox.Image = _videoRecording.drawFrameAtPosition(VideoPositionUpDown.Value, _
-                                                 VideoPanel.Width, VideoPanel.Height)
+                VideoPictureBox.Image = _videoRecording.getScaledFrame(VideoPanel.Width, VideoPanel.Height)
             Else
-                VideoPictureBox.Image = _videoRecording.drawFrameAtPosition(VideoPositionUpDown.Value, _
-                                                 _videoRecording.Width, _videoRecording.Height)
+                VideoPictureBox.Image = _videoRecording.getScaledFrame(_videoRecording.Width, _videoRecording.Height)
             End If
             drawAois()
             _isRedrawRequired = False
@@ -341,8 +339,7 @@ Public Class MainForm
     End Function
 
     Private Sub SaveScreenshotButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveScreenshotButton.Click
-        Using b = _videoRecording.drawFrameAtPosition(VideoPositionUpDown.Value, _
-                                             _videoRecording.Width, _videoRecording.Height)
+        Using b = _videoRecording.getScaledFrame(_videoRecording.Width, _videoRecording.Height)
             MainSaveFileDialog.Title = "Save screenshot"
             MainSaveFileDialog.FileName = "screenshot"
             MainSaveFileDialog.Filter = "PNG (*.png)|*.png"
@@ -1152,5 +1149,10 @@ Public Class MainForm
                 setStatusMessage("Calibration error data saved to " & MainSaveFileDialog.FileName & ".")
             End If
         End If
+    End Sub
+
+    Private Sub _videoRecording_FrameImageChanged() Handles _videoRecording.FrameImageChanged
+        
+        _isRedrawRequired = True
     End Sub
 End Class
