@@ -18,6 +18,8 @@ Public Class VideoRecording
     Private _control As IMediaControl = Nothing
     Private _frameImage As Bitmap = Nothing
     Private _imageAvailable As Boolean = False
+    Private _imageBytes(0) As Byte
+    Private _imageFlippedBytes(0) As Byte
 
     Private _lastRequestedPosition As ULong = ULong.MaxValue
 
@@ -237,23 +239,23 @@ Public Class VideoRecording
     Public Function BufferCB(ByVal sampleTime As Double, ByVal pBuffer As System.IntPtr, ByVal bufferLen As Integer) As Integer _
         Implements ISampleGrabberCB.BufferCB
 
-        Dim rgbValues(bufferLen - 1) As Byte
-        Dim flipped(bufferLen - 1) As Byte
+        ReDim _imageBytes(bufferLen - 1)
+        ReDim _imageFlippedBytes(bufferLen - 1)
         Dim frameImageData As BitmapData = _frameImage.LockBits(New Rectangle(0, 0, _width, _height), _
             ImageLockMode.WriteOnly, _frameImage.PixelFormat)
 
-        Marshal.Copy(pBuffer, rgbValues, 0, bufferLen)
+        Marshal.Copy(pBuffer, _imageBytes, 0, bufferLen)
 
         ' flip image vertically
         Dim orig_i As Integer = bufferLen - frameImageData.Stride
         For i As Integer = 0 To bufferLen - 1 Step frameImageData.Stride
             For j As Integer = 0 To frameImageData.Stride - 1
-                flipped(i + j) = rgbValues(orig_i + j)
+                _imageFlippedBytes(i + j) = _imageBytes(orig_i + j)
             Next
             orig_i = orig_i - frameImageData.Stride
         Next
 
-        Marshal.Copy(flipped, 0, frameImageData.Scan0, bufferLen)
+        Marshal.Copy(_imageFlippedBytes, 0, frameImageData.Scan0, bufferLen)
         _frameImage.UnlockBits(frameImageData)
         _imageAvailable = True
 
