@@ -121,7 +121,7 @@ Public Class VideoRecording
 
             DsError.ThrowExceptionForHR(_control.Run())
             ' spin wait for frame image to become available
-            For i As Long = 0 To Long.MaxValue
+            For i As Integer = 0 To Integer.MaxValue - 1
                 If _imageAvailable Then
                     Exit For
                 End If
