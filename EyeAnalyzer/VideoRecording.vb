@@ -21,6 +21,7 @@ Public Class VideoRecording
     Private _frameImage As Bitmap = Nothing
     Private _imageBytes(0) As Byte
     Private _currentPosition As ULong = 0
+    Private _endReferenceTime As Long = 0
 
 
     ''' <summary>
@@ -35,8 +36,9 @@ Public Class VideoRecording
                 Dim posRefUnits = value * 10000
                 DsError.ThrowExceptionForHR(_seek.SetPositions(posRefUnits, _
                                             AMSeekingSeekingFlags.AbsolutePositioning, _
-                                            posRefUnits, AMSeekingSeekingFlags.AbsolutePositioning))
+                                            _endReferenceTime, AMSeekingSeekingFlags.AbsolutePositioning))
                 DsError.ThrowExceptionForHR(_control.Run())
+                DsError.ThrowExceptionForHR(_control.StopWhenReady())
                 _currentPosition = value
             End If
         End Set
@@ -96,8 +98,9 @@ Public Class VideoRecording
 
             DsError.ThrowExceptionForHR(_seek.SetPositions(0, _
                                             AMSeekingSeekingFlags.AbsolutePositioning, _
-                                            0, AMSeekingSeekingFlags.AbsolutePositioning))
+                                            _endReferenceTime, AMSeekingSeekingFlags.AbsolutePositioning))
             DsError.ThrowExceptionForHR(_control.Run())
+            DsError.ThrowExceptionForHR(_control.StopWhenReady())
         Catch
             Dispose()
         End Try
@@ -204,6 +207,7 @@ Public Class VideoRecording
             Dim durationRefTime As Long ' duration in 100 ns units
             DsError.ThrowExceptionForHR(seek.GetDuration(durationRefTime))
             _lengthMs = durationRefTime * 0.0001
+            _endReferenceTime = durationRefTime
 
             _seek = seek
             _control = filterGraph

@@ -62,6 +62,15 @@
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
+    <Import Include="DirectShowLib" />
+    <Import Include="DirectShowLib.BDA" />
+    <Import Include="DirectShowLib.DES" />
+    <Import Include="DirectShowLib.DMO" />
+    <Import Include="DirectShowLib.MultimediaStreaming" />
+    <Import Include="DirectShowLib.SBE" />
+    <Import Include="EyeAnalyzer" />
+    <Import Include="EyeAnalyzer.My" />
+    <Import Include="EyeAnalyzer.My.Resources" />
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />

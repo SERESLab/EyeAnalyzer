@@ -58,6 +58,7 @@ Public Class ProcessingResults
                         writer.WriteStartElement("FixationPoint")
                         writer.WriteAttributeString("x", f.Point.X.ToString())
                         writer.WriteAttributeString("y", f.Point.Y.ToString())
+                        writer.WriteAttributeString("start", f.StartMs.ToString())
                         writer.WriteAttributeString("duration", f.Duration.ToString())
                         writer.WriteAttributeString("aoi", aoiName)
                         writer.WriteEndElement()
