@@ -3,11 +3,15 @@ EyeAnalyzer
 
 EyeAnalyzer is a tool for measuring fixations in studies where the subject views several different stimuli over the course of the recorded session. It works by parsing XML data from an eye-tracking device and measuring fixations that fall within specified areas of interest (AOIs) over the time interval specified by for each stimulus. Screen-capture video is used for the user to specify the intervals and the AOIs for each interval.
 
-Features:
+Current Features:
 
 * Click-and-drag drawing of AOIs
 * Heatmap generation
 * Fine-grained time specification for each stimulus segment
+
+Requested Features:
+
+* Visualization of eye tracking data across AOIs.
 
 
 License
