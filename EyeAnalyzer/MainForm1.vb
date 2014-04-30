@@ -1,8 +1,320 @@
-﻿''' <summary>
+﻿Imports System.Xml
+Imports System.Timers
+Imports System.IO
+
+''' <summary>
 ''' Main form for measuring fixations. Allows the user to specify stimulus segments
 ''' and AOIs and execute processing.
 ''' </summary>
-Public Class MainForm
+Public Class MainForm1
+    ''' <summary>
+    ''' Creating of tabs for Settings and Visualization as well as for heatmap. 
+    ''' This was copied from the original Michael Falcone code.
+    ''' by Abdul-Basit
+    ''' </summary>
+    ''' <remarks></remarks>
+    ''' ---------------------------------------------------
+    ''' 
+#Region "Heatmap Tab"
+
+
+    Private _defaultRadius As Integer = 6
+    Private _defaultOpacity As Integer = 255
+    Private _defaultLowColor As Color = Color.Green
+    Private _defaultMidColor As Color = Color.Yellow
+    Private _defaultHighColor As Color = Color.Red
+
+    Private _heatmapNameDictionary As New Dictionary(Of String, Heatmap)
+    Private _lastDirImport As String = Nothing
+    Private _lastDirStimulusImage As String = Nothing
+    Private _clearStatusOnNextUpdate As Boolean
+
+    Private Sub CloseToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CloseToolStripMenuItem.Click
+        Close()
+    End Sub
+
+    Private Sub HeatmapForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        writeStatusMessage("No fixations loaded.")
+        _clearStatusOnNextUpdate = True
+        lblAOI.Text = ""
+    End Sub
+
+    Private Sub ImportFixationLocationsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ImportFixationLocationsToolStripMenuItem.Click
+        If _lastDirImport IsNot Nothing Then
+            MainOpenFileDialog.InitialDirectory = _lastDirImport
+        End If
+        MainOpenFileDialog.Multiselect = True
+        MainOpenFileDialog.Title = "Import fixation locations"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "XML (*.xml)|*.xml"
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            _lastDirImport = MainOpenFileDialog.FileName.Substring(0, MainOpenFileDialog.FileName.LastIndexOf("\") + 1)
+            Try
+                importFixationLocations(MainOpenFileDialog.FileNames)
+            Catch ex As Exception
+                writeStatusMessage("***Error importing fixation locations: " & ex.Message)
+            End Try
+        End If
+    End Sub
+
+    Private Sub importFixationLocations(ByVal filenames As String())
+        For Each filename As String In filenames
+            Dim fixationCount As Integer = 0
+            Dim stimulusCount As Integer = 0
+            Dim fixations As New Stack(Of List(Of Heatmap.FixationPoint))
+            Dim stimulusNames As New Stack(Of String)
+            Dim stimulusDurations As New Stack(Of ULong)
+
+            Using reader = New System.Xml.XmlTextReader(filename)
+                While reader.Read()
+                    If reader.IsStartElement("FixationPoint") Then
+                        Dim xStr As String = reader.GetAttribute("x")
+                        Dim yStr As String = reader.GetAttribute("y")
+                        Dim durationStr As String = reader.GetAttribute("duration")
+                        If xStr Is Nothing Or yStr Is Nothing Or durationStr Is Nothing Then
+                            Throw New Exception("Bad format.")
+                        End If
+                        Dim point As New Heatmap.FixationPoint
+                        point.x = Integer.Parse(xStr)
+                        point.y = Integer.Parse(yStr)
+                        point.strength = Single.Parse(durationStr) / stimulusDurations.Peek
+                        fixations.Peek().Add(point)
+                        fixationCount += 1
+
+                    ElseIf reader.IsStartElement("StimulusSegment") Then
+                        Dim name As String = reader.GetAttribute("name")
+                        Dim durationStr As String = reader.GetAttribute("duration")
+                        If name Is Nothing Or durationStr Is Nothing Then
+                            Throw New Exception("Bad format.")
+                        End If
+                        stimulusDurations.Push(ULong.Parse(durationStr))
+                        stimulusNames.Push(name)
+                        fixations.Push(New List(Of Heatmap.FixationPoint))
+                    End If
+                End While
+            End Using
+
+            While fixations.Count > 0
+                Dim fixationsList As List(Of Heatmap.FixationPoint) = fixations.Pop()
+                Dim stimulusName As String = stimulusNames.Pop()
+                Dim heatmap As Heatmap
+
+                If _heatmapNameDictionary.ContainsKey(stimulusName) Then
+                    heatmap = _heatmapNameDictionary.Item(stimulusName)
+                Else
+                    heatmap = New Heatmap(stimulusName, _defaultRadius, _defaultOpacity, _defaultLowColor, _
+                                          _defaultMidColor, _defaultHighColor)
+                    _heatmapNameDictionary.Add(stimulusName, heatmap)
+                    HeatmapsListBox.Items.Add(heatmap)
+                End If
+                If fixationsList.Count > 0 Then
+                    heatmap.addSubjectFixations(fixationsList)
+                    stimulusCount += 1
+                End If
+            End While
+            stimulusDurations.Clear()
+
+            If HeatmapsListBox.SelectedItem IsNot Nothing Then
+                Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+                NumberOfSubjectsTextBox.Text = heatmap.SubjectCount
+                TotalFixationsTextBox.Text = heatmap.FixationCount
+                StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+            End If
+
+            HeatmapsListBox.Refresh()
+            writeStatusMessage("Imported " & fixationCount & " total fixations on " & stimulusCount & " stimuli from " & filename & ".")
+            ClearFixationLocationsToolStripMenuItem.Enabled = (fixationCount > 0)
+            ExportHeatmapsToolStripMenuItem.Enabled = (fixationCount > 0)
+            SelectAllButton.Enabled = (fixationCount > 0)
+            SelectNoneButton.Enabled = (fixationCount > 0)
+        Next
+    End Sub
+
+    Private Sub writeStatusMessage(ByVal msg As String)
+        If _clearStatusOnNextUpdate Then
+            clearStatus()
+            _clearStatusOnNextUpdate = False
+        End If
+        Dim b As System.Text.StringBuilder = New System.Text.StringBuilder(StatusTextBox.Text)
+        b.AppendLine(msg)
+        StatusTextBox.Text = b.ToString()
+    End Sub
+
+    Private Sub clearStatus()
+        StatusTextBox.Text = Nothing
+    End Sub
+
+    Private Sub ClearFixationLocationsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ClearFixationLocationsToolStripMenuItem.Click
+
+        If MessageBox.Show("Are you sure you would like to clear all fixations?", "Clear fixations", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) = Windows.Forms.DialogResult.No Then
+            Return
+        End If
+
+        SelectAllButton.Enabled = False
+        SelectNoneButton.Enabled = False
+        HeatmapsListBox.ClearSelected()
+        HeatmapsListBox.Items.Clear()
+        HeatmapsListBox.Refresh()
+        _heatmapNameDictionary.Clear()
+        ClearFixationLocationsToolStripMenuItem.Enabled = False
+        ExportHeatmapsToolStripMenuItem.Enabled = False
+        clearStatus()
+        writeStatusMessage("Cleared all fixations.")
+        _clearStatusOnNextUpdate = True
+    End Sub
+
+    Private Sub HeatmapsListBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HeatmapsListBox.SelectedIndexChanged
+        If HeatmapsListBox.SelectedItem IsNot Nothing Then
+            Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+            HeatmapGroupBox.Enabled = True
+            NumberOfSubjectsTextBox.Text = heatmap.SubjectCount
+            TotalFixationsTextBox.Text = heatmap.FixationCount
+            StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+            HeatmapPictureBox.Image = heatmap.Image
+            LowFixationsColorLabel.BackColor = heatmap.LowFixationsColor
+            MidFixationsColorLabel.BackColor = heatmap.MidFixationsColor
+            HighFixationsColorLabel.BackColor = heatmap.HighFixationsColor
+            RadiusNumericUpDown.Value = heatmap.FixationRadius
+            AlphaTrackBar.Value = heatmap.FixationAlpha
+        Else
+            LowFixationsColorLabel.BackColor = Color.Black
+            MidFixationsColorLabel.BackColor = Color.Black
+            HighFixationsColorLabel.BackColor = Color.Black
+            RadiusNumericUpDown.Value = 2
+            AlphaTrackBar.Value = 255
+            NumberOfSubjectsTextBox.Text = ""
+            TotalFixationsTextBox.Text = ""
+            StimulusImageTextBox.Text = ""
+            HeatmapPictureBox.Image = Nothing
+            HeatmapGroupBox.Enabled = False
+        End If
+    End Sub
+
+    Private Sub ClearStimulusImageButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ClearStimulusImageButton.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        heatmap.clearStimulusImage()
+        StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+        HeatmapPictureBox.Image = Nothing
+        HeatmapPictureBox.Image = heatmap.Image
+        HeatmapsListBox.Refresh()
+    End Sub
+
+    Private Sub LoadStimulusImageButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LoadStimulusImageButton.Click
+        If _lastDirStimulusImage IsNot Nothing Then
+            MainOpenFileDialog.InitialDirectory = _lastDirStimulusImage
+        End If
+        MainOpenFileDialog.Multiselect = False
+        MainOpenFileDialog.Title = "Load stimulus image"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG;*.TIFF)|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG;*.TIFF"
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            _lastDirStimulusImage = MainOpenFileDialog.FileName.Substring(0, MainOpenFileDialog.FileName.LastIndexOf("\") + 1)
+            Try
+                Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+                heatmap.loadStimulusImage(MainOpenFileDialog.FileName)
+                StimulusImageTextBox.Text = heatmap.StimulusImageFilename
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                HeatmapsListBox.Refresh()
+            Catch ex As Exception
+                MessageBox.Show("An error occurred while loading the stimulus image.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+    End Sub
+
+    Private Sub ExportHeatmapsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExportHeatmapsToolStripMenuItem.Click
+        For Each heatmap As Heatmap In HeatmapsListBox.CheckedItems
+            MainSaveFileDialog.Title = "Save " & heatmap.StimulusName & " heatmap"
+            MainSaveFileDialog.FileName = heatmap.StimulusName & "-Heatmap"
+            MainSaveFileDialog.Filter = "PNG (*.png)|*.png"
+            If MainSaveFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.Image.Save(MainSaveFileDialog.FileName, Imaging.ImageFormat.Png)
+                writeStatusMessage("Exported heatmap image for " & heatmap.StimulusName & " to " & MainSaveFileDialog.FileName & ".")
+            End If
+        Next
+    End Sub
+
+    Private Sub SelectAllButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectAllButton.Click
+        For i As Integer = 0 To HeatmapsListBox.Items.Count - 1
+            HeatmapsListBox.SetItemChecked(i, True)
+        Next
+    End Sub
+
+    Private Sub SelectNoneButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectNoneButton.Click
+        For i As Integer = 0 To HeatmapsListBox.Items.Count - 1
+            HeatmapsListBox.SetItemChecked(i, False)
+        Next
+    End Sub
+
+    Private Sub AlphaTrackBar_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AlphaTrackBar.Scroll
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            heatmap.FixationAlpha = AlphaTrackBar.Value
+            HeatmapPictureBox.Image = Nothing
+            HeatmapPictureBox.Image = heatmap.Image
+        End If
+    End Sub
+
+    Private Sub RadiusNumericUpDown_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RadiusNumericUpDown.ValueChanged
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            heatmap.FixationRadius = RadiusNumericUpDown.Value
+            HeatmapPictureBox.Image = Nothing
+            HeatmapPictureBox.Image = heatmap.Image
+        End If
+    End Sub
+
+    Private Sub LowFixationsColorLabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LowFixationsColorLabel.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            MainColorDialog.Color = LowFixationsColorLabel.BackColor
+            If MainColorDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.LowFixationsColor = MainColorDialog.Color
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                LowFixationsColorLabel.BackColor = MainColorDialog.Color
+            End If
+        End If
+    End Sub
+
+    Private Sub MidFixationsColorLabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MidFixationsColorLabel.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            MainColorDialog.Color = MidFixationsColorLabel.BackColor
+            If MainColorDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.MidFixationsColor = MainColorDialog.Color
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                MidFixationsColorLabel.BackColor = MainColorDialog.Color
+            End If
+        End If
+    End Sub
+
+    Private Sub HighFixationsColorLabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HighFixationsColorLabel.Click
+        Dim heatmap As Heatmap = HeatmapsListBox.SelectedItem
+        If heatmap IsNot Nothing Then
+            MainColorDialog.Color = HighFixationsColorLabel.BackColor
+            If MainColorDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                heatmap.HighFixationsColor = MainColorDialog.Color
+                HeatmapPictureBox.Image = Nothing
+                HeatmapPictureBox.Image = heatmap.Image
+                HighFixationsColorLabel.BackColor = MainColorDialog.Color
+            End If
+        End If
+    End Sub
+    '-------------------------------------------------------------------
+#End Region
+
+#Region "Experiments and Settings tab"
+
+    'Declare private members/fields
+    ''' <summary>
+    ''' Setting-up and processing experiment data: setting initial parameters and thresholds 
+    ''' and also extracting the required data
+    ''' </summary>
+    ''' <remarks>Abdul-basit</remarks>
 
     Private Const AOI_DRAW_WIDTH As Single = 1.0
     Private Const SELECTED_AOI_DRAW_WIDTH As Single = 2.0
@@ -40,6 +352,7 @@ Public Class MainForm
     ''' Formats the specified time in milliseconds to a string of the
     ''' format HH:MM:SS
     ''' </summary>
+    ''' 
     Private Function makeTimeString(ByVal timeMs As ULong) As String
         Dim hours As Integer = timeMs \ 3600000L
         timeMs -= hours * 3600000L
@@ -54,12 +367,9 @@ Public Class MainForm
         Close()
     End Sub
 
-    Private Sub GenerateNewHeatmapToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GenerateNewHeatmapToolStripMenuItem.Click
-        Dim form As New HeatmapForm()
-        form.Show(Me)
-    End Sub
 
-    Private Sub MainForm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+    Private Sub MainForm1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         updateAoiDrawObjects()
         resetForm()
     End Sub
@@ -162,7 +472,7 @@ Public Class MainForm
 
         MainOpenFileDialog.FileName = ""
         MainOpenFileDialog.Title = "Select eye-tracker data"
-        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.FileName = ""  '---duplication. Already initialized---.
         MainOpenFileDialog.Filter = "Eye-tracker data (*.xml)|*.xml"
         If _lastDirEyeData IsNot Nothing Then
             MainOpenFileDialog.InitialDirectory = _lastDirEyeData
@@ -1070,7 +1380,9 @@ Public Class MainForm
                 writer.WriteAttributeString("name", segment.Name)
                 writer.WriteAttributeString("startTime", segment.StartMs.ToString())
                 writer.WriteAttributeString("endTime", segment.EndMs.ToString())
+                '  writer.WriteAttributeString("AOIHeight", segment.AOIheight.ToString)
                 writer.WriteStartElement("AreasOfInterest")
+
                 For Each aoi As AreaOfInterest In segment.AOIs
                     writer.WriteStartElement("AOI")
                     writer.WriteAttributeString("name", aoi.Name)
@@ -1094,11 +1406,7 @@ Public Class MainForm
         MeasureFixationsGroupBox.Enabled = MeasureFixationsCheckBox.Checked
         SaveFixationLocationsCheckBox.Enabled = MeasureFixationsCheckBox.Checked
     End Sub
-    ''' <summary>
-    ''' Abdul-basit added this coment
-    ''' Actual processing of data that is to be save
-    ''' </summary>
-    
+
     Private Sub ProcessButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ProcessButton.Click
         Dim minFixationLength As Integer = Integer.Parse(FixationDurationTextBox.Text)
         Dim results As ProcessingResults = _eyeTrackerData.process(minFixationLength, _stimulusSegments)
@@ -1156,13 +1464,973 @@ Public Class MainForm
     End Sub
 
     Private Sub _videoRecording_FrameImageChanged() Handles _videoRecording.FrameImageChanged
-        
+
         _isRedrawRequired = True
     End Sub
+#End Region
 
-    Private Sub GazePointsVisualizationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GazePointsVisualizationToolStripMenuItem.Click
-        Dim f As New GazePointForm
+#Region "Static Visualization Tab"
 
-        f.ShowDialog()
+    Dim inputpath As String
+    Dim gPoint As List(Of GazePoints)
+    Dim _imagePath As String
+    Dim vs As New VisualizationClass
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnLoadData.Click
+
+        gPoint = New List(Of GazePoints)
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Title = "Select eye-tracker data"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "Processed data (*.xml)|*.xml"
+
+
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            xmlFileFullName = MainOpenFileDialog.FileName
+            xmlfileName = MainOpenFileDialog.SafeFileName
+            _lastDirData = MainOpenFileDialog.FileName _
+                .Substring(0, MainOpenFileDialog.FileName.Length _
+                           - MainOpenFileDialog.SafeFileName.Length)
+        End If
+
+        _imagePath = MainOpenFileDialog.FileName _
+                    .Substring(0, MainOpenFileDialog.FileName.Length _
+                               - MainOpenFileDialog.SafeFileName.Length - MainOpenFileDialog.SafeFileName.Length + ("-FixationLocations").Length + 2)
+        vs.Gefilename = xmlFileFullName
+
+
+        gPoint = vs.GetGPFromFile()
+        ComboBox1.DataSource = vs.SegmentList
+        ComboBox1.DisplayMember = vs.SegmentList(0)
+
+    End Sub
+
+    ''' <summary>
+    ''' this used to retrieve stimulus segment snapshot
+    ''' </summary>
+    ''' <remarks>Abdul-Basit Kasim</remarks>
+    ''' 
+    Function GetStimulusSegmentPath(ByVal imageStr As String) As String
+        Return My.Computer.FileSystem.CombinePath(_imagePath, imageStr & ".png")
+    End Function
+
+    Public Sub GetSnapShot()
+
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Title = "Select Stimulus segment snapshot"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "Processed data (*.png)|*.png"
+        Dim SegmentSnapShot As String = ""
+        Dim picfilename As String
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            SegmentSnapShot = MainOpenFileDialog.FileName
+            picfilename = MainOpenFileDialog.SafeFileName
+            _lastDirData = MainOpenFileDialog.FileName _
+                .Substring(0, MainOpenFileDialog.FileName.Length _
+                           - MainOpenFileDialog.SafeFileName.Length)
+        End If
+        If SegmentSnapShot = "" Then
+            SegmentSnapShot = Nothing
+            MessageBox.Show("No Stimulus Segment Selected")
+            Exit Sub
+        End If
+        Me.Panel1.BackgroundImageLayout = ImageLayout.Stretch
+        Me.Panel1.BackgroundImage = Image.FromFile(SegmentSnapShot)
+
+    End Sub
+
+    Dim swidth As Integer = 567
+    Dim sheight As Integer = 425
+
+    Dim _W As Integer = 1920
+    Dim _H As Integer = 1080
+
+    Dim xmlFileFullName As String
+    Dim xmlfileName As String
+    Dim _lastDirData As String
+
+
+    Dim g1 As Drawing.Graphics
+    Dim g2 As Drawing.Graphics
+
+    Public Function LoadData() As List(Of Point)
+
+        Dim plist As New List(Of Point)
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Title = "Select eye-tracker data"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "Processed data (*.xml)|*.xml"
+
+
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            xmlFileFullName = MainOpenFileDialog.FileName
+            xmlfileName = MainOpenFileDialog.SafeFileName
+            _lastDirData = MainOpenFileDialog.FileName _
+                .Substring(0, MainOpenFileDialog.FileName.Length _
+                           - MainOpenFileDialog.SafeFileName.Length)
+        End If
+
+        Dim reader As XmlTextReader = New XmlTextReader(xmlFileFullName)
+        Dim p As Point
+        While reader.Read()
+
+            If reader.IsStartElement("FixationPoint") Then
+                Dim x As Integer = Integer.Parse(reader.GetAttribute("x")) * swidth / _W
+                Dim y As Integer = Integer.Parse(reader.GetAttribute("y")) * sheight / _H
+                p = New Point(x, y)
+            End If
+            plist.Add(p)
+        End While
+        Return plist
+    End Function
+
+    Public Function drawPoint(p As Point) As Rectangle
+        Return New Rectangle(p.X - 5, p.Y - 5, 10, 10)
+    End Function
+
+    Public Sub DrawTrajectory(list As List(Of GazePoints))
+        Panel1.Refresh()
+
+
+        g1 = Panel1.CreateGraphics()
+        g2 = Panel1.CreateGraphics()
+        Dim redPen As New Pen(Color.Red)
+
+        ' Set the StartCap property.
+        redPen.StartCap = Drawing2D.LineCap.RoundAnchor
+
+        ' Set the EndCap property.
+        redPen.EndCap = Drawing2D.LineCap.ArrowAnchor
+
+        Dim j As Integer = 0
+        Dim lp(list.Count) As Point
+        For Each p As GazePoints In list
+
+            g1.DrawEllipse(Pens.Red, drawPoint(p.gpoint))
+            g1.FillEllipse(Brushes.Aqua, drawPoint(p.gpoint))
+            lp(j) = New Point(p.gpoint.X, p.gpoint.Y)
+
+            j += 1
+
+        Next
+        g1.DrawLines(redPen, lp)
+
+    End Sub
+#End Region
+
+    Private Sub btnLoadSnapShot_Click(sender As Object, e As EventArgs) Handles btnLoadSnapShot.Click
+        GetSnapShot()
+        ' If ComboBox1.Items.Count > 0 Then
+        btnVisualize.Enabled = True
+        ' End If
+    End Sub
+    Dim g As Graphics
+
+
+    Private Sub btnVisualize_Click(sender As Object, e As EventArgs) Handles btnVisualize.Click
+
+        Dim ifname As String = ComboBox1.Text.Trim
+        Dim imgPath As String = GetStimulusSegmentPath(ifname)
+
+        If My.Computer.FileSystem.FileExists(imgPath) Then
+            Panel1.BackgroundImageLayout = ImageLayout.Stretch
+            Panel1.BackgroundImage = Image.FromFile(imgPath)
+        Else
+            MessageBox.Show("The image file does not exist", "No stimulus segment snapshot")
+
+        End If
+
+        Dim x As Integer = 240 * swidth / _W
+        Dim y As Integer = 0
+        Dim aoiwidth As Integer = 1440 * swidth / _W
+        Dim aoiHeight As Integer = 90 * sheight / _H
+        Dim sortedList As New List(Of GazePoints)
+        Dim sgt As String = ComboBox1.Text.Trim()
+        sortedList = vs.GetStimulusSegment(sgt, gPoint)
+
+        ListView1.Clear()
+        GetPercentages(sortedList)
+        Dim cnt As Integer = Get_AOI_LIST(sortedList)
+        DrawTrajectory(sortedList)
+        g = Panel1.CreateGraphics
+
+        For i As Integer = 0 To cnt - 1
+            '  g.FillRectangle(Brushes.Azure, x, y, aoiwidth, aoiHeight)
+            g.DrawRectangle(Pens.Blue, x - 2, y, aoiwidth, aoiHeight)
+            aoiNamelist.Sort()
+            ' Name_AOIs(aoiNamelist(i).ToString, x + aoiwidth, y + 5)
+            y = y + aoiHeight
+
+        Next
+    End Sub
+    Dim aoiNamelist As List(Of String)
+    ''' <summary>
+    ''' this is use to retrieve The number of AOIs and AOI names
+    ''' </summary>
+    ''' <param name="segment"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Get_AOI_LIST(ByVal segment As List(Of GazePoints)) As Integer
+        Dim _count As Integer = 0
+
+        aoiNamelist = New List(Of String)
+        aoiNamelist.Clear()
+        Dim aoiList = From item As GazePoints In segment
+             Select item.aoi
+             Distinct
+
+
+
+        For Each lst In aoiList
+            Dim aname As String = lst
+            aoiNamelist.Add(lst)
+        Next
+
+        _count = aoiList.Count
+        Return _count
+    End Function
+
+
+    Public Sub GetPercentages(ByVal ls As List(Of GazePoints))
+
+        ' Return customers that are grouped based on country. 
+        Dim aoiPct = From aoip In ls
+                        Order By aoip.aoi
+                        Group By aoiname = aoip.aoi
+                        Into aoiGrouping = Group, Count(), Average(aoip.duration)
+                        Order By aoiname
+
+
+        ' Output the results. 
+        ListView1.Clear()
+        ListView1.Columns.Add("AOI's")
+        ListView1.Columns.Add("Fixation count", 100)
+        ListView1.Columns.Add("Average Duration(ms)", 150)
+        ListView1.Columns.Add("Percent")
+
+        For Each a In aoiPct
+            ' aoiDictionary.Add(a.aoiname, a.Count)
+            ListView1.Items.Add(New ListViewItem(New String() {a.aoiname, a.Count.ToString, a.Average.ToString("N2"), (a.Count * 100 / ls.Count).ToString("N2") & " %"}))
+        Next
+
+    End Sub
+
+
+    Dim g4 As Graphics
+    Sub Name_AOIs(ByVal aname As String, ByVal x As Integer, ByVal y As Integer)
+        g4 = Panel1.CreateGraphics
+        Dim drawString As [String] = aname
+        Dim strwidth As Single = 40.0F
+        Dim strheight As Single = 90.0F
+        ' Create font and brush. 
+        Dim drawFont As New Font("Arial", 8)
+        Dim drawBrush As New SolidBrush(Color.White)
+
+        ' Create rectangle for drawing. 
+
+        Dim drawRect As New RectangleF(x, y, strwidth, strheight)
+
+        ' Draw rectangle to screen. 
+        Dim blackPen As New Pen(Color.White)
+        '  g4.DrawRectangle(blackPen, x, y, strwidth, strheight)
+
+        ' Set format of string. 
+        Dim drawFormat As New StringFormat
+        drawFormat.Alignment = StringAlignment.Center
+
+        ' Draw string to screen.
+        g4.DrawString(drawString, drawFont, drawBrush, _
+        drawRect, drawFormat)
+    End Sub
+
+    '==================Visualization with time (Tab 4)============================== 
+
+    Dim sortedList As List(Of GazePoints)
+
+    ''' <summary>
+    ''' Retrieve processed data
+    ''' </summary>
+    ''' <remarks>done By Abdul-Basit</remarks>
+    Dim gpoint1 As List(Of GazePoints)
+    Private Sub btnLoadPData_Click(sender As Object, e As EventArgs) Handles btnLoadPData.Click
+
+
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Title = "Select eye-tracker data"
+        MainOpenFileDialog.FileName = ""
+        MainOpenFileDialog.Filter = "Processed data (*.xml)|*.xml"
+
+
+        If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            xmlFileFullName = MainOpenFileDialog.FileName
+            xmlfileName = MainOpenFileDialog.SafeFileName
+            _lastDirData = MainOpenFileDialog.FileName _
+                .Substring(0, MainOpenFileDialog.FileName.Length _
+                           - MainOpenFileDialog.SafeFileName.Length)
+        End If
+
+        gpoint1 = New List(Of GazePoints)
+        vs = New VisualizationClass
+
+        vs.Gefilename = xmlFileFullName
+
+        gpoint1 = vs.GetGPFromFile()
+
+        Try
+            cbxSSegment.Items.Clear()
+            cbxSSegment.DataSource = vs.SegmentList
+            cbxSSegment.DisplayMember = vs.SegmentList(0)
+
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
+    Dim SegmentSnapShot As String = ""
+    Dim picfilename As String
+   
+
+    Dim clearanceInterval As Integer
+
+    Private Sub btnVisualizeSS_Click(sender As Object, e As EventArgs) Handles btnVisualizeSS.Click
+
+        btnVisualizeSS.Enabled = False
+        If Me.Panel2.BackgroundImage Is Nothing Then
+            Panel2.BackgroundImageLayout = ImageLayout.Stretch
+            Panel2.BackgroundImage = Image.FromFile(GetImage(cbxSSegment.Text.Trim()))
+        Else
+            Me.Panel2.BackgroundImage = Nothing
+            Panel2.BackgroundImageLayout = ImageLayout.Stretch
+            Panel2.BackgroundImage = Image.FromFile(GetImage(cbxSSegment.Text.Trim))
+        End If
+
+        Dim x As Integer = 240 * swidth / _W
+        Dim y As Integer = 0
+        Dim aoiwidth As Integer = 1440 * swidth / _W
+        Dim aoiHeight As Integer = 90 * sheight / _H
+        clearanceInterval = Integer.Parse(TrackBar1.Value)
+        Dim sgt As String = cbxSSegment.Text.Trim()
+        sortedList = New List(Of GazePoints)
+
+        sortedList = vs.GetStimulusSegment(sgt, gpoint1)
+        Dim cnt As Integer = Get_AOI_LIST(sortedList)
+
+        i = 0
+        j = 0
+
+
+        ''aTimer.AutoReset = True
+        '' Hook up the Elapsed event for the timer. 
+        'AddHandler aTimer.Elapsed, AddressOf OnTimedEvent
+
+        '' Set the Interval to 4 seconds (400 milliseconds).
+        'aTimer.Interval = 400
+        'aTimer.Enabled = True
+        Timer1.Interval = 500
+        Timer1.Enabled = True
+        Timer1.Start()
+
+    End Sub
+
+    Function GetImage(ByVal imageName As String) As String
+
+
+        Dim imagageFullPath As String = My.Computer.FileSystem.CombinePath(lastDirectory, imageName & ".png")
+        If My.Computer.FileSystem.FileExists(imagageFullPath) Then
+            Return imagageFullPath
+        Else
+            Return Nothing
+            MessageBox.Show("The image file does not exist", "No Stimulus Image found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        End If
+
+    End Function
+
+
+
+    Private aTimer As System.Timers.Timer
+    Dim g12 As Drawing.Graphics
+
+
+    ' Specify what you want to happen when the Elapsed event is  
+    ' raised. 
+    'Private Sub OnTimedEvent(source As Object, e As ElapsedEventArgs)
+
+    '    g12 = Panel2.CreateGraphics
+    '    Try
+    '        If i >= sortedList.Count - 1 Or j > sortedList.Count - 1 Then
+    '            aTimer.Stop()
+    '            Exit Sub
+    '        Else
+    '            Me.drawCircles(sortedList(i))
+    '            j = i + 1
+    '            Me.drawCircles(sortedList(j))
+    '            g12.DrawLine(Pens.Blue, sortedList(i).gpoint.X, sortedList(i).gpoint.Y, sortedList(j).gpoint.X, sortedList(j).gpoint.Y)
+    '            i += 1
+
+    '        End If
+    '    Catch ex As Exception
+    '        MessageBox.Show(ex.Message)
+    '        Exit Sub
+    '    End Try
+
+
+    'End Sub
+
+
+    Dim j As Integer
+    Dim i As Integer
+    Sub plotDynamicGazepoint()
+
+        g12 = Panel2.CreateGraphics
+        Try
+            If i >= sortedList.Count - 1 Or j > sortedList.Count - 1 Then
+                Timer1.Stop()
+                Timer1.Enabled = False
+                Exit Sub
+            Else
+                Me.drawCircles(sortedList(i))
+                j = i + 1
+                Me.drawCircles(sortedList(j))
+                g12.DrawLine(Pens.Blue, sortedList(i).gpoint.X, sortedList(i).gpoint.Y, sortedList(j).gpoint.X, sortedList(j).gpoint.Y)
+                i += 1
+
+            End If
+        Catch ex As Exception
+            MessageBox.Show(ex.Message)
+            Exit Sub
+        End Try
+    End Sub
+
+
+    Public Sub drawCircles(s As GazePoints)
+
+        g = Panel2.CreateGraphics
+        g.DrawEllipse(Pens.Red, s.gpoint.X - 5, s.gpoint.Y - 5, 10, 10)
+        g.FillEllipse(Brushes.Aqua, s.gpoint.X - 5, s.gpoint.Y - 5, 10, 10)
+    End Sub
+
+    Private Sub cbxSSegment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbxSSegment.SelectedIndexChanged
+        Timer1.Stop()
+        Timer1.Enabled = False
+        btnVisualizeSS.Enabled = True
+
+
+        'MessageBox.Show("load segment image")
+        'btnLoadSnapShot_Click(sender, e)
+        'SegmentSnapShot = MainOpenFileDialog.FileName
+        'Panel2.BackgroundImage = Image.FromFile(SegmentSnapShot)
+
+    End Sub
+
+    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles btnClear.Click
+        Panel2.Refresh()
+    End Sub
+
+    ''' <summary>
+    ''' timer for dynamic display of gaze points
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    ''' <remarks></remarks>
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        plotDynamicGazepoint()
+
+        If (Now.Second Mod clearanceInterval) = 0 Then
+            Panel2.Refresh()
+        End If
+
+    End Sub
+
+    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
+        Panel1.BackgroundImage = Nothing
+        ListView1.Clear()
+        btnVisualize.Enabled = True
+    End Sub
+
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        btnVisualizeSS.Enabled = True
+        Timer1.Stop()
+        Timer1.Enabled = False
+    End Sub
+
+    Dim lastDirectory As String
+    Private Sub btnAddRecord_Click(sender As Object, e As EventArgs) Handles btnAddRecord.Click
+        lvDirectory.Clear()
+        lastDirectory = ChooseFolder()
+        ' Make a reference to a directory. 
+        Try
+            Dim di As New DirectoryInfo(lastDirectory)
+            ' Get a reference to each directory in that directory. 
+            Dim diArr As DirectoryInfo() = di.GetDirectories()
+            ' Display the names of the directories. 
+            Dim dri As DirectoryInfo
+            For Each dri In diArr
+                Dim listviewitemX As New ListViewItem
+                listviewitemX.Text = dri.Name
+                listviewitemX.SubItems.Add(dri.FullName)
+                lvDirectory.Items.Add(listviewitemX)
+            Next dri
+        Catch ex As Exception
+            MessageBox.Show(ex.Message)
+
+        End Try
+
+
+    End Sub
+    Dim _filePath As String
+
+    Public Function buildFilePath(ByVal _fname As String) As String
+        Dim _filePath As String = _fname + "-FixationLocations"
+        Dim fileFullPath As String = My.Computer.FileSystem.CombinePath(lastDirectory, _filePath)
+
+        Return fileFullPath
+        
+    End Function
+
+    Public Function ChooseFolder() As String
+        FolderBrowserDialog1.ShowNewFolderButton = False
+        If FolderBrowserDialog1.ShowDialog() = DialogResult.OK Then
+
+            Dim root As Environment.SpecialFolder = FolderBrowserDialog1.RootFolder
+
+            Return FolderBrowserDialog1.SelectedPath
+        End If
+    End Function
+
+
+    Private Sub lvDirectory_DoubleClick(sender As Object, e As EventArgs) Handles lvDirectory.DoubleClick
+
+
+        Dim result As DialogResult = MessageBox.Show("Loading new data will clear the old data entry, do you still want to continue ?", _
+                                                   "Load data", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If result = Windows.Forms.DialogResult.Yes Then
+            cbxSSegment.DataSource = Nothing
+            Dim txtValue As String
+            txtValue = lvDirectory.FocusedItem.Text.Trim() & "\" & lvDirectory.FocusedItem.Text.Trim() & "-FixationLocations.xml"
+
+            
+            Dim fileFullPath As String = My.Computer.FileSystem.CombinePath(lastDirectory, txtValue)
+
+            'Dim f As String = buildFilePath(txtValue)
+
+
+
+            gpoint1 = New List(Of GazePoints)
+
+            vs = New VisualizationClass
+            vs.Gefilename = fileFullPath
+            gpoint1 = vs.GetGPFromFile()
+
+            Try
+                cbxSSegment.Items.Clear()
+                cbxSSegment.DataSource = vs.SegmentList
+                cbxSSegment.DisplayMember = vs.SegmentList(0)
+
+            Catch ex As Exception
+
+            End Try
+        Else
+            Exit Sub
+        End If
+
+
+
+    End Sub
+
+
+
+    '====================================TAB 5 (AOI VISUALIZATION)================================================
+
+
+#Region "AOI Visualiztion (Tab 5 )"
+
+
+    Public Structure aoiStructure
+        Dim postion As Point
+        Dim name As String
+    End Structure
+
+    Dim aw As Single
+    Dim ah As Single
+
+    ''' <summary>
+    ''' this function is to draw the AOI rectangles
+    ''' </summary>
+    ''' <param name="sx"></param>
+    ''' <param name="sy"></param>
+    ''' <param name="w"></param>
+    ''' <param name="h"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function drRec(ByVal sx As Integer, ByVal sy As Integer, w As Integer, h As Integer) As Rectangle
+        Return New Rectangle(sx, sy, w, h)
+    End Function
+
+    Dim gpointList As List(Of GazePoints)
+    Private Sub btnLoadData_aoi_Click(sender As Object, e As EventArgs) Handles btnLoadData_aoi.Click
+
+        Dim result As DialogResult = MessageBox.Show("Loading new data will clear the old data entry, do you still want to continue ?", _
+                                                     "Load data", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+        If result = Windows.Forms.DialogResult.Yes Then
+            picSegment.Image = Nothing
+            cboSS_aoi.DataSource = Nothing
+
+            cboSS_aoi.Items.Clear()
+            aoiPanel.Refresh()
+            gpointList = New List(Of GazePoints)
+
+            MainOpenFileDialog.FileName = ""
+            MainOpenFileDialog.Title = "Select eye-tracker data"
+            MainOpenFileDialog.FileName = ""
+            MainOpenFileDialog.Filter = "Processed data (*.xml)|*.xml"
+
+
+            If MainOpenFileDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+                xmlFileFullName = MainOpenFileDialog.FileName
+                xmlfileName = MainOpenFileDialog.SafeFileName
+                _lastDirData = MainOpenFileDialog.FileName _
+                    .Substring(0, MainOpenFileDialog.FileName.Length _
+                               - MainOpenFileDialog.SafeFileName.Length - MainOpenFileDialog.SafeFileName.Length + ("-FixationLocations.xml").Length - 2)
+            End If
+
+            gpointList = New List(Of GazePoints)
+
+            vs.Gefilename = xmlFileFullName
+            gpointList = vs.GetGPFromFile()
+
+            Try
+                cboSS_aoi.Items.Clear()
+                cboSS_aoi.DataSource = vs.SegmentList
+                cboSS_aoi.DisplayMember = vs.SegmentList(0)
+
+            Catch ex As Exception
+
+            End Try
+        Else
+            Exit Sub
+        End If
+
+
+    End Sub
+
+    Dim AOISortedList As List(Of GazePoints)
+    Dim cnt As Integer 'number of gazepoints per segment. By Abdul-Basit kasim
+    Dim _cnt As Integer 'number of AOIs per segment.By Abdul-Basit kasim
+    Dim aoiGfx As Graphics
+
+    Dim ListOfAoi As List(Of aoiStructure)
+
+
+    ''' <summary>
+    ''' the function below returns the path to the stimulus segment image in the same folder where the data was stored.
+    ''' </summary>
+    ''' <param name="imageStr"></param>
+    ''' <returns></returns>
+    ''' <remarks>abdul-basit Kasim</remarks>
+    Function DisplayStimulusSegment(ByVal imageStr As String) As String
+        Return My.Computer.FileSystem.CombinePath(_lastDirData, imageStr & ".png")
+    End Function
+
+    ''' <summary>
+    '''This event displays the AOI transition matrix, label the AOIs and draw trajectories.
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    ''' <remarks>Abdul-basit Kasim</remarks>
+    ''' 
+    Private Sub btnGetAOI_Click(sender As Object, e As EventArgs) Handles btnGetAOI.Click
+        btnClearAll.Enabled = True
+        If cboSS_aoi.Text.Trim = "" Then
+            picSegment.Image = Nothing
+        Else
+            'check for fileNotFoundExceptoin
+            Try
+                picSegment.Image = Image.FromFile(DisplayStimulusSegment(cboSS_aoi.Text.Trim()))
+            Catch ex As Exception
+                MessageBox.Show("The path to the images folder is not set properly", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                picSegment.Image = Nothing
+            End Try
+
+        End If
+
+        ListOfAoi = New List(Of aoiStructure)
+        AOISortedList = New List(Of GazePoints)
+        Dim xstart As Integer
+        Dim ystart As Integer = 10
+        Dim displayWidth As Integer = aoiPanel.Width - 10
+        Dim displayHeight As Integer = aoiPanel.Height - 10
+
+        aoiGfx = aoiPanel.CreateGraphics
+        Dim nrow As Integer 'number of rows
+        Dim ncol As Integer 'number of columns
+        Dim y As Integer 'as counters
+
+        Dim sgmt As String = cboSS_aoi.Text.Trim
+        AOISortedList = vs.GetStimulusSegment(sgmt, gpointList)
+        cnt = AOISortedList.Count
+
+        _cnt = Get_AOI_LIST(AOISortedList)
+
+        Dim aois As New List(Of String)
+
+        aois = aoiNamelist
+
+        lblAOI.Text = "There are " & _cnt.ToString & " AOIs"
+
+        If _cnt > 10 Then
+            aw = displayWidth / 8
+            ncol = 4
+            nrow = _cnt / ncol
+        Else
+            aw = displayWidth / 6
+            ncol = 3
+            nrow = _cnt / ncol
+        End If
+
+
+        aoiPanel.Refresh()
+
+        Dim numAoi As Integer = _cnt
+
+        If (_cnt Mod 3) = 0 Or (_cnt Mod 4 = 0) Then
+            ah = displayHeight / (2 * nrow)
+        Else
+            nrow = nrow + 1
+            ah = displayHeight / (2 * nrow)
+        End If
+
+        'creating the AOI rectangles
+        Dim m As Integer = 0
+        Dim AoiStruct As aoiStructure
+
+        For x = 0 To nrow - 1
+            If numAoi >= ncol Then
+            Else
+                ncol = ncol - numAoi
+            End If
+
+            xstart = 15
+            For y = 0 To ncol - 1
+
+                aoiGfx.FillRectangle(Brushes.Aqua, drRec(xstart, ystart, aw, ah))
+                aoiGfx.DrawRectangle(Pens.Blue, drRec(xstart, ystart, aw, ah))
+                If m = _cnt Then
+                    Exit For
+                End If
+                write_AOI_names(aoiNamelist(m), xstart + 5, ystart + 5)
+                AoiStruct.postion = New Point(xstart, ystart)
+                AoiStruct.name = aoiNamelist(m).ToString
+                ListOfAoi.Add(AoiStruct)
+
+                m += 1
+                numAoi -= 1
+
+                xstart += 2 * aw
+
+            Next
+            ystart += ah * 2
+
+        Next
+
+        TransitionPoints = GetTransition(AOISortedList, ListOfAoi)
+
+        DrawTrajectory()
+
+        'the code below Generates array for the drawing of lines. this is for testing, must be deleted later
+        '===============================================
+        'Dim v As Integer = 0
+        'Dim larray(TransitionPoints.Count) As Point
+        'For v = 0 To TransitionPoints.Count - 1
+        '    larray(v) = TransitionPoints(v)
+
+
+        'Next
+
+        'Dim gfxLines As Graphics
+        'gfxLines = aoiPanel.CreateGraphics
+        'gfxLines.DrawLines(Pens.Blue, larray)
+        '================================================
+    End Sub
+    Dim TransitionPoints As List(Of Point)
+
+    Private Sub cboSS_aoi_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboSS_aoi.SelectedIndexChanged
+        btnGetAOI.Enabled = True
+        lblAOI.Text = ""
+    End Sub
+
+    Dim Gfx As Graphics
+    Sub write_AOI_names(ByVal aname As String, ByVal x As Integer, ByVal y As Integer)
+        Gfx = aoiPanel.CreateGraphics
+        Dim drawString As [String] = aname
+        Dim strwidth As Single = 100.0F
+        Dim strheight As Single = 90.0F
+        ' Create font and brush. 
+        Dim drawFont As New Font("Arial", 10)
+        Dim drawBrush As New SolidBrush(Color.Blue)
+
+        ' Create rectangle for drawing. 
+
+        Dim drawRect As New RectangleF(x, y, strwidth, strheight)
+
+        ' Draw rectangle to screen. 
+        'Dim whitePen As New Pen(Color.White)
+        '  g4.DrawRectangle(blackPen, x, y, strwidth, strheight)
+
+        ' Set format of string. 
+        Dim drawFormat As New StringFormat
+        drawFormat.Alignment = StringAlignment.Center
+
+        ' Draw string to screen.
+        Gfx.DrawString(drawString, drawFont, drawBrush, _
+        drawRect, drawFormat)
+    End Sub
+
+    ''' <summary>
+    ''' this is a Structure used to create collection of transitions
+    ''' </summary>
+    ''' <remarks>By Abdul-Basit kasim</remarks>
+    Public Structure gTransition
+        Dim startPoint As Point
+        Dim endPoint As Point
+        Dim _name As String
+    End Structure
+    Dim t As gTransition
+    Dim pointArray As List(Of Point)
+
+    ''' <summary>
+    ''' GetTransition function is used to create the AOI rectangles on the screen, 
+    ''' proportionate to the number of aois
+    ''' </summary>
+    ''' <param name="gpl"> this parameter is the list of gaze points </param>
+    ''' <param name="_aoi">this is the list of aoi per stimulus segment</param>
+    ''' <returns></returns>
+    ''' <remarks>By Abdul-Basit Kasim</remarks>
+
+    Function GetTransition(ByVal gpl As List(Of GazePoints), ByVal _aoi As List(Of aoiStructure)) As List(Of Point)
+
+        Dim k As Integer = _aoi.Count
+        pointArray = New List(Of Point)
+        Dim h As Integer = 0
+        Dim ar As New List(Of String)
+        For Each p In gpl
+            ar.Add(p.aoi)
+        Next
+        Dim l As Integer = 0
+        While h < gpl.Count
+            l = 0
+
+            'this while loop forms the transition
+
+            While ar(h) <> _aoi(l).name
+                If l < k Then
+                    l += 1
+                End If
+            End While
+
+            pointArray.Add(New Point(_aoi(l).postion.X + 0.5 * aw, _aoi(l).postion.Y + 0.5 * ah))
+            h += 1
+        End While
+
+
+        Return pointArray
+    End Function
+
+    ''' <summary>
+    ''' This function generates all the transtioins between AOIs
+    ''' </summary>
+    ''' 
+    ''' <returns>returns a list of Transtion trajectories</returns>
+    ''' <remarks>By Abdul-Basit kasim</remarks>
+
+
+    Public Function GetTrajectory() As List(Of gTransition)
+
+        Dim listOfPoints As New List(Of Point)
+        listOfPoints = TransitionPoints
+        Dim trajList As New List(Of gTransition)
+        Dim listCount As Integer = listOfPoints.Count
+        Dim i As Integer = 0
+        Dim j As Integer = 0
+
+        While listCount > 0
+
+            Dim t As New gTransition
+
+            If listCount = 1 Then
+                t.startPoint = listOfPoints(0)
+                t.endPoint = listOfPoints(0)
+            ElseIf listCount Then
+                j = i + 1
+                t.startPoint = listOfPoints(i)
+                t.endPoint = listOfPoints(j)
+            End If
+            trajList.Add(t)
+            listCount -= 1
+            i += 1
+        End While
+        Return trajList
+    End Function
+
+    ''' <summary>
+    ''' This sub procedure draws the AOI's transition in tab 5 ( AOI TRANSITIONS )
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Sub DrawTrajectory()
+
+        'FURTHER PROCESSING SHOULD BE DONE HERE ABOUT AOI LOCATION
+        ' Create a new custom pen. 
+        Dim listTraj As New List(Of gTransition)
+        listTraj = GetTrajectory()
+
+        'Dim picturebox2 As New PictureBox
+        Dim redPen As New Pen(Brushes.BlueViolet, 1.5F)
+        ' Dim tbmp As New Bitmap(588, 410)
+
+        ' Dim gfx As Drawing.Graphics = Drawing.Graphics.FromImage(tbmp)
+
+        Dim gline As Graphics
+        gline = aoiPanel.CreateGraphics
+        ' Set the StartCap property.
+        redPen.StartCap = Drawing2D.LineCap.Triangle
+        ' Set the EndCap property.
+        redPen.EndCap = Drawing2D.LineCap.ArrowAnchor
+        Dim k As Integer = listTraj.Count
+        Dim i As Integer = 0
+
+        If chkCurves.Checked Then
+            Dim f As Integer = TransitionPoints.Count
+            Dim arr(f) As Point
+
+            For i = 0 To f - 1
+
+                arr(i) = TransitionPoints.Item(i)
+
+            Next
+            gline.DrawCurve(Pens.Red, arr, 0.3)
+
+        Else
+            While k > 0
+                'gfx.DrawEllipse(redPen, Lst())
+                gline.DrawLine(redPen, listTraj(i).startPoint, listTraj(i).endPoint)
+                i += 1
+                k -= 1
+            End While
+        End If
+
+    End Sub
+
+    Private Sub btnClearAll_Click(sender As Object, e As EventArgs) Handles btnClearAll.Click
+        picSegment.Image = Nothing
+        cboSS_aoi.DataSource = Nothing
+        aoiPanel.Refresh()
+        btnClearAll.Enabled = False
+    End Sub
+#End Region
+
+
+    Private Sub TrackBar1_Scroll(sender As Object, e As EventArgs) Handles TrackBar1.Scroll
+        clearanceInterval = Integer.Parse(TrackBar1.Value)
     End Sub
 End Class

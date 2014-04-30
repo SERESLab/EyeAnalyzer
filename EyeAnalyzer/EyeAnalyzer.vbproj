@@ -54,6 +54,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -84,7 +85,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaOfInterest.vb" />
+    <Compile Include="GazePointForm.Designer.vb">
+      <DependentUpon>GazePointForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="GazePointForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Heatmap.vb" />
+    <Compile Include="MainForm1.Designer.vb">
+      <DependentUpon>MainForm1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MirametrixViewerData.vb" />
     <Compile Include="Fixation.vb" />
     <Compile Include="HeatmapForm.Designer.vb">
@@ -117,14 +130,25 @@
     </Compile>
     <Compile Include="ProcessingResults.vb" />
     <Compile Include="StimulusSegment.vb" />
+    <Compile Include="tests\GazePoins.vb" />
+    <Compile Include="tests\Trajectory.vb" />
+    <Compile Include="tests\TrajectoryClass.vb" />
+    <Compile Include="TrajClass.vb" />
     <Compile Include="VideoRecording.vb" />
+    <Compile Include="VisualizationClass.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GazePointForm.resx">
+      <DependentUpon>GazePointForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="HeatmapForm.resx">
       <DependentUpon>HeatmapForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm1.resx">
+      <DependentUpon>MainForm1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

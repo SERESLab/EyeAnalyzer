@@ -9,6 +9,22 @@ Public Class StimulusSegment
     Private _startMs? As ULong = Nothing
     Private _endMs? As ULong = Nothing
     Private _areasOfInterest As New List(Of AreaOfInterest)
+    ' Private _sheight As Integer
+
+    '''<summary>
+    ''' Get and set the aoi heiths.
+    ''' This part was added By Abdul-Basit Kasim
+    ''' </summary>
+    'Public Property AOIheight As Integer
+    '    Get
+    '        Return _sheight
+    '    End Get
+    '    Set(ByVal value As Integer)
+    '        _sheight = value
+    '    End Set
+    'End Property
+
+
 
     ''' <summary>
     ''' Gets or sets the name of the segment.

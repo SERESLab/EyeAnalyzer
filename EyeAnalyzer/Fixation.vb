@@ -6,6 +6,17 @@ Public Class Fixation
     Private _startMs As ULong = 0
     Private _endMs As ULong = 0
     Private _point As Point
+    Private _cnt As ULong = 0
+
+    Public Property Count As ULong
+
+        Get
+            Return _cnt
+        End Get
+        Set(value As ULong)
+            _cnt = value
+        End Set
+    End Property
 
     ''' <summary>
     ''' Gets or sets the start of the fixation in milliseconds.

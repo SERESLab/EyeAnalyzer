@@ -158,6 +158,7 @@ Public Class Heatmap
     ''' <summary>
     ''' Constructs a new heatmap with the specified properties.
     ''' </summary>
+    ''' 
     Public Sub New(ByVal stimulusName As String, ByVal pointRadius As Integer, ByVal alpha As Integer, _
                    ByVal lowColor As Color, ByVal midColor As Color, ByVal highColor As Color)
         _stimulusName = stimulusName

@@ -13,6 +13,7 @@ Public Class MirametrixViewerData
         Public isValid As Boolean
         Public x As Integer
         Public y As Integer
+        Public cnt As Integer
     End Structure
 
     Private _gazes As New Dictionary(Of String, PointOfGaze)
@@ -21,6 +22,9 @@ Public Class MirametrixViewerData
     Private _averageCalibrationError As Single = 0.0
     Private _validCalibrationPoints As Integer = 0
 
+
+
+   
     ''' <summary>
     ''' Gets the number of gaze points.
     ''' </summary>
@@ -83,7 +87,7 @@ Public Class MirametrixViewerData
         Using reader As New System.Xml.XmlTextReader(filename)
             While reader.Read()
                 If reader.IsStartElement("REC") Then
-
+                    Dim count As String = reader.GetAttribute("CNT")
                     Dim id As String = reader.GetAttribute("FPOGID")
                     Dim startStr As String = reader.GetAttribute("FPOGS")
                     Dim durationStr As String = reader.GetAttribute("FPOGD")
@@ -110,6 +114,7 @@ Public Class MirametrixViewerData
                             Dim yPercent As Single = Single.Parse(yPercentStr)
                             gaze.x = xPercent * _screenWidth
                             gaze.y = yPercent * _screenHeight
+                            gaze.cnt = count
                         Else
                             Throw New Exception("Bad format.")
                         End If
@@ -122,6 +127,7 @@ Public Class MirametrixViewerData
                             avg.x = (avg.x + gaze.x) / 2
                             avg.y = (avg.y + gaze.y) / 2
                             _gazes.Item(id) = avg
+
                         End If
 
                     End If
@@ -183,7 +189,7 @@ Public Class MirametrixViewerData
             Dim fixation As New Fixation(New Point(pog.x, pog.y))
             fixation.StartMs = pog.start
             fixation.EndMs = pog.start + pog.duration
-
+            fixation.Count = pog.cnt
             ' clip fixation to segment boundary
             If fixation.EndMs > segment.EndMs Then
                 fixation.EndMs = segment.EndMs

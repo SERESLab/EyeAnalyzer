@@ -3,10 +3,12 @@
 ''' </summary>
 Public Class ProcessingResults
 
+    'Declaration of private viriables
+
     Private _averageCalibrationError As Single = 0.0
     Private _validCalibrationPoints As Integer = 0
-    Private _fixations As New Dictionary(Of String, Dictionary(Of String, List(Of Fixation)))
-    Private _segmentDurations As New Dictionary(Of String, ULong)
+    Private _fixations As New Dictionary(Of String, Dictionary(Of String, List(Of Fixation))) '_fixations holds collection of fixation points
+    Private _segmentDurations As New Dictionary(Of String, ULong) 'holds collection of _segmentDurations: key-value pair
 
     ''' <summary>
     ''' Constructs an empty results object with the specified calibration error
@@ -56,6 +58,7 @@ Public Class ProcessingResults
                     Dim aoiName As String = kvpFixations.Key
                     For Each f As Fixation In kvpFixations.Value
                         writer.WriteStartElement("FixationPoint")
+                        writer.WriteAttributeString("Count", f.Count.ToString())
                         writer.WriteAttributeString("x", f.Point.X.ToString())
                         writer.WriteAttributeString("y", f.Point.Y.ToString())
                         writer.WriteAttributeString("start", f.StartMs.ToString())
