@@ -2426,6 +2426,7 @@ Public Class MainForm1
         cboSS_aoi.DataSource = Nothing
         aoiPanel.Refresh()
         btnClearAll.Enabled = False
+        chkCurves.Checked = False
     End Sub
 #End Region
 
